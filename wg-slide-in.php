@@ -49,17 +49,30 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * initialize the plugin
          */
         public function __construct() {
-            add_action('wp_footer', array($this, 'display_footer_box'));
+            add_action('wp_footer', array($this, 'display_footer'));
+
+            add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        }
+
+        /**
+         * add scripts
+         */
+        public function enqueue_scripts() {
+            // enqueue empty advertisement.js
+            wp_register_script('adblock-counter-testjs', plugins_url('js/advertisement.js', __FILE__), array('jquery'), ABCOUNTERVERSION);
+            wp_enqueue_script('adblock-counter-testjs');
         }
 
         /**
          * content box that goes into the footer
          */
-        public function display_footer_box() {
-
+        public function display_footer() {
             ?><script>
                 jQuery(document).ready(function($) {
-                                            
+                    console.log( $.adblockJsFile );
+                    if ($.adblockJsFile === undefined){
+                        
+                    }
                 });
             </script><?php
         }
