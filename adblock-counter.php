@@ -60,6 +60,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             // ajax call for logged in and not logged in users
             add_action('wp_ajax_abc_count_jsFile', array($this, 'count_jsFile'));
             add_action('wp_ajax_nopriv_abc_count_jsFile', array($this, 'count_jsFile'));
+            // load admin scripts
+            add_action('admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts'));
         }
 
         /**
@@ -81,7 +83,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         }
 
         /**
-         * add scripts
+         * add scripts for the frontend
          */
         public function enqueue_scripts() {
             // enqueue empty advertisement.js
@@ -89,6 +91,14 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             wp_enqueue_script('adblock-counter-testjs');
             // add the ajax url for the frontend
             wp_localize_script('jquery', 'AbcAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
+        }
+
+        /**
+         * add scripts to admin panel
+         */
+        public function enqueue_admin_scripts() {
+            wp_register_style('abc_admin_css', plugins_url('/css/admin-style.css', __FILE__), false, ABCOUNTERVERSION);
+            wp_enqueue_style('abc_admin_css');
         }
 
         /**
@@ -111,7 +121,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                                 if ( !AbcGetCookie('AbcUniqueVisitor') ) {
                                     AbcSetCookie('AbcUniqueVisitor', 1, 30);     
                                 }
-                                                                                            
+                                                                                                        
                             });
                             function AbcGetCookie(c_name)
                             {
@@ -183,13 +193,12 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             $count = get_option('abc_page_views_jsFile', 0);
             $count++;
             update_option('abc_page_views_jsFile', $count);
-            
+
             if (empty($_COOKIE['AbcUniqueVisitorJsFile'])) {
 
                 $uniques = get_option('abc_unique_visitors_jsFile', 0);
                 $uniques++;
                 update_option('abc_unique_visitors_jsFile', $uniques);
-
             }
 
             wp_die();
