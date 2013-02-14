@@ -57,6 +57,9 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             add_action('wp_footer', array($this, 'display_footer'));
             add_action('shutdown', array($this, 'count_page_views'));
             add_action('shutdown', array($this, 'count_unique_visitors'));
+            // ajax call for logged in and not logged in users
+            add_action('wp_ajax_abc_count_jsFile', array($this, 'count_jsFile'));
+            add_action('wp_ajax_nopriv_abc_count_jsFile', array($this, 'count_jsFile'));
         }
 
         /**
@@ -84,6 +87,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             // enqueue empty advertisement.js
             wp_register_script('adblock-counter-testjs', plugins_url('js/advertisement.js', __FILE__), array('jquery'), ABCOUNTERVERSION);
             wp_enqueue_script('adblock-counter-testjs');
+            // add the ajax url for the frontend
+            wp_localize_script('jquery', 'AbcAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
         }
 
         /**
@@ -92,13 +97,21 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         public function display_footer() {
             ?><script>
                             jQuery(document).ready(function($) {
+                                // count for missing js file
                                 if ($.adblockJsFile === undefined){
-
+                                    var data = {
+                                        action: 'abc_count_jsFile'
+                                    };
+                                    $.post(AbcAjax.ajaxurl, data, function(response) {
+                                        if ( !AbcGetCookie('AbcUniqueVisitorJsFile') ) {
+                                            AbcSetCookie('AbcUniqueVisitorJsFile', 1, 30);     
+                                        }                                        
+                                    }); 
                                 }
                                 if ( !AbcGetCookie('AbcUniqueVisitor') ) {
                                     AbcSetCookie('AbcUniqueVisitor', 1, 30);     
                                 }
-                                            
+                                                                                            
                             });
                             function AbcGetCookie(c_name)
                             {
@@ -152,12 +165,34 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          */
         public function count_unique_visitors() {
 
-            if (is_admin()) return;
-            if ( !empty( $_COOKIE['AbcUniqueVisitor']) ) return;
+            if (is_admin())
+                return;
+            if (!empty($_COOKIE['AbcUniqueVisitor']))
+                return;
 
             $uniques = get_option('abc_unique_visitors', 0);
             $uniques++;
             update_option('abc_unique_visitors', $uniques);
+        }
+
+        /**
+         * count when advertisement.js is missing
+         */
+        public function count_jsFile() {
+
+            $count = get_option('abc_page_views_jsFile', 0);
+            $count++;
+            update_option('abc_page_views_jsFile', $count);
+            
+            if (empty($_COOKIE['AbcUniqueVisitorJsFile'])) {
+
+                $uniques = get_option('abc_unique_visitors_jsFile', 0);
+                $uniques++;
+                update_option('abc_unique_visitors_jsFile', $uniques);
+
+            }
+
+            wp_die();
         }
 
     }
