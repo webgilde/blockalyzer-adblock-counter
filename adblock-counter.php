@@ -55,6 +55,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             add_action('admin_menu', array($this, 'add_menu_page'));
             add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
             add_action('wp_footer', array($this, 'display_footer'));
+            add_action('shutdown', array($this, 'count_page_views'));
         }
 
         /**
@@ -71,9 +72,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             if (!current_user_can('manage_options')) {
                 wp_die(__('You do not have sufficient permissions to access this page.'));
             }
-            
-            require_once plugins_url('templates/statistics.php', __FILE__);
-            
+
+            require_once 'templates/statistics.php';
         }
 
         /**
@@ -91,12 +91,61 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         public function display_footer() {
             ?><script>
                             jQuery(document).ready(function($) {
-                                console.log( $.adblockJsFile );
                                 if ($.adblockJsFile === undefined){
-                                    
+
                                 }
+                                if ( AbcGetCookie('AbcPageViews') ) {
+                                    var pageViews = parseInt( AbcGetCookie('AbcPageViews') ) + 1;
+                                } else {
+                                    var pageViews = 1;
+                                }
+                                AbcSetCookie('AbcPageViews', pageViews, 30); 
                             });
+                            function AbcGetCookie(c_name)
+                            {
+                                var i,x,y,ARRcookies=document.cookie.split(";");
+                                for (i=0;i<ARRcookies.length;i++)
+                                {
+                                    x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+                                    y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+                                    x=x.replace(/^\s+|\s+$/g,"");
+                                    if (x==c_name)
+                                    {
+                                        return unescape(y);
+                                    }
+                                }
+                            }
+
+                            /**
+                             * name = cookie name
+                             * value = cookie value
+                             * exdays = days until cookie expires
+                             */
+                            function AbcSetCookie( name, value, exdays, path, domain, secure)
+                            {
+                                var exdate=new Date();
+                                exdate.setDate(exdate.getDate() + exdays);
+                                document.cookie = name + "=" + escape(value) + 
+                                    ((exdate == null) ? "" : "; expires=" + exdate.toUTCString()) +
+                                    ((path == null) ? "; path=/" : "; path=" + path) +        
+                                    ((domain == null) ? "" : "; domain=" + domain) +
+                                    ((secure == null) ? "" : "; secure");
+                            }
+
             </script><?php
+        }
+        
+        /**
+         * count the total page views
+         */
+        public function count_page_views(){
+            
+            if ( is_admin() ) return;
+            
+            $page_views = get_option('abc_page_views', 0);
+            $page_views++;
+            update_option('abc_page_views', $page_views);
+            
         }
 
     }
