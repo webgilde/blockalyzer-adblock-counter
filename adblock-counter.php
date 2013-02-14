@@ -51,7 +51,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * initialize the plugin
          */
         public function __construct() {
-            
+
             add_action('admin_menu', array($this, 'add_menu_page'));
             add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
             add_action('wp_footer', array($this, 'display_footer'));
@@ -60,17 +60,22 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         /**
          * add menu page in tools section
          */
-        public function add_menu_page(){
-            add_management_page( __('AdBlock Counter Dashboard', ABCOUNTERTD), __('AdBlock Counter', ABCOUNTERTD), 'manage_options', 'adblock-counter', array($this, 'render_menu_page') );
+        public function add_menu_page() {
+            add_management_page(__('AdBlock Counter Dashboard', ABCOUNTERTD), __('AdBlock Counter', ABCOUNTERTD), 'manage_options', 'adblock-counter', array($this, 'render_menu_page'));
         }
-        
+
         /**
          * render the menu page
          */
-        public function render_menu_page(){
+        public function render_menu_page() {
+            if (!current_user_can('manage_options')) {
+                wp_die(__('You do not have sufficient permissions to access this page.'));
+            }
+            
+            require_once plugins_url('templates/statistics.php', __FILE__);
             
         }
-        
+
         /**
          * add scripts
          */
@@ -85,12 +90,12 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          */
         public function display_footer() {
             ?><script>
-                jQuery(document).ready(function($) {
-                    console.log( $.adblockJsFile );
-                    if ($.adblockJsFile === undefined){
-                        
-                    }
-                });
+                            jQuery(document).ready(function($) {
+                                console.log( $.adblockJsFile );
+                                if ($.adblockJsFile === undefined){
+                                    
+                                }
+                            });
             </script><?php
         }
 
