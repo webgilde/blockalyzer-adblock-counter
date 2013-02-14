@@ -56,6 +56,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
             add_action('wp_footer', array($this, 'display_footer'));
             add_action('shutdown', array($this, 'count_page_views'));
+            add_action('shutdown', array($this, 'count_unique_visitors'));
         }
 
         /**
@@ -94,12 +95,10 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                                 if ($.adblockJsFile === undefined){
 
                                 }
-                                if ( AbcGetCookie('AbcPageViews') ) {
-                                    var pageViews = parseInt( AbcGetCookie('AbcPageViews') ) + 1;
-                                } else {
-                                    var pageViews = 1;
+                                if ( !AbcGetCookie('AbcUniqueVisitor') ) {
+                                    AbcSetCookie('AbcUniqueVisitor', 1, 30);     
                                 }
-                                AbcSetCookie('AbcPageViews', pageViews, 30); 
+                                            
                             });
                             function AbcGetCookie(c_name)
                             {
@@ -134,18 +133,31 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 
             </script><?php
         }
-        
+
         /**
          * count the total page views
          */
-        public function count_page_views(){
-            
-            if ( is_admin() ) return;
-            
+        public function count_page_views() {
+
+            if (is_admin())
+                return;
+
             $page_views = get_option('abc_page_views', 0);
             $page_views++;
             update_option('abc_page_views', $page_views);
-            
+        }
+
+        /**
+         * count the total page views
+         */
+        public function count_unique_visitors() {
+
+            if (is_admin()) return;
+            if ( !empty( $_COOKIE['AbcUniqueVisitor']) ) return;
+
+            $uniques = get_option('abc_unique_visitors', 0);
+            $uniques++;
+            update_option('abc_unique_visitors', $uniques);
         }
 
     }
