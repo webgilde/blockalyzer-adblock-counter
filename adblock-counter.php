@@ -52,19 +52,23 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          */
         public function __construct() {
 
+            // perform on plugin activation
+            register_activation_hook( __FILE__, array($this, '_activation') );
+            
             add_action('admin_menu', array($this, 'add_menu_page'));
-            add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-            add_action('wp_footer', array($this, 'display_footer'));
-            add_action('shutdown', array($this, 'count_unique_visitors'));
-            add_action('shutdown', array($this, 'count_page_views'));
-            // ajax call for logged in and not logged in users
-            add_action('wp_ajax_abc_count_jsFile', array($this, 'count_jsFile'));
-            add_action('wp_ajax_nopriv_abc_count_jsFile', array($this, 'count_jsFile'));
             // load admin scripts
             add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
             
-            // perform on plugin activation
-            register_activation_hook( __FILE__, array($this, '_activation') );
+            // everything connected with the measuing - run only when active
+            if ( $this->_is_measuring() ) {
+                add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+                add_action('wp_footer', array($this, 'display_footer'));
+                add_action('shutdown', array($this, 'count_unique_visitors'));
+                add_action('shutdown', array($this, 'count_page_views'));
+                // ajax call for logged in and not logged in users
+                add_action('wp_ajax_abc_count_jsFile', array($this, 'count_jsFile'));
+                add_action('wp_ajax_nopriv_abc_count_jsFile', array($this, 'count_jsFile'));
+            }
         }
 
         /**
@@ -84,8 +88,16 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 
             if (!empty($_POST['abcounter'])) {
                 // reset statistics
-                if ($_POST['abcounter']['reset'] == 'reset') {
+                if ($_POST['abcounter'] == 'reset') {
                     $this->_reset_statistics();
+                }
+                // start measuring
+                if ($_POST['abcounter'] == 'start') {
+                    $this->_start_measuring();
+                }
+                // stop measuring
+                if ($_POST['abcounter'] == 'stop') {
+                    $this->_stop_measuring();
                 }
             }
 
@@ -228,6 +240,43 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             $this->_update_nonce();
             
         }
+        
+        /**
+         * check if the measuring is running
+         * @return bool true if measunring, false if not
+         */
+        public function _is_measuring(){
+            
+            $start = get_option('abc_start');
+            if ( empty( $start )) return false;
+            
+            $stop = get_option('abc_stop');
+            if ( empty( $stop )) return true;
+            
+            $time = time();
+            if ( $stop < $time ) return false;
+            
+            return false;
+            
+        }
+        
+        /**
+         * start measuring
+         */
+        public function _start_measuring(){
+            
+            update_option( 'abc_start', time() );
+            
+        }
+
+        /**
+         * stop measuring
+         */
+        public function _stop_measuring(){
+            
+            update_option( 'abc_stop', time() );
+            
+        }
 
         /**
          * reset the statistics to 0
@@ -238,6 +287,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             update_option('abc_unique_visitors', 0);
             update_option('abc_page_views_jsFile', 0);
             update_option('abc_unique_visitors_jsFile', 0);
+            update_option('abc_start', 0);
+            update_option('abc_stop', 0);
 
             $this->_update_nonce();
         }
