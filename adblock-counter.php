@@ -55,13 +55,13 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             add_action('admin_menu', array($this, 'add_menu_page'));
             add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
             add_action('wp_footer', array($this, 'display_footer'));
-            add_action('shutdown', array($this, 'count_page_views'));
             add_action('shutdown', array($this, 'count_unique_visitors'));
+            add_action('shutdown', array($this, 'count_page_views'));
             // ajax call for logged in and not logged in users
             add_action('wp_ajax_abc_count_jsFile', array($this, 'count_jsFile'));
             add_action('wp_ajax_nopriv_abc_count_jsFile', array($this, 'count_jsFile'));
             // load admin scripts
-            add_action('admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts'));
+            add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
         }
 
         /**
@@ -78,10 +78,10 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             if (!current_user_can('manage_options')) {
                 wp_die(__('You do not have sufficient permissions to access this page.'));
             }
-            
-            if (!empty( $_POST['abcounter'] ) ) {
+
+            if (!empty($_POST['abcounter'])) {
                 // reset statistics
-                if ( $_POST['abcounter']['reset'] == 'reset' ) {
+                if ($_POST['abcounter']['reset'] == 'reset') {
                     $this->_reset_statistics();
                 }
             }
@@ -114,53 +114,54 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          */
         public function display_footer() {
             ?><script>
-                            jQuery(document).ready(function($) {
-                                // count for missing js file
-                                if ($.adblockJsFile === undefined){
-                                    var data = {
-                                        action: 'abc_count_jsFile'
-                                    };
-                                    $.post(AbcAjax.ajaxurl, data, function(response) {
-                                        if ( !AbcGetCookie('AbcUniqueVisitorJsFile') ) {
-                                            AbcSetCookie('AbcUniqueVisitorJsFile', 1, 30);     
-                                        }                                        
-                                    }); 
-                                }
-                                if ( !AbcGetCookie('AbcUniqueVisitor') ) {
-                                    AbcSetCookie('AbcUniqueVisitor', 1, 30);     
-                                }
-                                                                                                        
-                            });
-                            function AbcGetCookie(c_name)
-                            {
-                                var i,x,y,ARRcookies=document.cookie.split(";");
-                                for (i=0;i<ARRcookies.length;i++)
-                                {
-                                    x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
-                                    y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
-                                    x=x.replace(/^\s+|\s+$/g,"");
-                                    if (x==c_name)
-                                    {
-                                        return unescape(y);
-                                    }
-                                }
-                            }
+                jQuery(document).ready(function($) {
+                    // count for missing js file
+                    var nonce = '<?php echo get_option('abc_nonce'); ?>';
+                    if ($.adblockJsFile === undefined){
+                        var data = {
+                            action: 'abc_count_jsFile'
+                        };
+                        $.post(AbcAjax.ajaxurl, data, function(response) {
+                            if ( !AbcGetCookie('AbcUniqueVisitorJsFile') || AbcGetCookie('AbcUniqueVisitorJsFile') != nonce  ) {
+                                AbcSetCookie('AbcUniqueVisitorJsFile', nonce, 30);     
+                            }                                        
+                        }); 
+                    }
+                    if ( !AbcGetCookie('AbcUniqueVisitor') || AbcGetCookie('AbcUniqueVisitor') != nonce ) {
+                        AbcSetCookie('AbcUniqueVisitor', nonce, 30);     
+                    }
+                                                                                                                    
+                });
+                function AbcGetCookie(c_name)
+                {
+                    var i,x,y,ARRcookies=document.cookie.split(";");
+                    for (i=0;i<ARRcookies.length;i++)
+                    {
+                        x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+                        y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+                        x=x.replace(/^\s+|\s+$/g,"");
+                        if (x==c_name)
+                        {
+                            return unescape(y);
+                        }
+                    }
+                }
 
-                            /**
-                             * name = cookie name
-                             * value = cookie value
-                             * exdays = days until cookie expires
-                             */
-                            function AbcSetCookie( name, value, exdays, path, domain, secure)
-                            {
-                                var exdate=new Date();
-                                exdate.setDate(exdate.getDate() + exdays);
-                                document.cookie = name + "=" + escape(value) + 
-                                    ((exdate == null) ? "" : "; expires=" + exdate.toUTCString()) +
-                                    ((path == null) ? "; path=/" : "; path=" + path) +        
-                                    ((domain == null) ? "" : "; domain=" + domain) +
-                                    ((secure == null) ? "" : "; secure");
-                            }
+                /**
+                 * name = cookie name
+                 * value = cookie value
+                 * exdays = days until cookie expires
+                 */
+                function AbcSetCookie( name, value, exdays, path, domain, secure)
+                {
+                    var exdate=new Date();
+                    exdate.setDate(exdate.getDate() + exdays);
+                    document.cookie = name + "=" + escape(value) + 
+                        ((exdate == null) ? "" : "; expires=" + exdate.toUTCString()) +
+                        ((path == null) ? "; path=/" : "; path=" + path) +        
+                        ((domain == null) ? "" : "; domain=" + domain) +
+                        ((secure == null) ? "" : "; secure");
+                }
 
             </script><?php
         }
@@ -180,12 +181,15 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 
         /**
          * count the total page views
+         * use the nonce to identify the visitor
          */
         public function count_unique_visitors() {
 
             if (is_admin())
                 return;
-            if (!empty($_COOKIE['AbcUniqueVisitor']))
+            
+            // return if the nonce did not change identical
+            if (!empty($_COOKIE['AbcUniqueVisitor']) && $_COOKIE['AbcUniqueVisitor'] == get_option('abc_nonce'))
                 return;
 
             $uniques = get_option('abc_unique_visitors', 0);
@@ -202,7 +206,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             $count++;
             update_option('abc_page_views_jsFile', $count);
 
-            if (empty($_COOKIE['AbcUniqueVisitorJsFile'])) {
+            // only count, if wasn't count before or nonce was reset
+            if (empty($_COOKIE['AbcUniqueVisitorJsFile']) || $_COOKIE['AbcUniqueVisitorJsFile'] != get_option('abc_nonce') ) {
 
                 $uniques = get_option('abc_unique_visitors_jsFile', 0);
                 $uniques++;
@@ -211,17 +216,19 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 
             wp_die();
         }
-        
+
         /**
          * reset the statistics to 0
          */
-        public function _reset_statistics(){
-            
+        public function _reset_statistics() {
+
             update_option('abc_page_views', 0);
             update_option('abc_unique_visitors', 0);
             update_option('abc_page_views_jsFile', 0);
             update_option('abc_unique_visitors_jsFile', 0);
-            
+            // create new nonce using current time
+            $nonce = wp_create_nonce( time() );
+            update_option('abc_nonce', $nonce);
         }
 
     }
