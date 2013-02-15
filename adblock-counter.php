@@ -62,6 +62,9 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             add_action('wp_ajax_nopriv_abc_count_jsFile', array($this, 'count_jsFile'));
             // load admin scripts
             add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
+            
+            // perform on plugin activation
+            register_activation_hook( __FILE__, array($this, '_activation') );
         }
 
         /**
@@ -216,6 +219,15 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 
             wp_die();
         }
+        
+        /**
+         * run on activation of the plugin
+         */
+        public function _activation(){
+            
+            $this->_update_nonce();
+            
+        }
 
         /**
          * reset the statistics to 0
@@ -226,9 +238,20 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             update_option('abc_unique_visitors', 0);
             update_option('abc_page_views_jsFile', 0);
             update_option('abc_unique_visitors_jsFile', 0);
-            // create new nonce using current time
+
+            $this->_update_nonce();
+        }
+        
+        /**
+         * update nonce using the current time
+         * @return string $nonce nonce, if needed as a return
+         */
+        public function _update_nonce() {
+            
             $nonce = wp_create_nonce( time() );
             update_option('abc_nonce', $nonce);
+            return $nonce;
+            
         }
 
     }
