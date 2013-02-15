@@ -53,6 +53,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         public function __construct() {
 
             add_action('admin_menu', array($this, 'add_menu_page'));
+            // add_action('admin_init', array($this, 'build_settings_section'));
             add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
             add_action('wp_footer', array($this, 'display_footer'));
             add_action('shutdown', array($this, 'count_page_views'));
@@ -82,6 +83,15 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             require_once 'templates/settings.php';
             require_once 'templates/statistics.php';
         }
+        
+        /**
+         * build the setting section of the plugin
+         */
+        /*public function build_settings_section(){
+            register_setting( 'my-settings-group', 'my-setting' );
+            add_settings_section( 'section-one', 'Section One', 'section_one_callback', 'my-plugin' );
+            add_settings_field( 'field-one', 'Field One', 'field_one_callback', 'my-plugin', 'section-one' );
+        }*/
 
         /**
          * add scripts for the frontend
