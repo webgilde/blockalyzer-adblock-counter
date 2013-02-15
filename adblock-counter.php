@@ -79,6 +79,13 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             if (!current_user_can('manage_options')) {
                 wp_die(__('You do not have sufficient permissions to access this page.'));
             }
+            
+            if (!empty( $_POST['abcounter'] ) ) {
+                // reset statistics
+                if ( $_POST['abcounter']['reset'] == 'reset' ) {
+                    $this->_reset_statistics();
+                }
+            }
 
             require_once 'templates/settings.php';
             require_once 'templates/statistics.php';
@@ -213,6 +220,18 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             }
 
             wp_die();
+        }
+        
+        /**
+         * reset the statistics to 0
+         */
+        public function _reset_statistics(){
+            
+            update_option('abc_page_views', 0);
+            update_option('abc_unique_visitors', 0);
+            update_option('abc_page_views_jsFile', 0);
+            update_option('abc_unique_visitors_jsFile', 0);
+            
         }
 
     }
