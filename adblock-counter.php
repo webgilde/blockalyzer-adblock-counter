@@ -79,6 +79,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                 wp_die(__('You do not have sufficient permissions to access this page.'));
             }
 
+            require_once 'templates/settings.php';
             require_once 'templates/statistics.php';
         }
 

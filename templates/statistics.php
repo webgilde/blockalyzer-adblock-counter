@@ -1,3 +1,4 @@
+<h2><?php _e('Statistics', ABCOUNTERTD); ?></h2>
 <p><?php _e('These statistics show the amound of page views and unique visitors having adblock enabled.', ABCOUNTERTD); ?></p>
 <table id="adblock-counter-statistic">
     <thead></thead>
@@ -23,12 +24,12 @@
         <tr>
             <th><?php _e('page views', ABCOUNTERTD); ?></th>
             <td><?php echo get_option('abc_page_views_jsFile', 0); ?></td>
-            <td><?php echo get_option('abc_page_views_jsFile', 0) / get_option('abc_page_views', 1) * 100; ?>%</td>
+            <td><?php echo round( get_option('abc_page_views_jsFile', 0) / get_option('abc_page_views', 1) * 100); ?>%</td>
             <td><?php _e('total number of page views with ad blocker', ABCOUNTERTD); ?></td>
         </tr>
         <tr>
             <th><?php _e('unique visitors', ABCOUNTERTD); ?></th>
-            <td><?php echo round( get_option('abc_unique_visitors_jsFile', 0) ); ?></td>
+            <td><?php echo get_option('abc_unique_visitors_jsFile', 0); ?></td>
             <td><?php echo round( get_option('abc_unique_visitors_jsFile', 0) / get_option('abc_unique_visitors', 1) * 100 ); ?>%</td>
             <td><?php _e('total number of unique visitors with ad blocker', ABCOUNTERTD); ?></td>
         </tr>
