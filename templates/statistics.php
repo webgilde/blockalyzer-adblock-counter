@@ -10,13 +10,13 @@
         </tr>
         <tr>
             <th><?php _e('total page views', ABCOUNTERTD); ?></th>
-            <td><?php echo get_option('abc_page_views', 0); ?></td>
+            <td><?php echo $abc_page_views = get_option('abc_page_views', 0); ?></td>
             <td></td>
             <td><?php _e('total number of page views', ABCOUNTERTD); ?></td>
         </tr>
         <tr>
             <th><?php _e('total unique visitors', ABCOUNTERTD); ?></th>
-            <td><?php echo get_option('abc_unique_visitors', 0); ?></td>
+            <td><?php echo $abc_unique_visitors = get_option('abc_unique_visitors', 0); ?></td>
             <td></td>
             <td><?php _e('total number of unique visitors', ABCOUNTERTD); ?></td>
         </tr>
@@ -24,13 +24,19 @@
         <tr>
             <th><?php _e('page views', ABCOUNTERTD); ?></th>
             <td><?php echo get_option('abc_page_views_jsFile', 0); ?></td>
-            <td><?php echo round( get_option('abc_page_views_jsFile', 0) / get_option('abc_page_views', 1) * 100); ?>%</td>
+            <td><?php 
+            if ( $abc_page_views > 0 ) 
+                echo round( get_option('abc_page_views_jsFile', 0) / $abc_page_views * 100); 
+            else echo 0; ?>%</td>
             <td><?php _e('total number of page views with ad blocker', ABCOUNTERTD); ?></td>
         </tr>
         <tr>
             <th><?php _e('unique visitors', ABCOUNTERTD); ?></th>
             <td><?php echo get_option('abc_unique_visitors_jsFile', 0); ?></td>
-            <td><?php echo round( get_option('abc_unique_visitors_jsFile', 0) / get_option('abc_unique_visitors', 1) * 100 ); ?>%</td>
+            <td><?php 
+            if ( $abc_unique_visitors > 0 ) 
+                echo round( get_option('abc_unique_visitors_jsFile', 0) / $abc_unique_visitors * 100 ); 
+            else echo 0; ?>%</td>
             <td><?php _e('total number of unique visitors with ad blocker', ABCOUNTERTD); ?></td>
         </tr>
     </tbody>
