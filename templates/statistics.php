@@ -1,4 +1,4 @@
-<p><?php _e('This is a statistics that shows the amound of page views and unique visitors having adblock enabled.', ABCOUNTERTD); ?></p>
+<p><?php _e('These statistics show the amound of page views and unique visitors having adblock enabled.', ABCOUNTERTD); ?></p>
 <table id="adblock-counter-statistic">
     <thead></thead>
     <tbody>
