@@ -10,7 +10,7 @@
 <div class="abc-form-block">
     <form action="" method="post">
         <?php if ( $this->_is_measuring() ) : ?>
-        <span><?php echo get_option('abc_start'); ?></span>
+        <span><?php echo date_i18n(get_option('date_format'), get_option('abc_start')) . ', ' . date_i18n('H:i', get_option('abc_start'));?></span>
         <?php else : ?>
         <input type="hidden" name="abcounter" value="start"/>
         <input type="submit" value="<?php _e('start measuring', ABCOUNTERDIR ); ?>"/>
@@ -22,7 +22,7 @@
     <form action="" method="post">
         <?php $stop = get_option('abc_stop'); 
         if ( !empty( $stop ) ) : ?>
-        <span><?php echo get_option('abc_stop'); ?></span>
+        <span><?php echo date_i18n(get_option('date_format'), get_option('abc_stop')) . ', ' . date_i18n('H:i', get_option('abc_stop'));?></span>
         <?php else : ?>
         <input type="hidden" name="abcounter" value="stop"/>
         <input type="submit" value="<?php _e('stop measuring', ABCOUNTERDIR ); ?>"/>
