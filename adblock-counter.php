@@ -215,6 +215,9 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * count when advertisement.js is missing
          */
         public function count_jsFile() {
+            
+            if (is_admin())
+                return;
 
             $count = get_option('abc_page_views_jsFile', 0);
             $count++;
