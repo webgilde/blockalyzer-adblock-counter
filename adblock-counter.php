@@ -216,9 +216,6 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          */
         public function count_jsFile() {
             
-            if (is_admin())
-                return;
-
             $count = get_option('abc_page_views_jsFile', 0);
             $count++;
             update_option('abc_page_views_jsFile', $count);
