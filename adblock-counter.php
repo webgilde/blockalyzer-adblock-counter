@@ -24,7 +24,7 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * @todo combine this plugin with ads optimizer
+ * @todo use a specific hook and forwarding when using variables sent with $_POST; now there is always a reload message shown
  * @todo use this method for specific blocks (of there is the same ad block on each page): http://pastebin.com/QdJEpR8K
  * @todo add a method that tries to include a banner image (1px x 1px) like /ad/banner.gif and than check height of this field
  * 
