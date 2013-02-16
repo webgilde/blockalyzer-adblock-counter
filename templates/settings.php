@@ -9,7 +9,7 @@
 </div>
 <div class="abc-form-block">
     <form action="" method="post">
-        <?php if ( $this->_is_measuring() ) : ?>
+        <?php if ( $this->_is_measuring() || $this->_is_stopped() ) : ?>
         <span><?php echo date_i18n(get_option('date_format'), get_option('abc_start')) . ', ' . date_i18n('H:i', get_option('abc_start'));?></span>
         <?php else : ?>
         <input type="hidden" name="abcounter" value="start"/>

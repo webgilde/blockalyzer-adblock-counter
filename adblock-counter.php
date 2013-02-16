@@ -243,7 +243,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         
         /**
          * check if the measuring is running
-         * @return bool true if measunring, false if not
+         * @return bool true if measuring, false if not
          */
         public function _is_measuring(){
             
@@ -277,6 +277,22 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             update_option( 'abc_stop', time() );
             
         }
+        
+        /**
+         * check if the measuring was stopped, but not reset yet
+         * @return bool true if measuring stopped
+         */
+        public function _is_stopped(){
+            
+            $stop = get_option('abc_stop');
+            if ( empty( $stop )) return false;
+            
+            $time = time();
+            if ( $stop < $time ) return true;
+            
+            return false;
+            
+        }        
 
         /**
          * reset the statistics to 0
