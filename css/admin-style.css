@@ -1,3 +1,25 @@
+.abc-form-block {
+    clear: both;
+    height: 3em;
+}
+
+.abc-form-block form {
+    float: left;
+    width: 14em;
+}
+
+.abc-form-block p.description {
+    float: left;
+}
+    
+.abc-form-block .start {
+    color: green;
+}
+
+.abc-form-block .stop {
+    color: orange;
+}
+
 table#adblock-counter-statistic {
     text-align: left;
 }
