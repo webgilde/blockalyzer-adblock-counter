@@ -52,21 +52,27 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         public function __construct() {
 
             // perform on plugin activation
-            register_activation_hook( __FILE__, array($this, '_activation') );
-            
+            register_activation_hook(__FILE__, array($this, '_activation'));
+
             add_action('admin_menu', array($this, 'add_menu_page'));
             // load admin scripts
             add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
-            
+
             // everything connected with the measuing - run only when active
-            if ( $this->_is_measuring() ) {
+            if ($this->_is_measuring()) {
                 add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
                 add_action('wp_footer', array($this, 'display_footer'));
-                add_action('shutdown', array($this, 'count_unique_visitors'));
-                add_action('shutdown', array($this, 'count_page_views'));
+                // add_action('shutdown', array($this, 'count_unique_visitors'));
+                // add_action('shutdown', array($this, 'count_page_views'));
                 // ajax call for logged in and not logged in users
                 add_action('wp_ajax_abc_count_jsFile', array($this, 'count_jsFile'));
                 add_action('wp_ajax_nopriv_abc_count_jsFile', array($this, 'count_jsFile'));
+                // count unique visitors
+                add_action('wp_ajax_abc_count_unique', array($this, 'count_unique_visitors'));
+                add_action('wp_ajax_nopriv_abc_count_unique', array($this, 'count_unique_visitors'));
+                // count page views
+                add_action('wp_ajax_abc_count_views', array($this, 'count_page_views'));
+                add_action('wp_ajax_nopriv_abc_count_views', array($this, 'count_page_views'));
             }
         }
 
@@ -141,10 +147,18 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                             }                                        
                         }); 
                     }
-                    if ( !AbcGetCookie('AbcUniqueVisitor') || AbcGetCookie('AbcUniqueVisitor') != nonce ) {
-                        AbcSetCookie('AbcUniqueVisitor', nonce, 30);     
-                    }
-                                                                                                                    
+                    var data = {
+                        action: 'abc_count_unique'
+                    };
+                    $.post(AbcAjax.ajaxurl, data, function(response) {
+                        if ( !AbcGetCookie('AbcUniqueVisitor') || AbcGetCookie('AbcUniqueVisitor') != nonce ) {
+                            AbcSetCookie('AbcUniqueVisitor', nonce, 30);    
+                        }
+                    });                                                                                                        
+                    var data = {
+                        action: 'abc_count_views'
+                    };
+                    $.post(AbcAjax.ajaxurl, data, function(response) {});                                                                                                        
                 });
                 function AbcGetCookie(c_name)
                 {
@@ -185,12 +199,13 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          */
         public function count_page_views() {
 
-            if (is_admin())
-                return;
+            // if (is_admin()) return;
 
             $page_views = get_option('abc_page_views', 0);
             $page_views++;
             update_option('abc_page_views', $page_views);
+            
+            wp_die();
         }
 
         /**
@@ -199,9 +214,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          */
         public function count_unique_visitors() {
 
-            if (is_admin())
-                return;
-            
+            // if (is_admin()) return;
+
             // return if the nonce did not change identical
             if (!empty($_COOKIE['AbcUniqueVisitor']) && $_COOKIE['AbcUniqueVisitor'] == get_option('abc_nonce'))
                 return;
@@ -209,19 +223,21 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             $uniques = get_option('abc_unique_visitors', 0);
             $uniques++;
             update_option('abc_unique_visitors', $uniques);
+            
+            wp_die();
         }
 
         /**
          * count when advertisement.js is missing
          */
         public function count_jsFile() {
-            
+
             $count = get_option('abc_page_views_jsFile', 0);
             $count++;
             update_option('abc_page_views_jsFile', $count);
 
             // only count, if wasn't count before or nonce was reset
-            if (empty($_COOKIE['AbcUniqueVisitorJsFile']) || $_COOKIE['AbcUniqueVisitorJsFile'] != get_option('abc_nonce') ) {
+            if (empty($_COOKIE['AbcUniqueVisitorJsFile']) || $_COOKIE['AbcUniqueVisitorJsFile'] != get_option('abc_nonce')) {
 
                 $uniques = get_option('abc_unique_visitors_jsFile', 0);
                 $uniques++;
@@ -230,68 +246,68 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 
             wp_die();
         }
-        
+
         /**
          * run on activation of the plugin
          */
-        public function _activation(){
-            
+        public function _activation() {
+
             $this->_update_nonce();
-            
         }
-        
+
         /**
          * check if the measuring is running
          * @return bool true if measuring, false if not
          */
-        public function _is_measuring(){
-            
+        public function _is_measuring() {
+
             $start = get_option('abc_start');
-            if ( empty( $start )) return false;
-            
+            if (empty($start))
+                return false;
+
             $stop = get_option('abc_stop');
-            if ( empty( $stop )) return true;
-            
+            if (empty($stop))
+                return true;
+
             $time = time();
-            if ( $stop < $time ) return false;
-            
+            if ($stop < $time)
+                return false;
+
             return false;
-            
         }
-        
+
         /**
          * start measuring
          */
-        public function _start_measuring(){
-            
-            update_option( 'abc_start', time() );
-            
+        public function _start_measuring() {
+
+            update_option('abc_start', time());
         }
 
         /**
          * stop measuring
          */
-        public function _stop_measuring(){
-            
-            update_option( 'abc_stop', time() );
-            
+        public function _stop_measuring() {
+
+            update_option('abc_stop', time());
         }
-        
+
         /**
          * check if the measuring was stopped, but not reset yet
          * @return bool true if measuring stopped
          */
-        public function _is_stopped(){
-            
+        public function _is_stopped() {
+
             $stop = get_option('abc_stop');
-            if ( empty( $stop )) return false;
-            
+            if (empty($stop))
+                return false;
+
             $time = time();
-            if ( $stop < $time ) return true;
-            
+            if ($stop < $time)
+                return true;
+
             return false;
-            
-        }        
+        }
 
         /**
          * reset the statistics to 0
@@ -307,17 +323,16 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 
             $this->_update_nonce();
         }
-        
+
         /**
          * update nonce using the current time
          * @return string $nonce nonce, if needed as a return
          */
         public function _update_nonce() {
-            
-            $nonce = wp_create_nonce( time() );
+
+            $nonce = wp_create_nonce(time());
             update_option('abc_nonce', $nonce);
             return $nonce;
-            
         }
 
     }
