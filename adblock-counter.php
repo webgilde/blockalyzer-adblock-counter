@@ -128,7 +128,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * @since 1.1
          */
         public function include_bannergif() {
-            ?><img id = "abc_banner" src = "banner.gif" alt = "banner" width = "1px" height = "1px" style="display:none;" /><?php
+            ?><img id = "abc_banner" src = "banner.gif" alt = "banner" width = "1" height = "1" style="display:none;" /><?php
         }
 
         /**
@@ -144,6 +144,11 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 						var data = {
 							action: 'merged_count'
 						};
+						if ($.adblockJsFile === undefined){
+							data.abc_count_jsFile = true;
+						}else{
+							data.abc_count_jsFile = false;
+						}
 						if ($.adblockJsFile === undefined){
 							data.abc_count_jsFile = true;
 						}else{
@@ -284,7 +289,9 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * @since 1.1
          */
         public function count_merged_count() {
-            echo json_encode($_POST);
+            if (isset($_POST['abc_count_views']) && $_POST['abc_count_views'] == "true") {
+                $this->count_page_views();
+            }
             if (isset($_POST['abc_count_views']) && $_POST['abc_count_views'] == "true") {
                 $this->count_page_views();
             }
