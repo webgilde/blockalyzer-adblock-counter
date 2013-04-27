@@ -128,7 +128,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * @since 1.1
          */
         public function include_bannergif() {
-            ?><img id = "abc_banner" src = "banner.gif" alt = "banner" width = "1" height = "1" style="display:none;" /><?php
+            ?><img id = "abc_banner" src = "banner.gif" alt = "banner" width = "1" height = "1" /><?php
         }
 
         /**
@@ -138,35 +138,39 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         public function display_footer() {
             ?><script>
                 jQuery(document).ready(function($) {
-					setTimeout(function(){ // timeout to run after loading the advertisement.js
-						// count for missing js file
-						var nonce = '<?php echo get_option('abc_nonce'); ?>';
-						var data = {
-							action: 'merged_count'
-						};
-						if ($.adblockJsFile === undefined){
-							data.abc_count_jsFile = true;
-						}else{
-							data.abc_count_jsFile = false;
-						}
-						if ($.adblockJsFile === undefined){
-							data.abc_count_jsFile = true;
-						}else{
-							data.abc_count_jsFile = false;
-						}
-						data.abc_count_views=true;
-						data.abc_count_unique=true;
-						
-						$.post(AbcAjax.ajaxurl, data, function(response) {
-							if ( !AbcGetCookie('AbcUniqueVisitorJsFile') || AbcGetCookie('AbcUniqueVisitorJsFile') != nonce  ) {
-								AbcSetCookie('AbcUniqueVisitorJsFile', nonce, 30);     
-							}     
-							if ( !AbcGetCookie('AbcUniqueVisitor') || AbcGetCookie('AbcUniqueVisitor') != nonce ) {
-								AbcSetCookie('AbcUniqueVisitor', nonce, 30);    
-							}
-						});			
-					},100);
-				});
+                    setTimeout(function(){ // timeout to run after loading the advertisement.js
+                        // count for missing js file
+                        var nonce = '<?php echo get_option('abc_nonce'); ?>';
+                        var data = {
+                            action: 'merged_count'
+                        };
+                        if ($.adblockJsFile === undefined){
+                            data.abc_count_jsFile = true;
+                        }else{
+                            data.abc_count_jsFile = false;
+                        }
+                        
+                        var banner = document.getElementById("abc_banner");                        
+                        console.log( banner );
+                        if ( banner == null){
+                            data.abc_count_banner = true;
+                        }else{
+                            data.abc_count_banner = false;
+                        }
+
+                        data.abc_count_views=true;
+                        data.abc_count_unique=true;
+            						
+                        $.post(AbcAjax.ajaxurl, data, function(response) {
+                            if ( !AbcGetCookie('AbcUniqueVisitorJsFile') || AbcGetCookie('AbcUniqueVisitorJsFile') != nonce  ) {
+                                AbcSetCookie('AbcUniqueVisitorJsFile', nonce, 30);     
+                            }     
+                            if ( !AbcGetCookie('AbcUniqueVisitor') || AbcGetCookie('AbcUniqueVisitor') != nonce ) {
+                                AbcSetCookie('AbcUniqueVisitor', nonce, 30);    
+                            }
+                        });			
+                    },100);
+                });
                 function AbcGetCookie(c_name)
                 {
                     var i,x,y,ARRcookies=document.cookie.split(";");
@@ -198,16 +202,16 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                         ((secure == null) ? "" : "; secure");
                 }
 
-				function AbcFindeGif() {
-					var missing = false;
-					var banner = document.getElementById("abc_banner");
-					
-					if (banner == null) {
-						missing = true;
-					}
-					
-					return missing;
-				}
+                function AbcFindeGif() {
+                    var missing = false;
+                    var banner = document.getElementById("abc_banner");
+            					
+                    if (banner == null) {
+                        missing = true;
+                    }
+            					
+                    return missing;
+                }
             </script><?php
         }
 
@@ -222,7 +226,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             $page_views = get_option('abc_page_views', 0);
             $page_views++;
             update_option('abc_page_views', $page_views);
-            
+
             //wp_die();
         }
 
@@ -234,7 +238,6 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         public function count_unique_visitors() {
 
             // if (is_admin()) return;
-
             // return if the nonce did not change identical
             if (!empty($_COOKIE['AbcUniqueVisitor']) && $_COOKIE['AbcUniqueVisitor'] == get_option('abc_nonce'))
                 return;
@@ -242,7 +245,6 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             $uniques = get_option('abc_unique_visitors', 0);
             $uniques++;
             update_option('abc_unique_visitors', $uniques);
-            
         }
 
         /**
@@ -262,9 +264,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                 $uniques++;
                 update_option('abc_unique_visitors_jsFile', $uniques);
             }
-
         }
-        
+
         /**
          * count when banner is missing
          * @since 1.1
@@ -281,9 +282,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                 $uniques++;
                 update_option('abc_unique_visitors_bannerFile', $uniques);
             }
+        }
 
-        }        
-		
         /**
          * Should combine the total page views
          * @since 1.1
@@ -292,14 +292,14 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             if (isset($_POST['abc_count_views']) && $_POST['abc_count_views'] == "true") {
                 $this->count_page_views();
             }
-            if (isset($_POST['abc_count_views']) && $_POST['abc_count_views'] == "true") {
-                $this->count_page_views();
-            }
             if (isset($_POST['abc_count_unique']) && $_POST['abc_count_unique'] == "true") {
                 $this->count_unique_visitors();
             }
             if (isset($_POST['abc_count_jsFile']) && $_POST['abc_count_jsFile'] == "true") {
                 $this->count_jsFile();
+            }
+            if (isset($_POST['abc_count_banner']) && $_POST['abc_count_banner'] == "true") {
+                $this->count_banner();
             }
             wp_die();
         }
