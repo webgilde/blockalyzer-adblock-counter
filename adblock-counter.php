@@ -25,7 +25,6 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * @todo use this method for specific blocks (of there is the same ad block on each page): http://pastebin.com/QdJEpR8K
- * @todo add a method that tries to include a banner image (1px x 1px) like /ad/banner.gif and than check height of this field
  * 
  */
 
@@ -36,7 +35,7 @@ if (!function_exists('add_action')) {
     exit();
 }
 
-define('ABCOUNTERVERSION', '1.0.0');
+define('ABCOUNTERVERSION', '1.1.0');
 define('ABCOUNTERNAME', 'adblock-counter');
 define('ABCOUNTERTD', 'adblock-counter');
 define('ABCOUNTERDIR', basename(dirname(__FILE__)));
@@ -128,7 +127,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * @since 1.1
          */
         public function include_bannergif() {
-            ?><img id = "abc_banner" src = "banner.gif" alt = "banner" width = "1" height = "1" /><?php
+            ?><img id = "abc_banner" src = "<?php echo plugins_url('/img/ads/banner.jpg', __FILE__); ?>" alt = "banner" width = "1" height = "1" /><?php
         }
 
         /**
