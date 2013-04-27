@@ -61,3 +61,4 @@
         
     </tbody>
 </table>
+<?php do_action('abc_stats'); ?>
