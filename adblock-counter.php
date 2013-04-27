@@ -61,6 +61,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             // everything connected with the measuing - run only when active
             if ($this->_is_measuring()) {
                 add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+                add_action('wp_footer', array($this, 'include_bannergif'));
                 add_action('wp_footer', array($this, 'display_footer'));
                 // add_action('shutdown', array($this, 'count_unique_visitors'));
                 // add_action('shutdown', array($this, 'count_page_views'));
@@ -73,6 +74,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                 // count page views
                 add_action('wp_ajax_abc_count_views', array($this, 'count_page_views'));
                 add_action('wp_ajax_nopriv_abc_count_views', array($this, 'count_page_views'));
+                add_action('wp_ajax_abc_count_banners', array($this, 'countmissingbanner'));
+                add_action('wp_ajax_nopriv_abc_count_banners', array($this, 'countmissingbanner'));
             }
         }
 
@@ -129,6 +132,13 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             wp_enqueue_style('abc_admin_css');
         }
 
+		/**
+		 * display a img-tag with gif banner
+		 */
+		public function include_bannergif() {
+			?><img id = "abc_banner" src = "banner.gif" alt = "banner" width = "1px" height = "1px" style="display:none;" />;<?php
+		}
+
         /**
          * content box that goes into the footer
          */
@@ -158,7 +168,19 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                     var data = {
                         action: 'abc_count_views'
                     };
-                    $.post(AbcAjax.ajaxurl, data, function(response) {});                                                                                                        
+                    $.post(AbcAjax.ajaxurl, data, function(response) {}); 
+                    
+                    
+                    if (AbcFindeGif()) {
+                    	var data = {
+                        	action: 'abc_count_banners'
+                    	};
+                    	$.post(AbcAjax.ajaxurl, data, function(response) {
+                    		if ( !AbcGetCookie('AbcUniqueVisitorBannerFile') || AbcGetCookie('AbcUniqueVisitorBannerFile') != nonce  ) {
+                                AbcSetCookie('AbcUniqueVisitorBannerFile', nonce, 30);     
+                            }
+                    	}); 
+                    }                                                                
                 });
                 function AbcGetCookie(c_name)
                 {
@@ -191,6 +213,16 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                         ((secure == null) ? "" : "; secure");
                 }
 
+				function AbcFindeGif() {
+					var missing = false;
+					var banner = document.getElementById("abc_banner");
+					
+					if (banner == null) {
+						missing = true;
+					}
+					
+					return missing;
+				}
             </script><?php
         }
 
@@ -246,6 +278,27 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 
             wp_die();
         }
+        
+        /**
+         * count when banner is missing
+         */
+        public function countmissingbanner() {
+            $count = get_option('abc_page_views_BannerFile', 0);
+            $count++;
+            update_option('abc_page_views_BannerFile', $count);
+
+            // only count, if wasn't count before or nonce was reset
+            if (empty($_COOKIE['AbcUniqueVisitorBannerFile']) || $_COOKIE['AbcUniqueVisitorBannerFile'] != get_option('abc_nonce')) {
+
+                $uniques = get_option('abc_unique_visitors_BannerFile', 0);
+                $uniques++;
+                update_option('abc_unique_visitors_BannerFile', $uniques);
+            }
+
+            wp_die();
+        }
+        
+        
 
         /**
          * run on activation of the plugin
@@ -318,6 +371,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             update_option('abc_unique_visitors', 0);
             update_option('abc_page_views_jsFile', 0);
             update_option('abc_unique_visitors_jsFile', 0);
+            update_option('abc_page_views_BannerFile', 0);
+            update_option('abc_unique_visitors_BannerFile', 0);
             update_option('abc_start', 0);
             update_option('abc_stop', 0);
 
