@@ -1,7 +1,7 @@
 <?php
 /*
   Plugin Name: Adblock Counter
-  Version: 1.0.0
+  Version: 1.1.0
   Plugin URI: http://webgilde.com/
   Description: Count how many of your visitors are using an ad blocker.
   Author: Thomas Maier
@@ -48,6 +48,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 
         /**
          * initialize the plugin
+         * @update 1.1
          */
         public function __construct() {
 
@@ -124,6 +125,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 
         /**
          * display a img-tag with gif banner
+         * @since 1.1
          */
         public function include_bannergif() {
             ?><img id = "abc_banner" src = "banner.gif" alt = "banner" width = "1px" height = "1px" style="display:none;" /><?php
@@ -131,6 +133,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 
         /**
          * content box that goes into the footer
+         * @update 1.1
          */
         public function display_footer() {
             ?><script>
@@ -205,6 +208,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 
         /**
          * count the total page views
+         * @update 1.1
          */
         public function count_page_views() {
 
@@ -220,6 +224,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         /**
          * count the total page views
          * use the nonce to identify the visitor
+         * @update 1.1
          */
         public function count_unique_visitors() {
 
@@ -233,11 +238,11 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             $uniques++;
             update_option('abc_unique_visitors', $uniques);
             
-            //wp_die();
         }
 
         /**
          * count when advertisement.js is missing
+         * @update 1.1
          */
         public function count_jsFile() {
 
@@ -253,30 +258,44 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                 update_option('abc_unique_visitors_jsFile', $uniques);
             }
 
-            //wp_die();
         }
+        
+        /**
+         * count when banner is missing
+         * @since 1.1
+         */
+        public function count_banner() {
+            $count = get_option('abc_page_views_bannerFile', 0);
+            $count++;
+            update_option('abc_page_views_bannerFile', $count);
+
+            // only count, if wasn't count before or nonce was reset
+            if (empty($_COOKIE['AbcUniqueVisitorBannerFile']) || $_COOKIE['AbcUniqueVisitorBannerFile'] != get_option('abc_nonce')) {
+
+                $uniques = get_option('abc_unique_visitors_bannerFile', 0);
+                $uniques++;
+                update_option('abc_unique_visitors_bannerFile', $uniques);
+            }
+
+        }        
 		
-		/**
-		 * Should combine the total page views
-		 * todo: count the total page views
-         * todo: count the total page views
-         * 		 use the nonce to identify the visitor
-		 * todo: should cound when advertisement.js is missing
-		 * made by Tobias
-		 */
-		public function count_merged_count(){
-			echo json_encode($_POST);
-			if(isset($_POST['abc_count_views'])&&$_POST['abc_count_views']=="true"){
-				$this->count_page_views();
-			}
-			if(isset($_POST['abc_count_unique'])&&$_POST['abc_count_unique']=="true"){
-				$this->count_unique_visitors();
-			}	
-			if(isset($_POST['abc_count_jsFile'])&&$_POST['abc_count_jsFile']=="true"){
-				$this->count_jsFile();
-			}
+        /**
+         * Should combine the total page views
+         * @since 1.1
+         */
+        public function count_merged_count() {
+            echo json_encode($_POST);
+            if (isset($_POST['abc_count_views']) && $_POST['abc_count_views'] == "true") {
+                $this->count_page_views();
+            }
+            if (isset($_POST['abc_count_unique']) && $_POST['abc_count_unique'] == "true") {
+                $this->count_unique_visitors();
+            }
+            if (isset($_POST['abc_count_jsFile']) && $_POST['abc_count_jsFile'] == "true") {
+                $this->count_jsFile();
+            }
             wp_die();
-		}
+        }
 
         /**
          * run on activation of the plugin
