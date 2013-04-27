@@ -72,6 +72,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                 // add_action('wp_ajax_abc_count_jsFile', array($this, 'count_jsFile'));
                 // add_action('wp_ajax_nopriv_abc_count_jsFile', array($this, 'count_jsFile'));
                 add_action('wp_ajax_merged_count', array($this, 'count_merged_count'));
+                add_action('wp_ajax_nopriv_merged_count', array($this, 'count_merged_count'));
                 // count unique visitors
                 //add_action('wp_ajax_abc_count_unique', array($this, 'count_unique_visitors'));
                 add_action('wp_ajax_nopriv_abc_count_unique', array($this, 'count_unique_visitors'));
@@ -147,7 +148,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 						var data = {
 							action: 'merged_count'
 						};
-						if ($.adblockJsFile == true){
+						if ($.adblockJsFile === undefined){
 							data.abc_count_jsFile = true;
 						}else{
 							data.abc_count_jsFile = false;
@@ -292,7 +293,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 			}
 			if(isset($_POST['abc_count_unique'])&&$_POST['abc_count_unique']=="true"){
 				$this->count_unique_visitors();
-			}
+			}	
 			if(isset($_POST['abc_count_jsFile'])&&$_POST['abc_count_jsFile']=="true"){
 				$this->count_jsFile();
 			}
