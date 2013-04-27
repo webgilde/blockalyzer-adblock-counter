@@ -69,16 +69,10 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                 // add_action('shutdown', array($this, 'count_unique_visitors'));
                 // add_action('shutdown', array($this, 'count_page_views'));
                 // ajax call for logged in and not logged in users
-                // add_action('wp_ajax_abc_count_jsFile', array($this, 'count_jsFile'));
-                // add_action('wp_ajax_nopriv_abc_count_jsFile', array($this, 'count_jsFile'));
                 add_action('wp_ajax_merged_count', array($this, 'count_merged_count'));
                 add_action('wp_ajax_nopriv_merged_count', array($this, 'count_merged_count'));
-                // count unique visitors
-                //add_action('wp_ajax_abc_count_unique', array($this, 'count_unique_visitors'));
-                add_action('wp_ajax_nopriv_abc_count_unique', array($this, 'count_unique_visitors'));
-                // count page views
+                 // count page views
                 add_action('wp_ajax_abc_count_views', array($this, 'count_page_views'));
-                add_action('wp_ajax_nopriv_abc_count_views', array($this, 'count_page_views'));
             }
         }
 
@@ -163,32 +157,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 							if ( !AbcGetCookie('AbcUniqueVisitor') || AbcGetCookie('AbcUniqueVisitor') != nonce ) {
 								AbcSetCookie('AbcUniqueVisitor', nonce, 30);    
 							}
-						});
-						//Tobias CODE END
-						/* // Thomas's Code BEGIN
-						if ($.adblockJsFile === undefined){
-							var data = {
-								action: 'abc_count_jsFile'
-							};
-							$.post(AbcAjax.ajaxurl, data, function(response) {
-								if ( !AbcGetCookie('AbcUniqueVisitorJsFile') || AbcGetCookie('AbcUniqueVisitorJsFile') != nonce  ) {
-									AbcSetCookie('AbcUniqueVisitorJsFile', nonce, 30);     
-								}                                        
-							}); 
-						}
-						var data = {
-							action: 'abc_count_unique'
-						};
-						$.post(AbcAjax.ajaxurl, data, function(response) {
-							if ( !AbcGetCookie('AbcUniqueVisitor') || AbcGetCookie('AbcUniqueVisitor') != nonce ) {
-								AbcSetCookie('AbcUniqueVisitor', nonce, 30);    
-							}
-						});                                                                                                        
-						var data = {
-							action: 'abc_count_views'
-						};
-						$.post(AbcAjax.ajaxurl, data, function(response) {});  
-						*/// Thomas's Code END				
+						});			
 					},100);
 				});
                 function AbcGetCookie(c_name)
@@ -333,7 +302,6 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * start measuring
          */
         public function _start_measuring() {
-
             update_option('abc_start', time());
         }
 
