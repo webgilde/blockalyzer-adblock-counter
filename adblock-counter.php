@@ -59,20 +59,20 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
 
             // everything connected with the measuing - run only when active
+			//
+			// Tobias: I have comment out the Ajax-Listener, because they don't contain
+			//			"wb_die();" anymore.
+			//
             if ($this->_is_measuring()) {
                 add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
                 add_action('wp_footer', array($this, 'display_footer'));
                 // add_action('shutdown', array($this, 'count_unique_visitors'));
                 // add_action('shutdown', array($this, 'count_page_views'));
                 // ajax call for logged in and not logged in users
-                add_action('wp_ajax_abc_count_jsFile', array($this, 'count_jsFile'));
-                add_action('wp_ajax_nopriv_abc_count_jsFile', array($this, 'count_jsFile'));
-                // count unique visitors
-                add_action('wp_ajax_abc_count_unique', array($this, 'count_unique_visitors'));
-                add_action('wp_ajax_nopriv_abc_count_unique', array($this, 'count_unique_visitors'));
-                // count page views
+                add_action('wp_ajax_merged_count', array($this, 'count_merged_count'));
+                add_action('wp_ajax_nopriv_merged_count', array($this, 'count_merged_count'));
+                 // count page views
                 add_action('wp_ajax_abc_count_views', array($this, 'count_page_views'));
-                add_action('wp_ajax_nopriv_abc_count_views', array($this, 'count_page_views'));
             }
         }
 
@@ -135,31 +135,31 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         public function display_footer() {
             ?><script>
                 jQuery(document).ready(function($) {
-                    // count for missing js file
-                    var nonce = '<?php echo get_option('abc_nonce'); ?>';
-                    if ($.adblockJsFile === undefined){
-                        var data = {
-                            action: 'abc_count_jsFile'
-                        };
-                        $.post(AbcAjax.ajaxurl, data, function(response) {
-                            if ( !AbcGetCookie('AbcUniqueVisitorJsFile') || AbcGetCookie('AbcUniqueVisitorJsFile') != nonce  ) {
-                                AbcSetCookie('AbcUniqueVisitorJsFile', nonce, 30);     
-                            }                                        
-                        }); 
-                    }
-                    var data = {
-                        action: 'abc_count_unique'
-                    };
-                    $.post(AbcAjax.ajaxurl, data, function(response) {
-                        if ( !AbcGetCookie('AbcUniqueVisitor') || AbcGetCookie('AbcUniqueVisitor') != nonce ) {
-                            AbcSetCookie('AbcUniqueVisitor', nonce, 30);    
-                        }
-                    });                                                                                                        
-                    var data = {
-                        action: 'abc_count_views'
-                    };
-                    $.post(AbcAjax.ajaxurl, data, function(response) {});                                                                                                        
-                });
+					setTimeout(function(){
+						// count for missing js file
+						var nonce = '<?php echo get_option('abc_nonce'); ?>';
+						//tobias CODE BEGIN
+						var data = {
+							action: 'merged_count'
+						};
+						if ($.adblockJsFile === undefined){
+							data.abc_count_jsFile = true;
+						}else{
+							data.abc_count_jsFile = false;
+						}
+						data.abc_count_views=true;
+						data.abc_count_unique=true;
+						
+						$.post(AbcAjax.ajaxurl, data, function(response) {
+							if ( !AbcGetCookie('AbcUniqueVisitorJsFile') || AbcGetCookie('AbcUniqueVisitorJsFile') != nonce  ) {
+								AbcSetCookie('AbcUniqueVisitorJsFile', nonce, 30);     
+							}     
+							if ( !AbcGetCookie('AbcUniqueVisitor') || AbcGetCookie('AbcUniqueVisitor') != nonce ) {
+								AbcSetCookie('AbcUniqueVisitor', nonce, 30);    
+							}
+						});			
+					},100);
+				});
                 function AbcGetCookie(c_name)
                 {
                     var i,x,y,ARRcookies=document.cookie.split(";");
@@ -205,7 +205,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             $page_views++;
             update_option('abc_page_views', $page_views);
             
-            wp_die();
+            //wp_die();
         }
 
         /**
@@ -224,7 +224,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             $uniques++;
             update_option('abc_unique_visitors', $uniques);
             
-            wp_die();
+            //wp_die();
         }
 
         /**
@@ -244,8 +244,30 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                 update_option('abc_unique_visitors_jsFile', $uniques);
             }
 
-            wp_die();
+            //wp_die();
         }
+		
+		/**
+		 * Should combine the total page views
+		 * todo: count the total page views
+         * todo: count the total page views
+         * 		 use the nonce to identify the visitor
+		 * todo: should cound when advertisement.js is missing
+		 * made by Tobias
+		 */
+		public function count_merged_count(){
+			echo json_encode($_POST);
+			if(isset($_POST['abc_count_views'])&&$_POST['abc_count_views']=="true"){
+				$this->count_page_views();
+			}
+			if(isset($_POST['abc_count_unique'])&&$_POST['abc_count_unique']=="true"){
+				$this->count_unique_visitors();
+			}	
+			if(isset($_POST['abc_count_jsFile'])&&$_POST['abc_count_jsFile']=="true"){
+				$this->count_jsFile();
+			}
+            wp_die();
+		}
 
         /**
          * run on activation of the plugin
@@ -280,7 +302,6 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * start measuring
          */
         public function _start_measuring() {
-
             update_option('abc_start', time());
         }
 
