@@ -61,6 +61,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             // everything connected with the measuing - run only when active
             if ($this->_is_measuring()) {
                 add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+                add_action('wp_footer', array($this, 'include_bannergif'));
                 add_action('wp_footer', array($this, 'display_footer'));
                 // ajax call for logged in and not logged in users
                 add_action('wp_ajax_merged_count', array($this, 'count_merged_count'));
@@ -119,6 +120,13 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         public function enqueue_admin_scripts() {
             wp_register_style('abc_admin_css', plugins_url('/css/admin-style.css', __FILE__), false, ABCOUNTERVERSION);
             wp_enqueue_style('abc_admin_css');
+        }
+
+        /**
+         * display a img-tag with gif banner
+         */
+        public function include_bannergif() {
+            ?><img id = "abc_banner" src = "banner.gif" alt = "banner" width = "1px" height = "1px" style="display:none;" /><?php
         }
 
         /**
@@ -182,6 +190,16 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                         ((secure == null) ? "" : "; secure");
                 }
 
+				function AbcFindeGif() {
+					var missing = false;
+					var banner = document.getElementById("abc_banner");
+					
+					if (banner == null) {
+						missing = true;
+					}
+					
+					return missing;
+				}
             </script><?php
         }
 
@@ -330,6 +348,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             update_option('abc_unique_visitors', 0);
             update_option('abc_page_views_jsFile', 0);
             update_option('abc_unique_visitors_jsFile', 0);
+            update_option('abc_page_views_bannerFile', 0);
+            update_option('abc_unique_visitors_bannerFile', 0);
             update_option('abc_start', 0);
             update_option('abc_stop', 0);
 
