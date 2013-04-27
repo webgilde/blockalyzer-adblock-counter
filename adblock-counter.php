@@ -59,20 +59,12 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
 
             // everything connected with the measuing - run only when active
-			//
-			// Tobias: I have comment out the Ajax-Listener, because they don't contain
-			//			"wb_die();" anymore.
-			//
             if ($this->_is_measuring()) {
                 add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
                 add_action('wp_footer', array($this, 'display_footer'));
-                // add_action('shutdown', array($this, 'count_unique_visitors'));
-                // add_action('shutdown', array($this, 'count_page_views'));
                 // ajax call for logged in and not logged in users
                 add_action('wp_ajax_merged_count', array($this, 'count_merged_count'));
                 add_action('wp_ajax_nopriv_merged_count', array($this, 'count_merged_count'));
-                 // count page views
-                add_action('wp_ajax_abc_count_views', array($this, 'count_page_views'));
             }
         }
 
@@ -135,10 +127,9 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         public function display_footer() {
             ?><script>
                 jQuery(document).ready(function($) {
-					setTimeout(function(){
+					setTimeout(function(){ // timeout to run after loading the advertisement.js
 						// count for missing js file
 						var nonce = '<?php echo get_option('abc_nonce'); ?>';
-						//tobias CODE BEGIN
 						var data = {
 							action: 'merged_count'
 						};
