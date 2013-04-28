@@ -151,7 +151,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                         }
                         
                         var banner = document.getElementById("abc_banner");                        
-                        console.log( banner.getAttribute("class") );
+                        
                         if (banner.getAttribute("class") != null || banner == null){
                             data.abc_count_banner = true;
                         }else{
