@@ -163,7 +163,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 		
 		public function save_nonce(){
 			?> 
-				AbcSetCookie('abc_uid', <?php echo $this->_user_id; ?>, 30);     
+						AbcSetCookie('abc_uid', '<?php echo $this->_user_id; ?>', 30);     
 			
 			<?php
 		}
@@ -178,16 +178,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                     setTimeout(function(){ // timeout to run after loading the advertisement.js
                         // count for missing js file
                         var nonce = '<?php echo get_option('abc_nonce'); ?>';
-						<?php if ( $this->_is_new_user ) save_nonce(); ?>
-						
-                        if ( !AbcGetCookie('abc_uid') 
-							|| 	AbcGetCookie('abc_uid').substr(
-									0,
-									AbcGetCookie('abc_uid').indexOf('_')
-								) != usernonce  
-							) {
-							AbcSetCookie('abc_uid', usernonce+'_'+Math.random(0,1000000000), 30);     
-						} 
+						<?php if ( $this->_is_new_user ) $this->save_nonce(); ?>
 						
 						var data = {
                             action: 'merged_count'
