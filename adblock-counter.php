@@ -127,7 +127,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * @since 1.1
          */
         public function include_bannergif() {
-            ?><img id = "abc_banner" src = "<?php echo plugins_url('/img/ads/banner.gif', __FILE__); ?>" alt = "banner" width = "100" height = "100" /><?php
+            ?><img id = "abc_banner" src = "<?php echo plugins_url('/img/ads/banner.gif', __FILE__); ?>" alt = "banner" width = "1" height = "1" /><?php
         }
 
         /**
@@ -151,7 +151,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                         
                         var banner = document.getElementById("abc_banner");                        
                         
-                        if (banner.getAttribute("class") != null || banner == null){
+                        if (banner == null || banner.offsetHeight == 0){
                             data.abc_count_banner = true;
                         }else{
                             data.abc_count_banner = false;
