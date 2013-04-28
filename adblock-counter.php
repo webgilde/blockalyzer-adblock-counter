@@ -192,29 +192,29 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 						var data = {
                             action: 'merged_count'
                         };
-						var abc_blocked=false;
+                        var abc_blocked=false;
                         if ($.adblockJsFile === undefined){
                             data.abc_count_jsFile = true;
-							abc_blocked=true;
-						}
-                        
+                            abc_blocked=true;
+                        }
+                                    
                         var banner = document.getElementById("abc_banner");                        
-                        
+                                    
                         if (banner == null || banner.offsetHeight == 0){
                             data.abc_count_banner = true;
-							abc_blocked=true;
+                            abc_blocked=true;
                         }else{
                             data.abc_count_banner = false;
                         }
-						
-						if(abc_blocked==true){	
-							AbcSetCookie('abc_adblock', 'enabled', 30);
-						}else{
-							AbcSetCookie('abc_adblock', 'disabled', 30);
-						}
+            						
+                        if(abc_blocked==true){	
+                            AbcSetCookie('abc_adblock', 'enabled', 30);
+                        }else{
+                            AbcSetCookie('abc_adblock', 'disabled', 30);
+                        }
                         data.abc_count_views=true;
                         data.abc_count_unique=true;
-            						
+                        						
                         $.post(AbcAjax.ajaxurl, data, function(response) {
                             if ( !AbcGetCookie('AbcUniqueVisitorJsFile') || AbcGetCookie('AbcUniqueVisitorJsFile') != nonce  ) {
                                 AbcSetCookie('AbcUniqueVisitorJsFile', nonce, 30);     
@@ -259,16 +259,6 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                         ((secure == null) ? "" : "; secure");
                 }
 
-                function AbcFindeGif() {
-                    var missing = false;
-                    var banner = document.getElementById("abc_banner");
-            					
-                    if (banner == null) {
-                        missing = true;
-                    }
-            					
-                    return missing;
-                }
             </script><?php
         }
 
@@ -354,7 +344,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             }
             if (isset($_POST['abc_count_jsFile']) && $_POST['abc_count_jsFile'] == "true") {
                 $this->count_jsFile();
-			}
+            }
             if (isset($_POST['abc_count_banner']) && $_POST['abc_count_banner'] == "true") {
                 $this->count_banner();
             }
