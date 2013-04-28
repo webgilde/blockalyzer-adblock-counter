@@ -145,8 +145,10 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                         };
                         if ($.adblockJsFile === undefined){
                             data.abc_count_jsFile = true;
+							AbcSetCookie('abc_adblock', 'enabled', 30);
                         }else{
                             data.abc_count_jsFile = false;
+							AbcSetCookie('abc_adblock', 'disabled', 30);
                         }
                         
                         var banner = document.getElementById("abc_banner");                        
@@ -299,7 +301,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             }
             if (isset($_POST['abc_count_jsFile']) && $_POST['abc_count_jsFile'] == "true") {
                 $this->count_jsFile();
-            }
+			}
             if (isset($_POST['abc_count_banner']) && $_POST['abc_count_banner'] == "true") {
                 $this->count_banner();
             }
