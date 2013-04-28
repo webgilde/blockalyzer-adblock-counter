@@ -44,6 +44,16 @@ define('ABCOUNTERPATH', plugin_dir_path(__FILE__));
 if (!class_exists('ABCOUNTER_CLASS')) {
 
     class ABCOUNTER_CLASS {
+	
+		/**
+		* user id
+		*/
+		public $_user_id = 0;
+		
+		/**
+		* new user flag
+		*/
+		public $_is_new_user = false;
 
         /**
          * initialize the plugin
@@ -61,7 +71,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             // everything connected with the measuing - run only when active
             if ($this->_is_measuring()) {
                 add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-                add_action('wp_footer', array($this, 'include_bannergif'));
+                add_action('init', array($this, 'create_user_id'));
+				add_action('wp_footer', array($this, 'include_bannergif'));
                 add_action('wp_footer', array($this, 'display_footer'));
                 // ajax call for logged in and not logged in users
                 add_action('wp_ajax_merged_count', array($this, 'count_merged_count'));
@@ -121,7 +132,19 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             wp_register_style('abc_admin_css', plugins_url('/css/admin-style.css', __FILE__), false, ABCOUNTERVERSION);
             wp_enqueue_style('abc_admin_css');
         }
-
+		
+		/**
+		* create user id if not exists
+		*/
+		public function create_user_id() {
+			if(isset($_COOKIE['abc_uid'])){
+				$this->_user_id = $_COOKIE['abc_uid'];
+			} else {
+				$this->_user_id = wp_create_nonce();
+				$this->_is_new_user = true;
+			}
+		}
+		
         /**
          * display a img-tag with gif banner
          * @since 1.1
@@ -130,6 +153,21 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             ?><img id = "abc_banner" src = "<?php echo plugins_url('/img/ads/banner.gif', __FILE__); ?>" alt = "banner" width = "1" height = "1" /><?php
         }
 
+		public function user_nonce(){
+			if(isset($_COOKIE['abc_uid'])){
+				return $_COOKIE['abc_uid'];
+			} else {
+				return wp_create_nonce();
+			}
+		}
+		
+		public function save_nonce(){
+			?> 
+				AbcSetCookie('abc_uid', <?php echo $this->_user_id; ?>, 30);     
+			
+			<?php
+		}
+		
         /**
          * content box that goes into the footer
          * @update 1.1
@@ -140,7 +178,18 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                     setTimeout(function(){ // timeout to run after loading the advertisement.js
                         // count for missing js file
                         var nonce = '<?php echo get_option('abc_nonce'); ?>';
-                        var data = {
+						<?php if ( $this->_is_new_user ) save_nonce(); ?>
+						
+                        if ( !AbcGetCookie('abc_uid') 
+							|| 	AbcGetCookie('abc_uid').substr(
+									0,
+									AbcGetCookie('abc_uid').indexOf('_')
+								) != usernonce  
+							) {
+							AbcSetCookie('abc_uid', usernonce+'_'+Math.random(0,1000000000), 30);     
+						} 
+						
+						var data = {
                             action: 'merged_count'
                         };
 						var abc_blocked=false;
