@@ -127,7 +127,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * @since 1.1
          */
         public function include_bannergif() {
-            ?><img id = "abc_banner" src = "<?php echo plugins_url('/img/ads/banner.jpg', __FILE__); ?>" alt = "banner" width = "1" height = "1" /><?php
+            ?><img id = "abc_banner" src = "<?php echo plugins_url('/img/ads/banner.gif', __FILE__); ?>" alt = "banner" width = "100" height = "100" /><?php
         }
 
         /**
@@ -150,8 +150,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                         }
                         
                         var banner = document.getElementById("abc_banner");                        
-                        console.log( banner );
-                        if ( banner == null){
+                        
+                        if (banner.getAttribute("class") != null || banner == null){
                             data.abc_count_banner = true;
                         }else{
                             data.abc_count_banner = false;
@@ -163,6 +163,9 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                         $.post(AbcAjax.ajaxurl, data, function(response) {
                             if ( !AbcGetCookie('AbcUniqueVisitorJsFile') || AbcGetCookie('AbcUniqueVisitorJsFile') != nonce  ) {
                                 AbcSetCookie('AbcUniqueVisitorJsFile', nonce, 30);     
+                            }     
+                            if ( !AbcGetCookie('AbcUniqueVisitorBanner') || AbcGetCookie('AbcUniqueVisitorBanner') != nonce  ) {
+                                AbcSetCookie('AbcUniqueVisitorBanner', nonce, 30);     
                             }     
                             if ( !AbcGetCookie('AbcUniqueVisitor') || AbcGetCookie('AbcUniqueVisitor') != nonce ) {
                                 AbcSetCookie('AbcUniqueVisitor', nonce, 30);    
@@ -275,7 +278,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             update_option('abc_page_views_bannerFile', $count);
 
             // only count, if wasn't count before or nonce was reset
-            if (empty($_COOKIE['AbcUniqueVisitorBannerFile']) || $_COOKIE['AbcUniqueVisitorBannerFile'] != get_option('abc_nonce')) {
+            if (empty($_COOKIE['AbcUniqueVisitorBanner']) || $_COOKIE['AbcUniqueVisitorBanner'] != get_option('abc_nonce')) {
 
                 $uniques = get_option('abc_unique_visitors_bannerFile', 0);
                 $uniques++;
