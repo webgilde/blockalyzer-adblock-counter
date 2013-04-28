@@ -143,22 +143,26 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                         var data = {
                             action: 'merged_count'
                         };
+						var abc_blocked=false;
                         if ($.adblockJsFile === undefined){
                             data.abc_count_jsFile = true;
-							AbcSetCookie('abc_adblock', 'enabled', 30);
-                        }else{
-                            data.abc_count_jsFile = false;
-							AbcSetCookie('abc_adblock', 'disabled', 30);
-                        }
+							abc_blocked=true;
+						}
                         
                         var banner = document.getElementById("abc_banner");                        
                         
                         if (banner == null || banner.offsetHeight == 0){
                             data.abc_count_banner = true;
+							abc_blocked=true;
                         }else{
                             data.abc_count_banner = false;
                         }
-
+						
+						if(abc_blocked==true){	
+							AbcSetCookie('abc_adblock', 'enabled', 30);
+						}else{
+							AbcSetCookie('abc_adblock', 'disabled', 30);
+						}
                         data.abc_count_views=true;
                         data.abc_count_unique=true;
             						
