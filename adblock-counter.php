@@ -75,6 +75,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                 // ajax call for logged in and not logged in users
                 add_action('wp_ajax_merged_count', array($this, 'count_merged_count'));
                 add_action('wp_ajax_nopriv_merged_count', array($this, 'count_merged_count'));
+                add_action('wp_ajax_get_user_id', array($this, 'get_user_id'));
+                add_action('wp_ajax_nopriv_get_user_id', array($this, 'get_user_id'));
             }
         }
 
@@ -133,14 +135,24 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 
         /**
          * create user id if not exists
+         * @since 1.1
          */
         public function create_user_id() {
-            if (isset($_COOKIE['abc_uid'])) {
-                $this->_user_id = $_COOKIE['abc_uid'];
+            if (isset($_COOKIE['AbcUniqueVisitorId'])) {
+                $this->_user_id = $_COOKIE['AbcUniqueVisitorId'];
             } else {
                 $this->_user_id = wp_create_nonce();
                 $this->_is_new_user = true;
             }
+        }
+        
+        /**
+         * retrieve the current user id
+         * @since 1.1
+         */
+        public function get_user_id() {
+            echo $this->_user_id;
+            wp_die();
         }
 
         /**
@@ -152,16 +164,19 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         }
 
         public function user_nonce() {
-            if (isset($_COOKIE['abc_uid'])) {
-                return $_COOKIE['abc_uid'];
+            if (isset($_COOKIE['AbcUniqueVisitorId'])) {
+                return $_COOKIE['AbcUniqueVisitorId'];
             } else {
                 return wp_create_nonce();
             }
         }
 
+        /**
+         * 
+         */
         public function save_nonce() {
             ?> 
-            AbcSetCookie('abc_uid', '<?php echo $this->_user_id; ?>', 30);     
+            AbcSetCookie('AbcUniqueVisitorId', '<?php echo $this->_user_id; ?>', 30);     
 
             <?php
         }
@@ -176,77 +191,86 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                                 setTimeout(function(){ // timeout to run after loading the advertisement.js
                                     // count for missing js file
                                     var nonce = '<?php echo get_option('abc_nonce'); ?>';
-            <?php if ($this->_is_new_user) $this->save_nonce(); ?>
-            						
-                    var data = {
-                        action: 'merged_count'
-                    };
-                    var abc_blocked=false;
-                    if ($.adblockJsFile === undefined){
-                        data.abc_count_jsFile = true;
-                        abc_blocked=true;
-                    }
+                                    // set unique user id
+                                    if ( !AbcGetCookie('AbcUniqueVisitorId') ) {
+                                        var data = {
+                                            action: 'get_user_id'
+                                        };
+                                        $.post(AbcAjax.ajaxurl, data, function(response) {
+                                            console.log( response );
+                                            AbcSetCookie('AbcUniqueVisitorId', response, 30);
+                                        });
+                                    }
+                        						
+                                    var data = {
+                                        action: 'merged_count'
+                                    };
+                                    var abc_blocked=false;
+                                    if ($.adblockJsFile === undefined){
+                                        data.abc_count_jsFile = true;
+                                        abc_blocked=true;
+                                    }
 
-                    var banner = document.getElementById("abc_banner");                        
+                                    var banner = document.getElementById("abc_banner");                        
 
-                    if (banner == null || banner.offsetHeight == 0){
-                        data.abc_count_banner = true;
-                        abc_blocked=true;
-                    }else{
-                        data.abc_count_banner = false;
-                    }
+                                    if (banner == null || banner.offsetHeight == 0){
+                                        data.abc_count_banner = true;
+                                        abc_blocked=true;
+                                    }else{
+                                        data.abc_count_banner = false;
+                                    }
 
-                    if(abc_blocked==true){	
-                        AbcSetCookie('abc_adblock', 'enabled', 30);
-                    }else{
-                        AbcSetCookie('abc_adblock', 'disabled', 30);
-                    }
-                    data.abc_count_views=true;
-                    data.abc_count_unique=true;
+                                    if(abc_blocked==true){	
+                                        AbcSetCookie('abc_adblock', 'enabled', 30);
+                                    }else{
+                                        AbcSetCookie('abc_adblock', 'disabled', 30);
+                                    }
+                                    data.abc_count_views=true;
+                                    data.abc_count_unique=true;
 
-                    $.post(AbcAjax.ajaxurl, data, function(response) {
-                        if ( !AbcGetCookie('AbcUniqueVisitorJsFile') || AbcGetCookie('AbcUniqueVisitorJsFile') != nonce  ) {
-                            AbcSetCookie('AbcUniqueVisitorJsFile', nonce, 30);     
-                        }     
-                        if ( !AbcGetCookie('AbcUniqueVisitorBanner') || AbcGetCookie('AbcUniqueVisitorBanner') != nonce  ) {
-                            AbcSetCookie('AbcUniqueVisitorBanner', nonce, 30);     
-                        }     
-                        if ( !AbcGetCookie('AbcUniqueVisitor') || AbcGetCookie('AbcUniqueVisitor') != nonce ) {
-                            AbcSetCookie('AbcUniqueVisitor', nonce, 30);    
-                        }
-                    });			
-                },100);
-            });
-            function AbcGetCookie(c_name)
-            {
-                var i,x,y,ARRcookies=document.cookie.split(";");
-                for (i=0;i<ARRcookies.length;i++)
-                {
-                    x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
-                    y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
-                    x=x.replace(/^\s+|\s+$/g,"");
-                    if (x==c_name)
-                    {
-                        return unescape(y);
-                    }
-                }
-            }
+                                    $.post(AbcAjax.ajaxurl, data, function(response) {
+                                        if ( !AbcGetCookie('AbcUniqueVisitorJsFile') || AbcGetCookie('AbcUniqueVisitorJsFile') != nonce  ) {
+                                            AbcSetCookie('AbcUniqueVisitorJsFile', nonce, 30);
+                                        }     
+                                        if ( !AbcGetCookie('AbcUniqueVisitorBanner') || AbcGetCookie('AbcUniqueVisitorBanner') != nonce  ) {
+                                            AbcSetCookie('AbcUniqueVisitorBanner', nonce, 30);     
+                                        }     
+                                        if ( !AbcGetCookie('AbcUniqueVisitor') || AbcGetCookie('AbcUniqueVisitor') != nonce ) {
+                                            AbcSetCookie('AbcUniqueVisitor', nonce, 30);    
+                                        }
+                                    });			
+                                },100);
+                            });
+                            function AbcGetCookie(c_name)
+                            {
+                                var i,x,y,ARRcookies=document.cookie.split(";");
+                                for (i=0;i<ARRcookies.length;i++)
+                                {
+                                    x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+                                    y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+                                    x=x.replace(/^\s+|\s+$/g,"");
+                                    if (x==c_name)
+                                    {
+                                        return unescape(y);
+                                    }
+                                }
+                            }
 
-            /**
-             * name = cookie name
-             * value = cookie value
-             * exdays = days until cookie expires
-             */
-            function AbcSetCookie( name, value, exdays, path, domain, secure)
-            {
-                var exdate=new Date();
-                exdate.setDate(exdate.getDate() + exdays);
-                document.cookie = name + "=" + escape(value) + 
-                    ((exdate == null) ? "" : "; expires=" + exdate.toUTCString()) +
-                    ((path == null) ? "; path=/" : "; path=" + path) +        
-                    ((domain == null) ? "" : "; domain=" + domain) +
-                    ((secure == null) ? "" : "; secure");
-            }
+                            /**
+                             * name = cookie name
+                             * value = cookie value
+                             * exdays = days until cookie expires
+                             */
+                            function AbcSetCookie( name, value, exdays, path, domain, secure)
+                            {
+                                var exdate=new Date();
+                                exdate.setDate(exdate.getDate() + exdays);
+                                document.cookie = name + "=" + escape(value) + 
+                                    ((exdate == null) ? "" : "; expires=" + exdate.toUTCString()) +
+                                    ((path == null) ? "; path=/" : "; path=" + path) +        
+                                    ((domain == null) ? "" : "; domain=" + domain) +
+                                    ((secure == null) ? "" : "; secure");
+                            }
 
             </script><?php
         }
