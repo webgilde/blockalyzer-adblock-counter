@@ -221,9 +221,9 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                                     }
 
                                     if(abc_blocked==true){	
-                                        AbcSetCookie('abc_adblock', 'enabled', 30);
+                                        AbcSetCookie('AbcAdBlock', 'enabled', 30);
                                     }else{
-                                        AbcSetCookie('abc_adblock', 'disabled', 30);
+                                        AbcSetCookie('AbcAdBlock', 'disabled', 30);
                                     }
                                     data.abc_count_views=true;
                                     data.abc_count_unique=true;
