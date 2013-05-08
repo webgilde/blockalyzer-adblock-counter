@@ -141,7 +141,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             if (isset($_COOKIE['AbcUniqueVisitorId'])) {
                 $this->_user_id = $_COOKIE['AbcUniqueVisitorId'];
             } else {
-                $this->_user_id = wp_create_nonce();
+                $this->_user_id = wp_create_nonce( $_SERVER['REMOTE_ADDR'] );
                 $this->_is_new_user = true;
             }
         }
@@ -197,7 +197,6 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                                             action: 'get_user_id'
                                         };
                                         $.post(AbcAjax.ajaxurl, data, function(response) {
-                                            console.log( response );
                                             AbcSetCookie('AbcUniqueVisitorId', response, 30);
                                         });
                                     }
