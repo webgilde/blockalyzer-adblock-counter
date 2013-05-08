@@ -20,6 +20,10 @@ The following statistics are included
 * relative and absolute number of page views with ad blocker enabled
 * relative and absolute number of unique visitors with ad block enabled
 
+Used methods
+* is img/ads/banner.gif included?
+* is js/advertisment.js loaded?
+
 **Localization**
 
 English
