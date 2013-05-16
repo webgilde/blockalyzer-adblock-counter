@@ -1,7 +1,7 @@
 <?php
 /*
   Plugin Name: Adblock Counter
-  Version: 1.1.0
+  Version: 1.1.1
   Plugin URI: http://webgilde.com/
   Description: Count how many of your visitors are using an ad blocker.
   Author: Thomas Maier
@@ -33,7 +33,7 @@ if (!function_exists('add_action')) {
     exit();
 }
 
-define('ABCOUNTERVERSION', '1.1.0');
+define('ABCOUNTERVERSION', '1.1.1');
 define('ABCOUNTERNAME', 'adblock-counter');
 define('ABCOUNTERTD', 'adblock-counter');
 define('ABCOUNTERDIR', basename(dirname(__FILE__)));
@@ -62,6 +62,9 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             // perform on plugin activation
             register_activation_hook(__FILE__, array($this, '_activation'));
 
+            // load constant with adblock value
+            add_action('init', array( $this, 'load_adblock_constant'));
+            
             add_action('admin_menu', array($this, 'add_menu_page'));
             // load admin scripts
             add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
@@ -78,6 +81,31 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                 add_action('wp_ajax_get_user_id', array($this, 'get_user_id'));
                 add_action('wp_ajax_nopriv_get_user_id', array($this, 'get_user_id'));
             }
+        }
+        
+        /**
+         * load a constant with the information if adblock is enabled
+         * false === adblock disabled
+         * true === adblock enabled
+         * 0 === not sure
+         * usage: check with '== false' if you need to check if adblock is disabled or not sure (as default)
+         * check if '=== false' or any of the other values to be sure about the status
+         * @since 1.1.1
+         */
+        public function load_adblock_constant() {
+            
+            if (!defined('ABC_ADBLOCK_ENABLED') ) {
+                
+                if ( isset( $_COOKIE['AbcAdBlock'] ) ) {
+                    if ( $_COOKIE['AbcAdBlock'] === 'disabled' ) define( 'ABC_ADBLOCK_ENABLED', false );
+                    elseif ( $_COOKIE['AbcAdBlock'] === 'enabled' ) define( 'ABC_ADBLOCK_ENABLED', true );
+                    else define( 'ABC_ADBLOCK_ENABLED', 0 );
+                } else {
+                    define( 'ABC_ADBLOCK_ENABLED', 0 );
+                }
+                
+            }   
+            
         }
 
         /**
