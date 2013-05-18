@@ -52,7 +52,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * new user flag
          */
         public $_is_new_user = false;
-        
+
         /**
          * methods for statistics
          */
@@ -68,12 +68,12 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             register_activation_hook(__FILE__, array($this, '_activation'));
 
             // load constant with adblock value
-            add_action('init', array( $this, 'load_adblock_constant'));
-            
+            add_action('init', array($this, 'load_adblock_constant'));
+
             add_action('admin_menu', array($this, 'add_stats_page'));
             add_action('admin_menu', array($this, 'add_settings_page'));
             add_action('admin_init', array($this, 'add_settings_options'));
-            
+
             // load admin scripts
             add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
 
@@ -89,17 +89,18 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                 add_action('wp_ajax_get_user_id', array($this, 'get_user_id'));
                 add_action('wp_ajax_nopriv_get_user_id', array($this, 'get_user_id'));
             }
-            
+
             // load methods of measurement beginning with basic method
             $stat_methods = array(
                 'basic' => array(
+                    'active' => true,
                     'name' => __('Basic method', ABCOUNTERTD),
                     'description' => sprintf(__('Start counting will reset older statistics. See your statistics in <em><a href="%s" title="Go to statistics page">Tools > AdBlock Stats</a></em>', ABCOUNTERTD), admin_url('tools.php?page=adblock-counter')),
                 )
             );
-            $this->_stat_methods = apply_filters('ba-stat-methods', $stat_methods );
+            $this->_stat_methods = apply_filters('ba-stat-methods', $stat_methods);
         }
-        
+
         /**
          * load a constant with the information if adblock is enabled
          * false === adblock disabled
@@ -110,18 +111,26 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * @since 1.1.1
          */
         public function load_adblock_constant() {
-            
-            if (!defined('ABC_ADBLOCK_ENABLED') ) {
-                
-                if ( isset( $_COOKIE['AbcAdBlock'] ) ) {
-                    if ( $_COOKIE['AbcAdBlock'] === 'disabled' ) define( 'ABC_ADBLOCK_ENABLED', false );
-                    elseif ( $_COOKIE['AbcAdBlock'] === 'enabled' ) define( 'ABC_ADBLOCK_ENABLED', true );
-                    else define( 'ABC_ADBLOCK_ENABLED', 0 );
+
+            if (!defined('ABC_ADBLOCK_ENABLED')) {
+
+                if (isset($_COOKIE['AbcAdBlock'])) {
+                    if ($_COOKIE['AbcAdBlock'] === 'disabled')
+                        define('ABC_ADBLOCK_ENABLED', false);
+                    elseif ($_COOKIE['AbcAdBlock'] === 'enabled')
+                        define('ABC_ADBLOCK_ENABLED', true);
+                    else
+                        define('ABC_ADBLOCK_ENABLED', 0);
                 } else {
-                    define( 'ABC_ADBLOCK_ENABLED', 0 );
+                    define('ABC_ADBLOCK_ENABLED', 0);
                 }
-                
-            }   
+            }
+        }
+        
+        /**
+         * get the information which stats method is enabled
+         */
+        public function get_active_stat_methods() {
             
         }
 
@@ -137,27 +146,34 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * @since 1.1.2
          */
         public function add_settings_page() {
-            $hook = add_options_page(__('BlockAlyzer Settings', ABCOUNTERTD), __('BlockAlyzer', ABCOUNTERTD), 'manage_options', 'ba-settings-page', array($this, 'render_settings_page'));
+            add_options_page(__('BlockAlyzer Settings', ABCOUNTERTD), __('BlockAlyzer', ABCOUNTERTD), 'manage_options', 'ba-settings-page', array($this, 'render_settings_page'));
         }
-        
+
         /**
          * render the setting options
          * @since 1.1.2
          */
-        public function add_settings_options () {
-            add_settings_section('ba-settings-section', __('BlockAlyzer Settings', ABCOUNTERTD), array( $this, 'render_settings_section'), 'ba-settings-page');
+        public function add_settings_options() {
+            add_settings_section('ba-settings-section', __('Stats Method', ABCOUNTERTD), array($this, 'render_settings_section'), 'ba-settings-page');
             
+            if ( !empty( $this->_stat_methods ) && is_array( $this->_stat_methods )) foreach( $this->_stat_methods as $_method_key => $_method ) {
             
-            add_settings_field('ba_methods', __('Methods to count AdBlock users'), array($this, 'render_settings_method'), 'ba-settings-page', 'ba-settings-section' );
-
+                add_settings_field('ba_methods', $_method['name'], array($this, 'render_settings_method'), 'ba-settings-page', 'ba-settings-section', array( $_method_key, $_method ) );
+            
+            }
+            
+            register_setting('ba-settings-section', 'ba_methods');
+            
         }
-        
+
         /**
          * callback for option to choose the method of measurement
+         * @param array $method with 1. value as index, second array with method information
          */
-        public function render_settings_method() {
-            echo '<input name="eg_setting_name" id="gv_thumbnails_insert_into_excerpt" type="checkbox" value="1" class="code" ' . 
-                    checked( 1, get_option('eg_setting_name'), false ) . ' /> Explanation text';
+        public function render_settings_method( $method ) {
+            
+            ?><input name="ba_methods[<?php echo $method[0]; ?>]" id="ba_methods_<?php echo $method[0]; ?>" type="checkbox" value="1"
+            <?php checked(1, get_option('ba_methods'), false) ?>/><span class="description"><?php echo $method[1]['description']; ?></span><?php
         }
 
         /**
@@ -185,14 +201,14 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 
             require_once 'templates/statistics.php';
         }
-        
+
         /**
          * render settings section
          */
         public function render_settings_section() {
             ?><p><?php _e('You can choose one or more of the methods below to display the AdBlock statistics. If you disable all methods, measuring will be disabled.', ABCOUNTERTD); ?></p><?php
         }
-        
+
         /**
          * render the settings page
          * @since 1.1.2
@@ -201,21 +217,23 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             if (!current_user_can('manage_options')) {
                 wp_die(__('You do not have sufficient permissions to access this page.'));
             }
-            
-            ?><form id="image-control-form" method="post" action="options.php">
-                    <div class="postbox isc-setting-group"><?php // Open the div for the first settings group ?>
-                    <?php
-                        settings_fields( 'ba-settings-section' );
-                        do_settings_sections( 'ba-settings-page' );
-                    ?>
-                    </div><?php //Close the last settings group div ?>
+            ?><div id="icon-options-general" class="icon32"><br></div>
+            <h2><?php _e('BlockAlyzer Settings', ABCOUNTERTD); ?></h2>
+            <div id="ba-admin-wrap">
+
+                <form method="post" action="options.php">
+                    <div class="postbox">
+                        <?php
+                        settings_fields('ba-settings-section');
+                        do_settings_sections('ba-settings-page');
+                        ?>
+                    </div>
                     <p class="submit">
-                        <input type="submit" name="submit" id="submit" class="button button-primary" value="Save Changes">
+                        <input type="submit" name="submit" id="submit" class="button button-primary" value="<?php _e('Save Changes', ABCOUNTERTD); ?>">
                     </p>
-                </form><?php  
-            
+                </form>
+            </div><?php
             require_once 'templates/settings.php';
-            
         }
 
         /**
@@ -245,11 +263,11 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             if (isset($_COOKIE['AbcUniqueVisitorId'])) {
                 $this->_user_id = $_COOKIE['AbcUniqueVisitorId'];
             } else {
-                $this->_user_id = wp_create_nonce( $_SERVER['REMOTE_ADDR'] );
+                $this->_user_id = wp_create_nonce($_SERVER['REMOTE_ADDR']);
                 $this->_is_new_user = true;
             }
         }
-        
+
         /**
          * retrieve the current user id
          * @since 1.1
@@ -264,7 +282,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * @since 1.1
          */
         public function include_bannergif() {
-            ?><img id = "abc_banner" src = "<?php echo plugins_url('/img/ads/banner.gif', __FILE__); ?>" alt = "banner" width = "1" height = "1" /><?php
+                        ?><img id = "abc_banner" src = "<?php echo plugins_url('/img/ads/banner.gif', __FILE__); ?>" alt = "banner" width = "1" height = "1" /><?php
         }
 
         public function user_nonce() {
@@ -279,7 +297,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * 
          */
         public function save_nonce() {
-            ?> 
+                        ?> 
             AbcSetCookie('AbcUniqueVisitorId', '<?php echo $this->_user_id; ?>', 30);     
 
             <?php
@@ -304,7 +322,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                                             AbcSetCookie('AbcUniqueVisitorId', response, 30);
                                         });
                                     }
-                        						
+                                    						
                                     var data = {
                                         action: 'merged_count'
                                     };
