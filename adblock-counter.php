@@ -52,6 +52,11 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * new user flag
          */
         public $_is_new_user = false;
+        
+        /**
+         * methods for statistics
+         */
+        public $_stat_methods = array();
 
         /**
          * initialize the plugin
@@ -65,7 +70,10 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             // load constant with adblock value
             add_action('init', array( $this, 'load_adblock_constant'));
             
-            add_action('admin_menu', array($this, 'add_menu_page'));
+            add_action('admin_menu', array($this, 'add_stats_page'));
+            add_action('admin_menu', array($this, 'add_settings_page'));
+            add_action('admin_init', array($this, 'add_settings_options'));
+            
             // load admin scripts
             add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
 
@@ -81,6 +89,15 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                 add_action('wp_ajax_get_user_id', array($this, 'get_user_id'));
                 add_action('wp_ajax_nopriv_get_user_id', array($this, 'get_user_id'));
             }
+            
+            // load methods of measurement beginning with basic method
+            $stat_methods = array(
+                'basic' => array(
+                    'name' => __('Basic method', ABCOUNTERTD),
+                    'description' => sprintf(__('Start counting will reset older statistics. See your statistics in <em><a href="%s" title="Go to statistics page">Tools > AdBlock Stats</a></em>', ABCOUNTERTD), admin_url('tools.php?page=adblock-counter')),
+                )
+            );
+            $this->_stat_methods = apply_filters('ba-stat-methods', $stat_methods );
         }
         
         /**
@@ -109,16 +126,44 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         }
 
         /**
-         * add menu page in tools section
+         * add statistics page for the default adblock counter
          */
-        public function add_menu_page() {
-            add_management_page(__('AdBlock Counter Dashboard', ABCOUNTERTD), __('AdBlock Counter', ABCOUNTERTD), 'manage_options', 'adblock-counter', array($this, 'render_menu_page'));
+        public function add_stats_page() {
+            add_management_page(__('BlockAlyzer Statistics', ABCOUNTERTD), __('AdBlock Stats', ABCOUNTERTD), 'manage_options', 'adblock-counter', array($this, 'render_stats_page'));
         }
 
         /**
-         * render the menu page
+         * add options page in tools section
+         * @since 1.1.2
          */
-        public function render_menu_page() {
+        public function add_settings_page() {
+            $hook = add_options_page(__('BlockAlyzer Settings', ABCOUNTERTD), __('BlockAlyzer', ABCOUNTERTD), 'manage_options', 'ba-settings-page', array($this, 'render_settings_page'));
+        }
+        
+        /**
+         * render the setting options
+         * @since 1.1.2
+         */
+        public function add_settings_options () {
+            add_settings_section('ba-settings-section', __('BlockAlyzer Settings', ABCOUNTERTD), array( $this, 'render_settings_section'), 'ba-settings-page');
+            
+            
+            add_settings_field('ba_methods', __('Methods to count AdBlock users'), array($this, 'render_settings_method'), 'ba-settings-page', 'ba-settings-section' );
+
+        }
+        
+        /**
+         * callback for option to choose the method of measurement
+         */
+        public function render_settings_method() {
+            echo '<input name="eg_setting_name" id="gv_thumbnails_insert_into_excerpt" type="checkbox" value="1" class="code" ' . 
+                    checked( 1, get_option('eg_setting_name'), false ) . ' /> Explanation text';
+        }
+
+        /**
+         * render the stats page
+         */
+        public function render_stats_page() {
             if (!current_user_can('manage_options')) {
                 wp_die(__('You do not have sufficient permissions to access this page.'));
             }
@@ -138,8 +183,39 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                 }
             }
 
-            require_once 'templates/settings.php';
             require_once 'templates/statistics.php';
+        }
+        
+        /**
+         * render settings section
+         */
+        public function render_settings_section() {
+            ?><p><?php _e('You can choose one or more of the methods below to display the AdBlock statistics. If you disable all methods, measuring will be disabled.', ABCOUNTERTD); ?></p><?php
+        }
+        
+        /**
+         * render the settings page
+         * @since 1.1.2
+         */
+        public function render_settings_page() {
+            if (!current_user_can('manage_options')) {
+                wp_die(__('You do not have sufficient permissions to access this page.'));
+            }
+            
+            ?><form id="image-control-form" method="post" action="options.php">
+                    <div class="postbox isc-setting-group"><?php // Open the div for the first settings group ?>
+                    <?php
+                        settings_fields( 'ba-settings-section' );
+                        do_settings_sections( 'ba-settings-page' );
+                    ?>
+                    </div><?php //Close the last settings group div ?>
+                    <p class="submit">
+                        <input type="submit" name="submit" id="submit" class="button button-primary" value="Save Changes">
+                    </p>
+                </form><?php  
+            
+            require_once 'templates/settings.php';
+            
         }
 
         /**
