@@ -43,6 +43,8 @@ e.g.
 
 == Changelog ==
 
+= 1.1.2 = separated option panel and result page
+
 = 1.1.1 =
 
 * added the constant ABC_ADBLOCK_ENABLED to retrieve, if adblock is enabled or not (use for other plugins)
