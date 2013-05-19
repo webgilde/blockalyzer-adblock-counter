@@ -169,8 +169,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                 if ( !empty( $active_methods ) && is_array( $active_methods ) ) {
                     foreach( $active_methods as $_method_key => $_active ) {
                         $this->_stat_methods[$_method_key]['active'] = $_active;
+                        if ( $_active ) $active_stat_methods[] = $_method_key;
                     }
-                    if ( $_active ) $active_stat_methods[] = $_method_key;
                 }
             }
             
@@ -409,37 +409,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                                     <?php do_action('ba_js_footer'); ?>
                                 },100);
                             });
-                            function AbcGetCookie(c_name)
-                            {
-                                var i,x,y,ARRcookies=document.cookie.split(";");
-                                for (i=0;i<ARRcookies.length;i++)
-                                {
-                                    x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
-                                    y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
-                                    x=x.replace(/^\s+|\s+$/g,"");
-                                    if (x==c_name)
-                                    {
-                                        return unescape(y);
-                                    }
-                                }
-                            }
-
-                            /**
-                             * name = cookie name
-                             * value = cookie value
-                             * exdays = days until cookie expires
-                             */
-                            function AbcSetCookie( name, value, exdays, path, domain, secure)
-                            {
-                                var exdate=new Date();
-                                exdate.setDate(exdate.getDate() + exdays);
-                                document.cookie = name + "=" + escape(value) + 
-                                    ((exdate == null) ? "" : "; expires=" + exdate.toUTCString()) +
-                                    ((path == null) ? "; path=/" : "; path=" + path) +        
-                                    ((domain == null) ? "" : "; domain=" + domain) +
-                                    ((secure == null) ? "" : "; secure");
-                            }
-
+                            function AbcGetCookie(c_name) { var i,x,y,ARRcookies=document.cookie.split(";"); for (i=0;i<ARRcookies.length;i++) { x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("=")); y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1); x=x.replace(/^\s+|\s+$/g,""); if (x==c_name) { return unescape(y); } } }
+                            function AbcSetCookie( name, value, exdays, path, domain, secure) { var exdate=new Date(); exdate.setDate(exdate.getDate() + exdays); document.cookie = name + "=" + escape(value) + ((exdate == null) ? "" : "; expires=" + exdate.toUTCString()) + ((path == null) ? "; path=/" : "; path=" + path) + ((domain == null) ? "" : "; domain=" + domain) +((secure == null) ? "" : "; secure");}
             </script><?php
         }
 
