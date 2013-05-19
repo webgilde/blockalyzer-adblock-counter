@@ -57,6 +57,16 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * methods for statistics
          */
         public $_stat_methods = array();
+        
+        /**
+         * active stats methods
+         */
+        public $_active_stat_methods = array();
+        
+        /**
+         * if any stats method is enabled, this is true
+         */
+        public $_is_measuring = false;
 
         /**
          * initialize the plugin
@@ -69,6 +79,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 
             // load constant with adblock value
             add_action('init', array($this, 'load_adblock_constant'));
+            // load statistic methods
+            add_action('init', array($this, 'load_stat_methods'), 3);
 
             add_action('admin_menu', array($this, 'add_stats_page'));
             add_action('admin_menu', array($this, 'add_settings_page'));
@@ -76,29 +88,20 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 
             // load admin scripts
             add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
-
-            // everything connected with the measuing - run only when active
-            if ($this->_is_measuring()) {
-                add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-                add_action('init', array($this, 'create_user_id'));
+            
+            // everything connected with the measuing in the frontend
+            if ( !is_admin() ) {
+                add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));    
+                add_action('init', array($this, 'create_user_id'), 10);
                 add_action('wp_footer', array($this, 'include_bannergif'));
                 add_action('wp_footer', array($this, 'display_footer'));
                 // ajax call for logged in and not logged in users
                 add_action('wp_ajax_merged_count', array($this, 'count_merged_count'));
                 add_action('wp_ajax_nopriv_merged_count', array($this, 'count_merged_count'));
                 add_action('wp_ajax_get_user_id', array($this, 'get_user_id'));
-                add_action('wp_ajax_nopriv_get_user_id', array($this, 'get_user_id'));
+                add_action('wp_ajax_nopriv_get_user_id', array($this, 'get_user_id'));                
+                
             }
-
-            // load methods of measurement beginning with basic method
-            $stat_methods = array(
-                'basic' => array(
-                    'active' => 0, // default is deactivated
-                    'name' => __('Basic method', ABCOUNTERTD),
-                    'description' => sprintf(__('Start counting will reset older statistics. See your statistics in <em><a href="%s" title="Go to statistics page">Tools > AdBlock Stats</a></em>', ABCOUNTERTD), admin_url('tools.php?page=adblock-counter')),
-                )
-            );
-            $this->_stat_methods = apply_filters('ba-stat-methods', $stat_methods);
         }
 
         /**
@@ -128,22 +131,47 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         }
         
         /**
+         * load statistic methods
+         */
+        public function load_stat_methods() {
+            // initialize basic method
+            $stat_methods = array(
+                'basic' => array(
+                    'name' => __('Basic method', ABCOUNTERTD),
+                    'active' => 0,
+                    'description' => sprintf(__('Start counting will reset older statistics. See your statistics in <em><a href="%s" title="Go to statistics page">Tools > AdBlock Stats</a></em>', ABCOUNTERTD), admin_url('tools.php?page=adblock-counter')),
+                )
+            );
+            // hook to register new stat methods
+            $this->_stat_methods = apply_filters('ba-stat-methods', $stat_methods);
+            
+            // load information about active stat methods
+            $this->get_active_stat_methods();
+            
+        }
+        
+        /**
          * get the information which stats method is enabled
          * loads the 'active' flag into $this->_stat_methods for each method
          * @todo what, if the number and kind of methods don't match?
          */
         public function get_active_stat_methods() {
             
+            $active_stat_methods = array();
+            
             if ( !empty( $this->_stat_methods ) && is_array( $this->_stat_methods )) {
+                // get stat methods status
                 $active_methods = get_option( 'ba_methods');
                 if ( !empty( $active_methods ) && is_array( $active_methods ) ) {
                     foreach( $active_methods as $_method_key => $_active ) {
                         $this->_stat_methods[$_method_key]['active'] = $_active;
                     }
-                    
+                    if ( $_active ) $active_stat_methods[] = $_method_key;
                 }
-                
             }
+            
+            $this->_active_stat_methods = $active_stat_methods;
+            $this->_is_measuring = ( count( $this->_active_stat_methods ) > 0 ) ? 1 : 0;
         }
 
         /**
@@ -167,9 +195,6 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          */
         public function add_settings_options() {
             add_settings_section('ba-settings-section', __('Stats Method', ABCOUNTERTD), array($this, 'render_settings_section'), 'ba-settings-page');
-            
-            // load the information which stats methods is currently enabled
-            $this->get_active_stat_methods();
             
             if ( !empty( $this->_stat_methods ) && is_array( $this->_stat_methods )) foreach( $this->_stat_methods as $_method_key => $_method ) {
             
@@ -277,6 +302,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * add scripts for the frontend
          */
         public function enqueue_scripts() {
+            
+            if ( !$this->_is_measuring ) return;
             // enqueue empty advertisement.js
             wp_register_script('adblock-counter-testjs', plugins_url('js/advertisement.js', __FILE__), array('jquery'), ABCOUNTERVERSION);
             wp_enqueue_script('adblock-counter-testjs');
@@ -297,6 +324,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * @since 1.1
          */
         public function create_user_id() {
+            if ( !$this->_is_measuring ) return;
+            
             if (isset($_COOKIE['AbcUniqueVisitorId'])) {
                 $this->_user_id = $_COOKIE['AbcUniqueVisitorId'];
             } else {
@@ -319,7 +348,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * @since 1.1
          */
         public function include_bannergif() {
-                        ?><img id = "abc_banner" src = "<?php echo plugins_url('/img/ads/banner.gif', __FILE__); ?>" alt = "banner" width = "1" height = "1" /><?php
+            if ( !$this->_is_measuring ) return;
+            ?><img id = "abc_banner" src = "<?php echo plugins_url('/img/ads/banner.gif', __FILE__); ?>" alt = "banner" width = "1" height = "1" /><?php
         }
 
         public function user_nonce() {
@@ -345,6 +375,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * @update 1.1
          */
         public function display_footer() {
+            if ( !$this->_is_measuring ) return;
             ?><script>
                             jQuery(document).ready(function($) {
                                 setTimeout(function(){ // timeout to run after loading the advertisement.js
@@ -507,6 +538,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * @since 1.1
          */
         public function count_merged_count() {
+
             if (isset($_POST['abc_count_views']) && $_POST['abc_count_views'] == "true") {
                 $this->count_page_views();
             }
@@ -536,6 +568,9 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          */
         public function _is_measuring() {
 
+            
+            
+            
             $start = get_option('abc_start');
             if (empty($start))
                 return false;

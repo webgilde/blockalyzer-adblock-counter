@@ -43,7 +43,11 @@ e.g.
 
 == Changelog ==
 
-= 1.1.2 = separated option panel and result page
+= 1.1.2 = 
+
+* separated option panel and result page
+* separated standard statistic method from checking for adblock
+* allow adding additional statistic methods without relation to each other
 
 = 1.1.1 =
 
