@@ -80,7 +80,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             // load constant with adblock value
             add_action('init', array($this, 'load_adblock_constant'));
             // load statistic methods
-            add_action('init', array($this, 'load_stat_methods'), 3);
+            add_action('init', array($this, 'load_stat_methods'), 1);
 
             if ( is_admin() ) {
                 add_action('admin_menu', array($this, 'add_stats_page'));
@@ -202,7 +202,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             
             if ( !empty( $this->_stat_methods ) && is_array( $this->_stat_methods )) foreach( $this->_stat_methods as $_method_key => $_method ) {
             
-                add_settings_field('ba_methods', $_method['name'], array($this, 'render_settings_method'), 'ba-settings-page', 'ba-settings-section', array( $_method_key, $_method ) );
+                add_settings_field('ba_methods_' . $_method_key, $_method['name'], array($this, 'render_settings_method'), 'ba-settings-page', 'ba-settings-section', array( $_method_key, $_method ) );
             
             }
             
