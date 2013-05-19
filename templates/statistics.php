@@ -1,5 +1,7 @@
 <h2><?php _e('Statistics', ABCOUNTERTD); ?></h2>
 <p><?php _e('These statistics show the amound of page views and unique visitors having adblock enabled.', ABCOUNTERTD); ?></p>
+<?php $status = ( in_array( 'basic', $this->_active_stat_methods )) ? __('active', ABCOUNTERTD) : __('deactivated', ABCOUNTERTD); ?>
+<p><?php printf( __('Current status of this method of measurement: <strong>%s</strong>', ABCOUNTERTD ), $status ); ?></p>
 <table id="adblock-counter-statistic">
     <thead></thead>
     <tbody>
@@ -61,4 +63,11 @@
         
     </tbody>
 </table>
+<div class="abc-form-block">
+    <form action="" method="post">
+        <input type="hidden" name="abcounter" value="reset"/>
+        <input type="submit" value="<?php _e('reset statistics', ABCOUNTERDIR ); ?>"/>
+    </form>
+    <p class="description"><?php _e('Resets the statistics and times. Also unique visitors will be counted again.', ABCOUNTERTD); ?></p>
+</div>
 <?php do_action('abc_stats'); ?>

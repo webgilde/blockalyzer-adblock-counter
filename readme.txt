@@ -2,8 +2,8 @@
 Contributors: webzunft
 Tags: ads, ad, adblock, ad blocker, ad block, adblock count, adblock counter
 Requires at least: 3.4
-Tested up to: 3.5
-Stable tag: 1.1.1
+Tested up to: 3.5.1
+Stable tag: 1.1.2
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -42,6 +42,13 @@ e.g.
 == Screenshots ==
 
 == Changelog ==
+
+= 1.1.2 = 
+
+* separated option panel and result page
+* separated standard statistic method from checking for adblock
+* allow adding additional statistic methods without relation to each other
+* added hooks and filters to allow multiple stat methods
 
 = 1.1.1 =
 
