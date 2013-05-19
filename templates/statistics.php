@@ -2,6 +2,7 @@
 <p><?php _e('These statistics show the amound of page views and unique visitors having adblock enabled.', ABCOUNTERTD); ?></p>
 <?php $status = ( in_array( 'basic', $this->_active_stat_methods )) ? __('active', ABCOUNTERTD) : __('deactivated', ABCOUNTERTD); ?>
 <p><?php printf( __('Current status of this method of measurement: <strong>%s</strong>', ABCOUNTERTD ), $status ); ?></p>
+<p><?php printf( __('Last reset: %s', ABCOUNTERTD), date_i18n( _x('d.m.Y, g:i a', 'time format of the last stat reset', ABCOUNTERTD), get_option('abc_last_reset', 0))); ?></p>
 <table id="adblock-counter-statistic">
     <thead></thead>
     <tbody>
