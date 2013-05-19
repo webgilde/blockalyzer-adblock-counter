@@ -93,6 +93,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             if ( !is_admin() ) {
                 add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));    
                 add_action('init', array($this, 'create_user_id'), 10);
+                add_action('wp_head', array($this, 'head_js'), 1);
                 add_action('wp_footer', array($this, 'include_bannergif'));
                 add_action('wp_footer', array($this, 'display_footer'));
                 
@@ -368,6 +369,18 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 
             <?php
         }
+        
+        /**
+         * basic js functions that are needed
+         * added to the header, because other plugins might need them earlier
+         */
+        public function head_js() {
+            if ( !$this->_is_measuring ) return;
+            ?><script type="text/javascript">//<![CDATA[
+            function AbcGetCookie(c_name) { var i,x,y,ARRcookies=document.cookie.split(";"); for (i=0;i<ARRcookies.length;i++) { x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("=")); y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1); x=x.replace(/^\s+|\s+$/g,""); if (x==c_name) { return unescape(y); } } }
+            function AbcSetCookie( name, value, exdays, path, domain, secure) { var exdate=new Date(); exdate.setDate(exdate.getDate() + exdays); document.cookie = name + "=" + escape(value) + ((exdate == null) ? "" : "; expires=" + exdate.toUTCString()) + ((path == null) ? "; path=/" : "; path=" + path) + ((domain == null) ? "" : "; domain=" + domain) +((secure == null) ? "" : "; secure");}
+            //]]></script><?php
+        }
 
         /**
          * content box that goes into the footer
@@ -375,43 +388,41 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          */
         public function display_footer() {
             if ( !$this->_is_measuring ) return;
-            ?><script>
-                            jQuery(document).ready(function($) {
-                                setTimeout(function(){ // timeout to run after loading the advertisement.js
-                                    // count for missing js file
-                                    var nonce = '<?php echo get_option('abc_nonce'); ?>';
-                                    // set unique user id
-                                    if ( !AbcGetCookie('AbcUniqueVisitorId') ) {
-                                        var data = {
-                                            action: 'get_user_id'
-                                        };
-                                        $.post(AbcAjax.ajaxurl, data, function(response) {
-                                            AbcSetCookie('AbcUniqueVisitorId', response, 30);
-                                        });
-                                    }
-
-                                    var abc_blocked=false;
-                                    if ($.adblockJsFile === undefined){
-                                        abc_blocked=true;
-                                    }
-
-                                    var banner = document.getElementById("abc_banner");                        
-
-                                    if (banner == null || banner.offsetHeight == 0){
-                                        abc_blocked=true;
-                                    }
-
-                                    if(abc_blocked==true){	
-                                        AbcSetCookie('AbcAdBlock', 'enabled', 30);
-                                    }else{
-                                        AbcSetCookie('AbcAdBlock', 'disabled', 30);
-                                    }
-                                    <?php do_action('ba_js_footer'); ?>
-                                },100);
+            ?><script type="text/javascript">//<![CDATA[
+                jQuery(document).ready(function($) {
+                    setTimeout(function(){ // timeout to run after loading the advertisement.js
+                        // count for missing js file
+                        var nonce = '<?php echo get_option('abc_nonce'); ?>';
+                        // set unique user id
+                        if ( !AbcGetCookie('AbcUniqueVisitorId') ) {
+                            var data = {
+                                action: 'get_user_id'
+                            };
+                            $.post(AbcAjax.ajaxurl, data, function(response) {
+                                AbcSetCookie('AbcUniqueVisitorId', response, 30);
                             });
-                            function AbcGetCookie(c_name) { var i,x,y,ARRcookies=document.cookie.split(";"); for (i=0;i<ARRcookies.length;i++) { x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("=")); y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1); x=x.replace(/^\s+|\s+$/g,""); if (x==c_name) { return unescape(y); } } }
-                            function AbcSetCookie( name, value, exdays, path, domain, secure) { var exdate=new Date(); exdate.setDate(exdate.getDate() + exdays); document.cookie = name + "=" + escape(value) + ((exdate == null) ? "" : "; expires=" + exdate.toUTCString()) + ((path == null) ? "; path=/" : "; path=" + path) + ((domain == null) ? "" : "; domain=" + domain) +((secure == null) ? "" : "; secure");}
-            </script><?php
+                        }
+
+                        var abc_blocked=false;
+                        if ($.adblockJsFile === undefined){
+                            abc_blocked=true;
+                        }
+
+                        var banner = document.getElementById("abc_banner");                        
+
+                        if (banner == null || banner.offsetHeight == 0){
+                            abc_blocked=true;
+                        }
+
+                        if(abc_blocked==true){	
+                            AbcSetCookie('AbcAdBlock', 'enabled', 30);
+                        }else{
+                            AbcSetCookie('AbcAdBlock', 'disabled', 30);
+                        }
+                        <?php do_action('ba_js_footer'); ?>
+                    },100);
+                });
+            //]]></script><?php
         }
 
         /**
