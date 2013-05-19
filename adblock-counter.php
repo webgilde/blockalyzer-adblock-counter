@@ -93,7 +93,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             // load methods of measurement beginning with basic method
             $stat_methods = array(
                 'basic' => array(
-                    'active' => true,
+                    'active' => 0, // default is deactivated
                     'name' => __('Basic method', ABCOUNTERTD),
                     'description' => sprintf(__('Start counting will reset older statistics. See your statistics in <em><a href="%s" title="Go to statistics page">Tools > AdBlock Stats</a></em>', ABCOUNTERTD), admin_url('tools.php?page=adblock-counter')),
                 )
@@ -129,9 +129,21 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         
         /**
          * get the information which stats method is enabled
+         * loads the 'active' flag into $this->_stat_methods for each method
+         * @todo what, if the number and kind of methods don't match?
          */
         public function get_active_stat_methods() {
             
+            if ( !empty( $this->_stat_methods ) && is_array( $this->_stat_methods )) {
+                $active_methods = get_option( 'ba_methods');
+                if ( !empty( $active_methods ) && is_array( $active_methods ) ) {
+                    foreach( $active_methods as $_method_key => $_active ) {
+                        $this->_stat_methods[$_method_key]['active'] = $_active;
+                    }
+                    
+                }
+                
+            }
         }
 
         /**
@@ -156,24 +168,49 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         public function add_settings_options() {
             add_settings_section('ba-settings-section', __('Stats Method', ABCOUNTERTD), array($this, 'render_settings_section'), 'ba-settings-page');
             
+            // load the information which stats methods is currently enabled
+            $this->get_active_stat_methods();
+            
             if ( !empty( $this->_stat_methods ) && is_array( $this->_stat_methods )) foreach( $this->_stat_methods as $_method_key => $_method ) {
             
                 add_settings_field('ba_methods', $_method['name'], array($this, 'render_settings_method'), 'ba-settings-page', 'ba-settings-section', array( $_method_key, $_method ) );
             
             }
             
-            register_setting('ba-settings-section', 'ba_methods');
+            register_setting('ba-settings-section', 'ba_methods', array($this, 'sanitize_settings_method'));
             
         }
 
         /**
          * callback for option to choose the method of measurement
          * @param array $method with 1. value as index, second array with method information
+         * @since 1.1.2
          */
         public function render_settings_method( $method ) {
-            
+
             ?><input name="ba_methods[<?php echo $method[0]; ?>]" id="ba_methods_<?php echo $method[0]; ?>" type="checkbox" value="1"
-            <?php checked(1, get_option('ba_methods'), false) ?>/><span class="description"><?php echo $method[1]['description']; ?></span><?php
+            <?php checked(1, $method[1]['active'] ) ?>/><span class="description"><?php echo $method[1]['description']; ?></span><?php
+        }
+        
+        /**
+         * sanitize the value for the methods
+         * especially include current values if not send via checkbox
+         * @since 1.1.2
+         */
+        public function sanitize_settings_method ( $input ) {
+            
+            if ( !empty( $this->_stat_methods ) && is_array( $this->_stat_methods )) {
+                
+                foreach ( $this->_stat_methods as $_key => $_method ) {
+                    if ( !isset( $input[ $_key ] ) ) {
+                        $input[ $_key ] = 0;
+                    }
+                }
+                
+            }
+            
+            return $input;
+            
         }
 
         /**
