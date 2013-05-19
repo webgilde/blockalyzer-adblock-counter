@@ -1,8 +1,7 @@
-<?php
-
-if ( !defined( 'ABCOUNTER_CLASS' ) ) {
-	header( 'HTTP/1.0 403 Forbidden' );
-	die;
+<?php 
+if ( !class_exists( 'ABCOUNTER_CLASS' ) ) {
+    header( 'HTTP/1.0 403 Forbidden' );
+    die;
 }
 
 /**
@@ -16,7 +15,7 @@ if ( !class_exists( 'ABC_Tracking' ) ) {
         /**
          * send blog adblock data
          */
-        public function send() {
+        static function send() {
             
             $data = array(
                 'site' => array(
@@ -33,11 +32,17 @@ if ( !class_exists( 'ABC_Tracking' ) ) {
             $args = array(
                 'body' => $data
             );
-            wp_remote_post( 'https://abstats.webgilde.com/', $args );
+            $result = wp_remote_post( 'http://stats.blockalyzer.com/', $args );
+            
+            if ( 200 == $result['response']['code'] ) {
+                
+                $return = json_decode( $result['body'] );
+                print_r( $return->site->url );
+                
+                
+                
+            }
             
         }
-        
-        
-        
     }
 }

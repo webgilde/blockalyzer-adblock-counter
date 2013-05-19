@@ -431,6 +431,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         public function _activation() {
 
             $this->_update_nonce();
+            update_option('abc_last_reset', time() );
         }
 
         /**
@@ -572,6 +573,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             update_option('abc_unique_visitors_jsFile', 0);
             update_option('abc_page_views_bannerFile', 0);
             update_option('abc_unique_visitors_bannerFile', 0);
+            udpate_option('abc_last_reset', time() );
 
             $this->_update_nonce();
         }        

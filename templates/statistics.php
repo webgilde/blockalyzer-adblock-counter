@@ -70,4 +70,11 @@
     </form>
     <p class="description"><?php _e('Resets the statistics and times. Also unique visitors will be counted again.', ABCOUNTERTD); ?></p>
 </div>
+
+<h2>Statistics</h2><?php
+require_once( ABCOUNTERPATH . '/classes/tracking.php' );
+ABC_Tracking::send();
+?>
+
+
 <?php do_action('abc_stats'); ?>
