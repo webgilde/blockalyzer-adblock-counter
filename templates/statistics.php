@@ -7,22 +7,30 @@
     <thead></thead>
     <tbody>
         <tr>
-            <th><?php _e('method/value'); ?></th>
-            <th><?php _e('absolute number', ABCOUNTERTD); ?></th>
-            <th><?php _e('relative number', ABCOUNTERTD); ?></th>
+            <th></th>
+            <th><?php _e('total', ABCOUNTERTD); ?></th>
+            <th><?php _e('with AdBlock', ABCOUNTERTD); ?></th>
+            <th><?php _e('share of AdBlock users', ABCOUNTERTD); ?></th>
         </tr>
         <tr>
-            <th><?php _e('total page views', ABCOUNTERTD); ?></th>
+            <th><?php _e('page views', ABCOUNTERTD); ?></th>
             <td><?php echo $abc_page_views = get_option('abc_page_views', 0); ?></td>
-            <td></td>
-            <td><?php _e('total number of page views', ABCOUNTERTD); ?></td>
+            <td><?php echo $abc_page_views_blocked = get_option('abc_page_views_blocked', 0); ?></td>
+            <td><?php 
+            if ( $abc_page_views > 0 ) 
+                echo round( $abc_page_views_blocked / $abc_page_views * 100); 
+            else echo 0; ?>%</td>
         </tr>
         <tr>
-            <th><?php _e('total unique visitors', ABCOUNTERTD); ?></th>
+            <th><?php _e('unique visitors', ABCOUNTERTD); ?></th>
             <td><?php echo $abc_unique_visitors = get_option('abc_unique_visitors', 0); ?></td>
-            <td></td>
-            <td><?php _e('total number of unique visitors', ABCOUNTERTD); ?></td>
+            <td><?php echo $abc_unique_visitors_blocked = get_option('abc_unique_visitors_blocked', 0); ?></td>
+            <td><?php 
+            if ( $abc_unique_visitors > 0 ) 
+                echo round( $abc_unique_visitors_blocked / $abc_unique_visitors * 100); 
+            else echo 0; ?>%</td>
         </tr>
+        <?php /*
         <tr class="headline"><th colspan="3"><?php _e('method: include script js/advertisement.js', ABCOUNTERTD); ?></th></tr>
         <tr>
             <th><?php _e('page views', ABCOUNTERTD); ?></th>
@@ -60,7 +68,7 @@
                 echo round( get_option('abc_unique_visitors_BannerFile', 0) / $abc_unique_visitors * 100 ); 
             else echo 0; ?>%</td>
             <td><?php _e('total number of unique visitors with ad blocker', ABCOUNTERTD); ?></td>
-        </tr>
+        </tr> */ ?>
         
     </tbody>
 </table>
@@ -69,7 +77,7 @@
         <input type="hidden" name="abcounter" value="reset"/>
         <input type="submit" value="<?php _e('reset statistics', ABCOUNTERDIR ); ?>"/>
     </form>
-    <p class="description"><?php _e('Resets the statistics and times. Also unique visitors will be counted again.', ABCOUNTERTD); ?></p>
+    <p class="description"><?php _e('Resets statistics. No way to turn back.', ABCOUNTERTD); ?></p>
 </div>
 
 <h2>Statistics</h2><?php

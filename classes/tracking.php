@@ -24,6 +24,7 @@ if ( !class_exists( 'ABC_Tracking' ) ) {
                     'lang'      => get_locale(),
                 ),                
                 'stats' => array(
+                    'last_reset'=> get_option('abc_last_reset', 0),
                     'views'     => get_option('abc_page_views', 0),
                     'users'     => get_option('abc_unique_visitors', 0)
                 )

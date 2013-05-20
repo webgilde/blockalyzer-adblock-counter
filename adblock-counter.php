@@ -454,7 +454,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         public function stat_method_standard_js() {
             if ( !in_array( 'basic', $this->_active_stat_methods ) ) return;
                 ?>var data = {
-                    action: 'standard_count'
+                    action: 'standard_count',
+                    blocked: abc_blocked
                 };
                 data.abc_count_jsFile = false;
                 if ($.adblockJsFile === undefined){
@@ -467,12 +468,12 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                 }
 
                 $.post(AbcAjax.ajaxurl, data, function(response) {
-                    if ( !AbcGetCookie('AbcUniqueVisitorJsFile') || AbcGetCookie('AbcUniqueVisitorJsFile') != nonce  ) {
+                    <?php /* if ( !AbcGetCookie('AbcUniqueVisitorJsFile') || AbcGetCookie('AbcUniqueVisitorJsFile') != nonce  ) {
                         AbcSetCookie('AbcUniqueVisitorJsFile', nonce, 30);
                     }     
                     if ( !AbcGetCookie('AbcUniqueVisitorBanner') || AbcGetCookie('AbcUniqueVisitorBanner') != nonce  ) {
                         AbcSetCookie('AbcUniqueVisitorBanner', nonce, 30);     
-                    }     
+                    }     */ ?>
                     if ( !AbcGetCookie('AbcUniqueVisitor') || AbcGetCookie('AbcUniqueVisitor') != nonce ) {
                         AbcSetCookie('AbcUniqueVisitor', nonce, 30);    
                     }
@@ -488,12 +489,17 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             $this->stat_method_standard_count_page_views();
             $this->stat_method_standard_count_unique_visitors();
             
-            if (isset($_POST['abc_count_jsFile']) && $_POST['abc_count_jsFile'] == "true") {
+            if (isset($_POST['blocked']) && $_POST['blocked'] == "true") {
+                $this->stat_method_standard_count_blocked_page_views();
+                $this->stat_method_standard_count_blocked_unique_visitors();
+            }
+            
+            /* if (isset($_POST['abc_count_jsFile']) && $_POST['abc_count_jsFile'] == "true") {
                 $this->stat_method_standard_count_jsFile();
             }
             if (isset($_POST['abc_count_banner']) && $_POST['abc_count_banner'] == "true") {
                 $this->stat_method_standard_count_banner();
-            }
+            } */
             wp_die();
         }
         
@@ -506,6 +512,18 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             $page_views = get_option('abc_page_views', 0);
             $page_views++;
             update_option('abc_page_views', $page_views);
+
+            //wp_die();
+        }
+        /**
+         * count the ad blocked page views
+         * @since 1.2
+         */
+        public function stat_method_standard_count_blocked_page_views() {
+
+            $page_views = get_option('abc_page_views_blocked', 0);
+            $page_views++;
+            update_option('abc_page_views_blocked', $page_views);
 
             //wp_die();
         }
@@ -526,8 +544,23 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         }
 
         /**
+         * count the blocked page views
+         * @since 1.2
+         */
+        public function stat_method_standard_count_blocked_unique_visitors() {
+
+            if (!empty($_COOKIE['AbcUniqueVisitor']) && $_COOKIE['AbcUniqueVisitor'] == get_option('abc_nonce'))
+                return;
+
+            $uniques = get_option('abc_unique_visitors_blocked', 0);
+            $uniques++;
+            update_option('abc_unique_visitors_blocked', $uniques);
+        }
+
+        /**
          * count when advertisement.js is missing
          * @update 1.1
+         * deprecated since 1.2
          */
         public function stat_method_standard_count_jsFile() {
 
@@ -547,6 +580,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         /**
          * count when banner is missing
          * @since 1.1
+         * deprecated since 1.2
          */
         public function stat_method_standard_count_banner() {
             $count = get_option('abc_page_views_bannerFile', 0);
@@ -569,10 +603,12 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 
             update_option('abc_page_views', 0);
             update_option('abc_unique_visitors', 0);
-            update_option('abc_page_views_jsFile', 0);
-            update_option('abc_unique_visitors_jsFile', 0);
-            update_option('abc_page_views_bannerFile', 0);
-            update_option('abc_unique_visitors_bannerFile', 0);
+            update_option('abc_page_views_blocked', 0);
+            update_option('abc_unique_visitors_blocked', 0);
+            // update_option('abc_page_views_jsFile', 0);
+            // update_option('abc_unique_visitors_jsFile', 0);
+            // update_option('abc_page_views_bannerFile', 0);
+            // update_option('abc_unique_visitors_bannerFile', 0);
             update_option('abc_last_reset', time() );
 
             $this->_update_nonce();
