@@ -49,7 +49,7 @@
         ?><p class="warning"><?php _e( 'You can currently not compare your data with others. See HELP panel above for more information.', ABCOUNTERTD); ?></p><?php endif; ?>    
     <form action="" method="post">
         <input type="hidden" name="abcounter" value="compare"/>
-        <input type="submit" value="<?php _e('compare statistics', ABCOUNTERDIR ); ?>"/>
+        <input type="submit" value="<?php _e('compare statistics', ABCOUNTERDIR ); ?>"<?php if ( !$this->_compareAllowed ) echo ' disabled="disabled"'; ?>/>
     </form>
     <p class="description"><?php _e('Compare your statistics with the statistics of other pages. Will also send your data to our server.', ABCOUNTERTD); ?><br/>
     <?php _e('See the HELP panel above for information on which data we are sending.', ABCOUNTERTD); ?></p>
