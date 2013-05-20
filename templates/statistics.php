@@ -48,8 +48,8 @@
         <input type="hidden" name="abcounter" value="compare"/>
         <input type="submit" value="<?php _e('compare statistics', ABCOUNTERDIR ); ?>"/>
     </form>
-    <p class="description"><?php _e('Compare your statistics with the statistics of other pages. Will also send your data to our server.', ABCOUNTERTD); ?></p>
-    <p><?php _e('See the help panel ', ABCOUNTERTD); ?>
+    <p class="description"><?php _e('Compare your statistics with the statistics of other pages. Will also send your data to our server.', ABCOUNTERTD); ?><br/>
+    <?php _e('See the HELP panel above for information on which data we are sending.', ABCOUNTERTD); ?></p>
 </div>
 
 <?php do_action('abc_stats'); ?>

@@ -72,6 +72,11 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * contains compare data
          */
         public $_compareData = array();
+        
+        /**
+         * page hooks
+         */
+        public $_hooks = array();
 
         /**
          * initialize the plugin
@@ -188,7 +193,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * add statistics page for the default adblock counter
          */
         public function add_stats_page() {
-            add_management_page(__('BlockAlyzer Statistics', ABCOUNTERTD), __('AdBlock Stats', ABCOUNTERTD), 'manage_options', 'adblock-counter', array($this, 'render_stats_page'));
+            $this->_hooks['stats'] = add_management_page(__('BlockAlyzer Statistics', ABCOUNTERTD), __('AdBlock Stats', ABCOUNTERTD), 'manage_options', 'adblock-counter', array($this, 'render_stats_page'));
+            add_action('load-'. $this->_hooks['stats'], array( $this, 'contextual_help'));
         }
 
         /**
@@ -213,6 +219,50 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             }
             
             register_setting('ba-settings-section', 'ba_methods', array($this, 'sanitize_settings_method'));
+            
+        }
+        
+        /**
+         * add contextual help
+         * @since 1.2
+         */
+        public function contextual_help() {
+            
+            $screen = get_current_screen();
+            if ($screen->id != $this->_hooks['stats']) return;       
+            
+            // conditions to send data
+            $conditions = array(
+                __('Your last reset was more than 24 ago', ABCOUNTERTD),
+                __('You have at least 20 visits and page views', ABCOUNTERTD),
+                __('You have at least 1 visit and page view with AdBlock', ABCOUNTERTD),
+            );
+            
+            $screen->add_help_tab( array(
+                'id'	=> 'ba_conditions',
+                'title'	=> __('Conditions', ABCOUNTERTD),
+                'content'	=> '<h3>' . __( 'Conditions under which your data will be accepted and compared with others.', ABCOUNTERTD ) . '</h3><ul><li>' .
+                    implode('</li><li>', $conditions ) . '</li></ul>',
+            ) );
+            
+            // array with data we are sending to server; for localization
+            $data_send = array(
+                __('Hash - to check source', ABCOUNTERTD),
+                __('Domain - to prevent duplicate data', ABCOUNTERTD),
+                __('Language - for later statistical use and comparision', ABCOUNTERTD),
+                __('Last reset - when have your data been reset (to prevent duplicate content', ABCOUNTERTD),
+                __('Number of Views', ABCOUNTERTD),
+                __('Number of View with AdBlock', ABCOUNTERTD),
+                __('Number of Unique Visitors', ABCOUNTERTD),
+                __('Number of Unique Visitors with AdBlock', ABCOUNTERTD),
+            );
+            
+            $screen->add_help_tab( array(
+                'id'	=> 'ba_data',
+                'title'	=> __('Data we send', ABCOUNTERTD),
+                'content'	=> '<h3>' . __( 'List of the data we compare and send to our server.', ABCOUNTERTD ) . '</h3><ul><li>' .
+                    implode('</li><li>', $data_send ) . '</li></ul>',
+            ) );
             
         }
 

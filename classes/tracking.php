@@ -31,7 +31,7 @@ if (!class_exists('ABC_Tracking')) {
                     'hash' => $hash,
                     'url' => site_url(),
                     'topic' => '',
-                    'name' => get_bloginfo('name'),
+                    'name' => '', //get_bloginfo('name'),
                     'lang' => get_locale(),
                     'country' => '',
                 ),
