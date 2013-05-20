@@ -67,6 +67,11 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * if any stats method is enabled, this is true
          */
         public $_is_measuring = false;
+        
+        /**
+         * contains compare data
+         */
+        public $_compareData = array();
 
         /**
          * initialize the plugin
@@ -255,6 +260,11 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                 // reset statistics
                 if ($_POST['abcounter'] == 'reset') {
                     $this->stat_method_standard_count_reset_statistics();
+                }
+                // load compare data
+                if ($_POST['abcounter'] == 'compare') {
+                    require_once 'classes/tracking.php';
+                    $this->compareData = ABC_Tracking::compare();
                 }
             }   
 
@@ -613,7 +623,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 
             $this->_update_nonce();
         }        
-
+        
     }
 
     $adblock_counter = new ABCOUNTER_CLASS();

@@ -15,9 +15,9 @@ if (!class_exists('ABC_Tracking')) {
     class ABC_Tracking {
 
         /**
-         * send blog adblock data
+         * send blog adblock data and compare with data from others
          */
-        static function send() {
+        static function compare() {
 
             $hash = get_option('abc_tracking_hash');
 
@@ -48,7 +48,6 @@ if (!class_exists('ABC_Tracking')) {
                 'body' => $data
             );
             $result = wp_remote_post('http://stats.blockalyzer.com/', $args);
-            //print_r( $result );
 
             if (200 == $result['response']['code']) {
 
@@ -57,11 +56,15 @@ if (!class_exists('ABC_Tracking')) {
                 
                 if ( !empty( $return->errors ) && is_array( $return->errors)) {
                     self::render_errors( $return->errors );
+                } else {
+                    return $return;
                 }
                 
             } else {
                 self::render_server_error();
             }
+            
+            return false;
         }
         
         /**
@@ -69,7 +72,7 @@ if (!class_exists('ABC_Tracking')) {
          */
         public function render_server_error(){
             
-            ?><p class="error">Server error. Please try again later. If there are no changed, please contact the plugin author.</p><?php
+            ?><div class="error"><p>Server error. Please try again later. If there are no changed, please contact the plugin author.</p></div><?php
             
         }
 
@@ -79,11 +82,11 @@ if (!class_exists('ABC_Tracking')) {
         public function render_errors( $errors ){
             
             if ( !empty( $errors ) && is_array( $errors ) && count( $errors) > 0 ) {
-            ?><ul class="error"><?php
+            ?><div class="error"><ul><?php
                 foreach( $errors as $_error ) : 
                     ?><li><?php echo $_error; ?></li><?php 
                 endforeach;
-            ?></ul><?php
+            ?></ul></div><?php
             }
             
         }
