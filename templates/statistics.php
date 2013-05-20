@@ -44,6 +44,9 @@
     <p class="description"><?php _e('Resets statistics. No way to turn back.', ABCOUNTERTD); ?></p>
 </div>
 <div class="abc-form-block">
+    <?php if ( $this->_compareAllowed ) :
+        ?><p class="success"><?php _e( 'Compare your data with others now.', ABCOUNTERTD); ?></p><?php else :
+        ?><p class="warning"><?php _e( 'You can currently not compare your data with others. See HELP panel above for more information.', ABCOUNTERTD); ?></p><?php endif; ?>    
     <form action="" method="post">
         <input type="hidden" name="abcounter" value="compare"/>
         <input type="submit" value="<?php _e('compare statistics', ABCOUNTERDIR ); ?>"/>

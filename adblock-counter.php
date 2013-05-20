@@ -70,11 +70,19 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         
         /**
          * contains compare data
+         * @since 1.2
          */
         public $_compareData = array();
         
         /**
+         * flag if compare is allowed
+         * @since 1.2
+         */
+        public $_compareAllowed = false;
+        
+        /**
          * page hooks
+         * @since 1.2
          */
         public $_hooks = array();
 
@@ -313,8 +321,13 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                 }
                 // load compare data
                 if ($_POST['abcounter'] == 'compare') {
-                    require_once 'classes/tracking.php';
-                    $this->compareData = ABC_Tracking::compare();
+                    if ( $this->compare_allowed() ) {
+                        require_once 'classes/tracking.php';
+                        $this->compareData = ABC_Tracking::compare();
+                        $this->_compare_allowed = true;
+                    } else {
+                        $this->_compare_allowed = false;
+                    }
                 }
             }   
 
@@ -491,7 +504,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         public function _activation() {
 
             $this->_update_nonce();
-            update_option('abc_last_reset', time() );
+            update_option('abc_last_reset', time() );            
         }
 
         /**
@@ -658,12 +671,13 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         
         /**
          * reset the statistics to 0
+         * @updated 1.2
          */
         public function stat_method_standard_count_reset_statistics() {
 
             update_option('abc_page_views', 0);
-            update_option('abc_unique_visitors', 0);
             update_option('abc_page_views_blocked', 0);
+            update_option('abc_unique_visitors', 0);            
             update_option('abc_unique_visitors_blocked', 0);
             // update_option('abc_page_views_jsFile', 0);
             // update_option('abc_unique_visitors_jsFile', 0);
@@ -673,6 +687,25 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 
             $this->_update_nonce();
         }        
+        
+        /**
+         * check, if comparing data is allowed
+         * conditions:
+         * * data is at least 24 hours old
+         * * at least 20 visits and views
+         * * at least 1 visit and view with AdBlock
+         * @since 1.2
+         */
+        public function compare_allowed() {
+            // timestamp from one day ago
+            $min_time = strtotime('-1 day', time());
+            // check if measuring time is at least 24 hours
+            if ( $min_time < intval ( get_option('abc_last_reset', 0))) return false;
+            if ( 20 >   intval ( get_option('abc_page_views', 0))) return false;
+            if ( 1  >   intval ( get_option('abc_page_views', 0))) return false;
+            if ( 20 >   intval ( get_option('abc_page_views', 0))) return false;
+            if ( 1  >   intval ( get_option('abc_page_views', 0))) return false;
+        }
         
     }
 
