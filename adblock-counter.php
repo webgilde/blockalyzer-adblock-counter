@@ -1,7 +1,7 @@
 <?php
 /*
   Plugin Name: Adblock Counter
-  Version: 1.1.2
+  Version: 1.2
   Plugin URI: http://webgilde.com/
   Description: Count how many of your visitors are using an ad blocker.
   Author: Thomas Maier
@@ -33,7 +33,7 @@ if (!function_exists('add_action')) {
     exit();
 }
 
-define('ABCOUNTERVERSION', '1.1.2');
+define('ABCOUNTERVERSION', '1.2');
 define('ABCOUNTERNAME', 'adblock-counter');
 define('ABCOUNTERTD', 'adblock-counter');
 define('ABCOUNTERDIR', basename(dirname(__FILE__)));
@@ -67,6 +67,24 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * if any stats method is enabled, this is true
          */
         public $_is_measuring = false;
+        
+        /**
+         * contains compare data
+         * @since 1.2
+         */
+        public $_compareData = array();
+        
+        /**
+         * flag if compare is allowed
+         * @since 1.2
+         */
+        public $_compareAllowed = false;
+        
+        /**
+         * page hooks
+         * @since 1.2
+         */
+        public $_hooks = array();
 
         /**
          * initialize the plugin
@@ -80,7 +98,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             // load constant with adblock value
             add_action('init', array($this, 'load_adblock_constant'));
             // load statistic methods
-            add_action('init', array($this, 'load_stat_methods'), 3);
+            add_action('init', array($this, 'load_stat_methods'), 1);
 
             if ( is_admin() ) {
                 add_action('admin_menu', array($this, 'add_stats_page'));
@@ -93,6 +111,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             if ( !is_admin() ) {
                 add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));    
                 add_action('init', array($this, 'create_user_id'), 10);
+                add_action('wp_head', array($this, 'head_js'), 1);
                 add_action('wp_footer', array($this, 'include_bannergif'));
                 add_action('wp_footer', array($this, 'display_footer'));
                 
@@ -169,8 +188,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                 if ( !empty( $active_methods ) && is_array( $active_methods ) ) {
                     foreach( $active_methods as $_method_key => $_active ) {
                         $this->_stat_methods[$_method_key]['active'] = $_active;
+                        if ( $_active ) $active_stat_methods[] = $_method_key;
                     }
-                    if ( $_active ) $active_stat_methods[] = $_method_key;
                 }
             }
             
@@ -182,7 +201,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * add statistics page for the default adblock counter
          */
         public function add_stats_page() {
-            add_management_page(__('BlockAlyzer Statistics', ABCOUNTERTD), __('AdBlock Stats', ABCOUNTERTD), 'manage_options', 'adblock-counter', array($this, 'render_stats_page'));
+            $this->_hooks['stats'] = add_management_page(__('BlockAlyzer Statistics', ABCOUNTERTD), __('AdBlock Stats', ABCOUNTERTD), 'manage_options', 'adblock-counter', array($this, 'render_stats_page'));
+            add_action('load-'. $this->_hooks['stats'], array( $this, 'contextual_help'));
         }
 
         /**
@@ -202,11 +222,55 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             
             if ( !empty( $this->_stat_methods ) && is_array( $this->_stat_methods )) foreach( $this->_stat_methods as $_method_key => $_method ) {
             
-                add_settings_field('ba_methods', $_method['name'], array($this, 'render_settings_method'), 'ba-settings-page', 'ba-settings-section', array( $_method_key, $_method ) );
+                add_settings_field('ba_methods_' . $_method_key, $_method['name'], array($this, 'render_settings_method'), 'ba-settings-page', 'ba-settings-section', array( $_method_key, $_method ) );
             
             }
             
             register_setting('ba-settings-section', 'ba_methods', array($this, 'sanitize_settings_method'));
+            
+        }
+        
+        /**
+         * add contextual help
+         * @since 1.2
+         */
+        public function contextual_help() {
+            
+            $screen = get_current_screen();
+            if ($screen->id != $this->_hooks['stats']) return;       
+            
+            // conditions to send data
+            $conditions = array(
+                __('Your last reset was more than 24 ago', ABCOUNTERTD),
+                __('You have at least 20 visits and page views', ABCOUNTERTD),
+                __('You have at least 1 visit and page view with AdBlock', ABCOUNTERTD),
+            );
+            
+            $screen->add_help_tab( array(
+                'id'	=> 'ba_conditions',
+                'title'	=> __('Conditions', ABCOUNTERTD),
+                'content'	=> '<h3>' . __( 'Conditions under which your data will be accepted and compared with others.', ABCOUNTERTD ) . '</h3><ul><li>' .
+                    implode('</li><li>', $conditions ) . '</li></ul>',
+            ) );
+            
+            // array with data we are sending to server; for localization
+            $data_send = array(
+                __('Hash - to check source', ABCOUNTERTD),
+                __('Domain - to prevent duplicate data', ABCOUNTERTD),
+                __('Language - for later statistical use and comparision', ABCOUNTERTD),
+                __('Last reset - when have your data been reset (to prevent duplicate content', ABCOUNTERTD),
+                __('Number of Views', ABCOUNTERTD),
+                __('Number of View with AdBlock', ABCOUNTERTD),
+                __('Number of Unique Visitors', ABCOUNTERTD),
+                __('Number of Unique Visitors with AdBlock', ABCOUNTERTD),
+            );
+            
+            $screen->add_help_tab( array(
+                'id'	=> 'ba_data',
+                'title'	=> __('Data we send', ABCOUNTERTD),
+                'content'	=> '<h3>' . __( 'List of the data we compare and send to our server.', ABCOUNTERTD ) . '</h3><ul><li>' .
+                    implode('</li><li>', $data_send ) . '</li></ul>',
+            ) );
             
         }
 
@@ -254,6 +318,16 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                 // reset statistics
                 if ($_POST['abcounter'] == 'reset') {
                     $this->stat_method_standard_count_reset_statistics();
+                }
+                // load compare data
+                if ($_POST['abcounter'] == 'compare') {
+                    if ( $this->compare_allowed() ) {
+                        require_once 'classes/tracking.php';
+                        $this->compareData = ABC_Tracking::compare();
+                        $this->_compare_allowed = true;
+                    } else {
+                        $this->_compare_allowed = false;
+                    }
                 }
             }   
 
@@ -368,6 +442,18 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 
             <?php
         }
+        
+        /**
+         * basic js functions that are needed
+         * added to the header, because other plugins might need them earlier
+         */
+        public function head_js() {
+            if ( !$this->_is_measuring ) return;
+            ?><script type="text/javascript">//<![CDATA[
+            function AbcGetCookie(c_name) { var i,x,y,ARRcookies=document.cookie.split(";"); for (i=0;i<ARRcookies.length;i++) { x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("=")); y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1); x=x.replace(/^\s+|\s+$/g,""); if (x==c_name) { return unescape(y); } } }
+            function AbcSetCookie( name, value, exdays, path, domain, secure) { var exdate=new Date(); exdate.setDate(exdate.getDate() + exdays); document.cookie = name + "=" + escape(value) + ((exdate == null) ? "" : "; expires=" + exdate.toUTCString()) + ((path == null) ? "; path=/" : "; path=" + path) + ((domain == null) ? "" : "; domain=" + domain) +((secure == null) ? "" : "; secure");}
+            //]]></script><?php
+        }
 
         /**
          * content box that goes into the footer
@@ -375,72 +461,41 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          */
         public function display_footer() {
             if ( !$this->_is_measuring ) return;
-            ?><script>
-                            jQuery(document).ready(function($) {
-                                setTimeout(function(){ // timeout to run after loading the advertisement.js
-                                    // count for missing js file
-                                    var nonce = '<?php echo get_option('abc_nonce'); ?>';
-                                    // set unique user id
-                                    if ( !AbcGetCookie('AbcUniqueVisitorId') ) {
-                                        var data = {
-                                            action: 'get_user_id'
-                                        };
-                                        $.post(AbcAjax.ajaxurl, data, function(response) {
-                                            AbcSetCookie('AbcUniqueVisitorId', response, 30);
-                                        });
-                                    }
-
-                                    var abc_blocked=false;
-                                    if ($.adblockJsFile === undefined){
-                                        abc_blocked=true;
-                                    }
-
-                                    var banner = document.getElementById("abc_banner");                        
-
-                                    if (banner == null || banner.offsetHeight == 0){
-                                        abc_blocked=true;
-                                    }
-
-                                    if(abc_blocked==true){	
-                                        AbcSetCookie('AbcAdBlock', 'enabled', 30);
-                                    }else{
-                                        AbcSetCookie('AbcAdBlock', 'disabled', 30);
-                                    }
-                                    <?php do_action('ba_js_footer'); ?>
-                                },100);
+            ?><script type="text/javascript">//<![CDATA[
+                jQuery(document).ready(function($) {
+                    setTimeout(function(){ // timeout to run after loading the advertisement.js
+                        // count for missing js file
+                        var nonce = '<?php echo get_option('abc_nonce'); ?>';
+                        // set unique user id
+                        if ( !AbcGetCookie('AbcUniqueVisitorId') ) {
+                            var data = {
+                                action: 'get_user_id'
+                            };
+                            $.post(AbcAjax.ajaxurl, data, function(response) {
+                                AbcSetCookie('AbcUniqueVisitorId', response, 30);
                             });
-                            function AbcGetCookie(c_name)
-                            {
-                                var i,x,y,ARRcookies=document.cookie.split(";");
-                                for (i=0;i<ARRcookies.length;i++)
-                                {
-                                    x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
-                                    y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
-                                    x=x.replace(/^\s+|\s+$/g,"");
-                                    if (x==c_name)
-                                    {
-                                        return unescape(y);
-                                    }
-                                }
-                            }
+                        }
 
-                            /**
-                             * name = cookie name
-                             * value = cookie value
-                             * exdays = days until cookie expires
-                             */
-                            function AbcSetCookie( name, value, exdays, path, domain, secure)
-                            {
-                                var exdate=new Date();
-                                exdate.setDate(exdate.getDate() + exdays);
-                                document.cookie = name + "=" + escape(value) + 
-                                    ((exdate == null) ? "" : "; expires=" + exdate.toUTCString()) +
-                                    ((path == null) ? "; path=/" : "; path=" + path) +        
-                                    ((domain == null) ? "" : "; domain=" + domain) +
-                                    ((secure == null) ? "" : "; secure");
-                            }
+                        var abc_blocked=false;
+                        if ($.adblockJsFile === undefined){
+                            abc_blocked=true;
+                        }
 
-            </script><?php
+                        var banner = document.getElementById("abc_banner");                        
+
+                        if (banner == null || banner.offsetHeight == 0){
+                            abc_blocked=true;
+                        }
+
+                        if(abc_blocked==true){	
+                            AbcSetCookie('AbcAdBlock', 'enabled', 30);
+                        }else{
+                            AbcSetCookie('AbcAdBlock', 'disabled', 30);
+                        }
+                        <?php do_action('ba_js_footer'); ?>
+                    },100);
+                });
+            //]]></script><?php
         }
 
         /**
@@ -449,6 +504,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         public function _activation() {
 
             $this->_update_nonce();
+            update_option('abc_last_reset', time() );            
         }
 
         /**
@@ -471,7 +527,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         public function stat_method_standard_js() {
             if ( !in_array( 'basic', $this->_active_stat_methods ) ) return;
                 ?>var data = {
-                    action: 'standard_count'
+                    action: 'standard_count',
+                    blocked: abc_blocked
                 };
                 data.abc_count_jsFile = false;
                 if ($.adblockJsFile === undefined){
@@ -484,12 +541,12 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                 }
 
                 $.post(AbcAjax.ajaxurl, data, function(response) {
-                    if ( !AbcGetCookie('AbcUniqueVisitorJsFile') || AbcGetCookie('AbcUniqueVisitorJsFile') != nonce  ) {
+                    <?php /* if ( !AbcGetCookie('AbcUniqueVisitorJsFile') || AbcGetCookie('AbcUniqueVisitorJsFile') != nonce  ) {
                         AbcSetCookie('AbcUniqueVisitorJsFile', nonce, 30);
                     }     
                     if ( !AbcGetCookie('AbcUniqueVisitorBanner') || AbcGetCookie('AbcUniqueVisitorBanner') != nonce  ) {
                         AbcSetCookie('AbcUniqueVisitorBanner', nonce, 30);     
-                    }     
+                    }     */ ?>
                     if ( !AbcGetCookie('AbcUniqueVisitor') || AbcGetCookie('AbcUniqueVisitor') != nonce ) {
                         AbcSetCookie('AbcUniqueVisitor', nonce, 30);    
                     }
@@ -505,12 +562,17 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             $this->stat_method_standard_count_page_views();
             $this->stat_method_standard_count_unique_visitors();
             
-            if (isset($_POST['abc_count_jsFile']) && $_POST['abc_count_jsFile'] == "true") {
+            if (isset($_POST['blocked']) && $_POST['blocked'] == "true") {
+                $this->stat_method_standard_count_blocked_page_views();
+                $this->stat_method_standard_count_blocked_unique_visitors();
+            }
+            
+            /* if (isset($_POST['abc_count_jsFile']) && $_POST['abc_count_jsFile'] == "true") {
                 $this->stat_method_standard_count_jsFile();
             }
             if (isset($_POST['abc_count_banner']) && $_POST['abc_count_banner'] == "true") {
                 $this->stat_method_standard_count_banner();
-            }
+            } */
             wp_die();
         }
         
@@ -523,6 +585,18 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             $page_views = get_option('abc_page_views', 0);
             $page_views++;
             update_option('abc_page_views', $page_views);
+
+            //wp_die();
+        }
+        /**
+         * count the ad blocked page views
+         * @since 1.2
+         */
+        public function stat_method_standard_count_blocked_page_views() {
+
+            $page_views = get_option('abc_page_views_blocked', 0);
+            $page_views++;
+            update_option('abc_page_views_blocked', $page_views);
 
             //wp_die();
         }
@@ -543,8 +617,23 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         }
 
         /**
+         * count the blocked page views
+         * @since 1.2
+         */
+        public function stat_method_standard_count_blocked_unique_visitors() {
+
+            if (!empty($_COOKIE['AbcUniqueVisitor']) && $_COOKIE['AbcUniqueVisitor'] == get_option('abc_nonce'))
+                return;
+
+            $uniques = get_option('abc_unique_visitors_blocked', 0);
+            $uniques++;
+            update_option('abc_unique_visitors_blocked', $uniques);
+        }
+
+        /**
          * count when advertisement.js is missing
          * @update 1.1
+         * deprecated since 1.2
          */
         public function stat_method_standard_count_jsFile() {
 
@@ -564,6 +653,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         /**
          * count when banner is missing
          * @since 1.1
+         * deprecated since 1.2
          */
         public function stat_method_standard_count_banner() {
             $count = get_option('abc_page_views_bannerFile', 0);
@@ -581,19 +671,42 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         
         /**
          * reset the statistics to 0
+         * @updated 1.2
          */
         public function stat_method_standard_count_reset_statistics() {
 
             update_option('abc_page_views', 0);
-            update_option('abc_unique_visitors', 0);
-            update_option('abc_page_views_jsFile', 0);
-            update_option('abc_unique_visitors_jsFile', 0);
-            update_option('abc_page_views_bannerFile', 0);
-            update_option('abc_unique_visitors_bannerFile', 0);
+            update_option('abc_page_views_blocked', 0);
+            update_option('abc_unique_visitors', 0);            
+            update_option('abc_unique_visitors_blocked', 0);
+            // update_option('abc_page_views_jsFile', 0);
+            // update_option('abc_unique_visitors_jsFile', 0);
+            // update_option('abc_page_views_bannerFile', 0);
+            // update_option('abc_unique_visitors_bannerFile', 0);
+            update_option('abc_last_reset', time() );
 
             $this->_update_nonce();
         }        
-
+        
+        /**
+         * check, if comparing data is allowed
+         * conditions:
+         * * data is at least 24 hours old
+         * * at least 20 visits and views
+         * * at least 1 visit and view with AdBlock
+         * @since 1.2
+         */
+        public function compare_allowed() {
+            // timestamp from one day ago
+            $min_time = strtotime('-1 day', time());
+            // check if measuring time is at least 24 hours
+            if ( $min_time < intval ( get_option('abc_last_reset', 0))) return false;
+            if ( 20 >   intval ( get_option('abc_page_views', 0))) return false;
+            if ( 1  >   intval ( get_option('abc_page_views', 0))) return false;
+            if ( 20 >   intval ( get_option('abc_page_views', 0))) return false;
+            if ( 1  >   intval ( get_option('abc_page_views', 0))) return false;
+        }
+        
     }
 
     $adblock_counter = new ABCOUNTER_CLASS();

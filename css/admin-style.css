@@ -8,18 +8,6 @@
     width: 14em;
 }
 
-.abc-form-block p.description {
-    float: left;
-}
-    
-.abc-form-block .start {
-    color: green;
-}
-
-.abc-form-block .stop {
-    color: orange;
-}
-
 table#adblock-counter-statistic {
     text-align: left;
 }
@@ -35,6 +23,5 @@ table#adblock-counter-statistic .headline th{
     padding-top: 1em;
 }
 
-table#adblock-counter-statistic tr td:nth-child(4){
-    color: grey;
-}
+.success { color: green; }
+.warning { color: red; }

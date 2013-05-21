@@ -3,7 +3,7 @@ Contributors: webzunft
 Tags: ads, ad, adblock, ad blocker, ad block, adblock count, adblock counter
 Requires at least: 3.4
 Tested up to: 3.5.1
-Stable tag: 1.1.2
+Stable tag: 1.2
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -42,6 +42,13 @@ e.g.
 == Screenshots ==
 
 == Changelog ==
+
+= 1.2 =
+
+* added stat exchange to get benchmark compared to your own adblock stats
+* both counting methods (banner.gif and advertising.js) now deliver single result value
+* minified and moved some js code
+* 
 
 = 1.1.2 = 
 
