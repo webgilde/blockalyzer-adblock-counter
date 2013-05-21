@@ -1,7 +1,7 @@
 <?php
 /*
   Plugin Name: Adblock Counter
-  Version: 1.1.2
+  Version: 1.2
   Plugin URI: http://webgilde.com/
   Description: Count how many of your visitors are using an ad blocker.
   Author: Thomas Maier
@@ -33,7 +33,7 @@ if (!function_exists('add_action')) {
     exit();
 }
 
-define('ABCOUNTERVERSION', '1.1.2');
+define('ABCOUNTERVERSION', '1.2');
 define('ABCOUNTERNAME', 'adblock-counter');
 define('ABCOUNTERTD', 'adblock-counter');
 define('ABCOUNTERDIR', basename(dirname(__FILE__)));
