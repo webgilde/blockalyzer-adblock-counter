@@ -72,13 +72,13 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * contains compare data
          * @since 1.2
          */
-        public $_compareData = array();
+        public $_compare_data = array();
         
         /**
          * flag if compare is allowed
          * @since 1.2
          */
-        public $_compareAllowed = false;
+        public $_compare_allowed = false;
         
         /**
          * page hooks
@@ -313,7 +313,6 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             if (!current_user_can('manage_options')) {
                 wp_die(__('You do not have sufficient permissions to access this page.'));
             }
-            
             if (!empty($_POST['abcounter'])) {
                 // reset statistics
                 if ($_POST['abcounter'] == 'reset') {
@@ -323,13 +322,16 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                 if ($_POST['abcounter'] == 'compare') {
                     if ( $this->compare_allowed() ) {
                         require_once 'classes/tracking.php';
-                        $this->compareData = ABC_Tracking::compare();
-                        $this->_compare_allowed = true;
-                    } else {
-                        $this->_compare_allowed = false;
+                        $this->_compare_data = ABC_Tracking::compare();
                     }
                 }
-            }   
+            }
+            
+            if ( $this->compare_allowed() ) {
+                $this->_compare_allowed = true;
+            } else {
+                $this->_compare_allowed = false;
+            }
 
             require_once 'templates/statistics.php';
         }
@@ -700,11 +702,12 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             // timestamp from one day ago
             $min_time = strtotime('-1 day', time());
             // check if measuring time is at least 24 hours
-            if ( $min_time < intval ( get_option('abc_last_reset', 0))) return false;
+            if ( $min_time < intval ( get_option('abc_last_reset', 0)) ) return false;
             if ( 20 >   intval ( get_option('abc_page_views', 0))) return false;
             if ( 1  >   intval ( get_option('abc_page_views', 0))) return false;
             if ( 20 >   intval ( get_option('abc_page_views', 0))) return false;
             if ( 1  >   intval ( get_option('abc_page_views', 0))) return false;
+            return true;
         }
         
     }

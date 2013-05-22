@@ -12,7 +12,7 @@
             <th><?php _e('total', ABCOUNTERTD); ?></th>
             <th><?php _e('with AdBlock', ABCOUNTERTD); ?></th>
             <th><?php _e('share of AdBlock users', ABCOUNTERTD); ?></th>
-            <?php if ( !empty( $this->compareData->totalViews ) ) : ?><th><?php _e('BlockAlyzer reference values', ABCOUNTERTD); ?></th><?php endif; ?>
+            <?php if ( !empty( $this->_compare_data->totalViews ) ) : ?><th><?php _e('BlockAlyzer reference values', ABCOUNTERTD); ?></th><?php endif; ?>
         </tr>
         <tr>
             <th><?php _e('page views', ABCOUNTERTD); ?></th>
@@ -22,7 +22,7 @@
             if ( $abc_page_views > 0 ) 
                 echo round( $abc_page_views_blocked / $abc_page_views * 100); 
             else echo 0; ?>%</td>
-            <?php if ( !empty( $this->compareData->totalViews ) ) : ?><td><?php echo $this->compareData->totalViews . '%'; ?></td><?php endif; ?>
+            <?php if ( !empty( $this->_compare_data->totalViews ) ) : ?><td><?php echo round( $this->_compare_data->totalViews ) . '%'; ?></td><?php endif; ?>
         </tr>
         <tr>
             <th><?php _e('unique visitors', ABCOUNTERTD); ?></th>
@@ -32,7 +32,7 @@
             if ( $abc_unique_visitors > 0 ) 
                 echo round( $abc_unique_visitors_blocked / $abc_unique_visitors * 100); 
             else echo 0; ?>%</td>
-            <?php if ( !empty( $this->compareData->totalUsers ) ) : ?><td><?php echo $this->compareData->totalUsers . '%'; ?></td><?php endif; ?>
+            <?php if ( !empty( $this->_compare_data->totalUsers ) ) : ?><td><?php echo round( $this->_compare_data->totalUsers ) . '%'; ?></td><?php endif; ?>
         </tr>
     </tbody>
 </table>
@@ -44,12 +44,12 @@
     <p class="description"><?php _e('Resets statistics. No way to turn back.', ABCOUNTERTD); ?></p>
 </div>
 <div class="abc-form-block">
-    <?php if ( $this->_compareAllowed ) :
+    <?php if ( $this->_compare_allowed ) :
         ?><p class="success"><?php _e( 'Compare your data with others now.', ABCOUNTERTD); ?></p><?php else :
         ?><p class="warning"><?php _e( 'You can currently not compare your data with others. See HELP panel above for more information.', ABCOUNTERTD); ?></p><?php endif; ?>    
     <form action="" method="post">
         <input type="hidden" name="abcounter" value="compare"/>
-        <input type="submit" value="<?php _e('compare statistics', ABCOUNTERDIR ); ?>"<?php if ( !$this->_compareAllowed ) echo ' disabled="disabled"'; ?>/>
+        <input type="submit" value="<?php _e('compare statistics', ABCOUNTERDIR ); ?>"<?php if ( !$this->_compare_allowed ) echo ' disabled="disabled"'; ?>/>
     </form>
     <p class="description"><?php _e('Compare your statistics with the statistics of other pages. Will also send your data to our server.', ABCOUNTERTD); ?><br/>
     <?php _e('See the HELP panel above for information on which data we are sending.', ABCOUNTERTD); ?></p>
