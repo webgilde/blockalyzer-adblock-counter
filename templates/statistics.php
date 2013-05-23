@@ -8,9 +8,8 @@
             date_i18n( _x('d.m.Y, g:i a', 'time format of the last stat reset', ABCOUNTERTD), 
                     get_option('abc_last_sent', 0))); 
     ?></p><?php 
-    endif; ?>
-
-<table id="adblock-counter-statistic">
+    endif; 
+?><table id="adblock-counter-statistic">
     <thead></thead>
     <tbody>
         <tr>

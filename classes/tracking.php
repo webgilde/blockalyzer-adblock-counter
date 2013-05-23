@@ -32,7 +32,7 @@ if (!class_exists('ABC_Tracking')) {
                     'url' => site_url(),
                     'topic' => '',
                     'name' => '', //get_bloginfo('name'),
-                    'lang' => WPLANG,
+                    'lang' => get_locale(),
                     'country' => '',
                 ),
                 'stats' => array(
