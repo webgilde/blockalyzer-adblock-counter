@@ -52,7 +52,6 @@ if (!class_exists('ABC_Tracking')) {
             if (200 == $result['response']['code']) {
 
                 $return = json_decode($result['body']);
-              //  print_r($return->errors );
                 
                 if ( !empty( $return->errors ) && is_array( $return->errors)) {
                     self::render_errors( $return->errors );
