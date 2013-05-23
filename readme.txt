@@ -3,7 +3,7 @@ Contributors: webzunft
 Tags: ads, ad, adblock, ad blocker, ad block, adblock count, adblock counter
 Requires at least: 3.4
 Tested up to: 3.5.1
-Stable tag: 1.2
+Stable tag: 1.2.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -42,6 +42,12 @@ e.g.
 == Screenshots ==
 
 == Changelog ==
+
+= 1.2.1 =
+
+* solved some errors with sending data
+* allow one compare request each 3 hours
+* cache last compare values locally
 
 = 1.2 =
 
