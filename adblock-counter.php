@@ -309,6 +309,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 
         /**
          * render the stats page
+         * @updated 1.2.1
          */
         public function render_stats_page() {
             if (!current_user_can('manage_options')) {
@@ -324,8 +325,12 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                     if ( $this->compare_allowed() ) {
                         require_once 'classes/tracking.php';
                         $this->_compare_data = ABC_Tracking::compare();
+                        $this->save_compare_data( $this->_compare_data );
                     }
                 }
+            }
+            if ( empty( $this->_compare_data ) && get_option('abc_last_stats') ) {
+                $this->_compare_data = get_option('abc_last_stats');
             }
             
             if ( $this->compare_allowed() ) {
@@ -708,6 +713,18 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             if ( 20 >   intval ( get_option('abc_page_views', 0))) return false;
             if ( 1  >   intval ( get_option('abc_page_views', 0))) return false;
             return true;
+        }
+        
+        /**
+         * save the compare data
+         * @since 1.2.1
+         */
+        public function save_compare_data( $data ) {
+            
+            if ( empty( $data->totalViews )) return;
+            
+            update_option( 'abc_last_stats', $data );
+            
         }
         
     }
