@@ -682,10 +682,6 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             update_option('abc_page_views_blocked', 0);
             update_option('abc_unique_visitors', 0);            
             update_option('abc_unique_visitors_blocked', 0);
-            // update_option('abc_page_views_jsFile', 0);
-            // update_option('abc_unique_visitors_jsFile', 0);
-            // update_option('abc_page_views_bannerFile', 0);
-            // update_option('abc_unique_visitors_bannerFile', 0);
             update_option('abc_last_reset', time() );
 
             $this->_update_nonce();
