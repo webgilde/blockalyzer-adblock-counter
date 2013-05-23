@@ -241,6 +241,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             
             // conditions to send data
             $conditions = array(
+                __('You can send a request every 3 hours', ABCOUNTERTD),
                 __('Your last reset was more than 24 ago', ABCOUNTERTD),
                 __('You have at least 20 visits and page views', ABCOUNTERTD),
                 __('You have at least 1 visit and page view with AdBlock', ABCOUNTERTD),
@@ -308,6 +309,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
 
         /**
          * render the stats page
+         * @updated 1.2.1
          */
         public function render_stats_page() {
             if (!current_user_can('manage_options')) {
@@ -323,8 +325,12 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                     if ( $this->compare_allowed() ) {
                         require_once 'classes/tracking.php';
                         $this->_compare_data = ABC_Tracking::compare();
+                        $this->save_compare_data( $this->_compare_data );
                     }
                 }
+            }
+            if ( empty( $this->_compare_data ) && get_option('abc_last_stats') ) {
+                $this->_compare_data = get_option('abc_last_stats');
             }
             
             if ( $this->compare_allowed() ) {
@@ -681,10 +687,6 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             update_option('abc_page_views_blocked', 0);
             update_option('abc_unique_visitors', 0);            
             update_option('abc_unique_visitors_blocked', 0);
-            // update_option('abc_page_views_jsFile', 0);
-            // update_option('abc_unique_visitors_jsFile', 0);
-            // update_option('abc_page_views_bannerFile', 0);
-            // update_option('abc_unique_visitors_bannerFile', 0);
             update_option('abc_last_reset', time() );
 
             $this->_update_nonce();
@@ -701,13 +703,28 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         public function compare_allowed() {
             // timestamp from one day ago
             $min_time = strtotime('-1 day', time());
+            // timestamp from 12 hours ago
+            $min_send_again_time = strtotime('-3 hours', time());
             // check if measuring time is at least 24 hours
             if ( $min_time < intval ( get_option('abc_last_reset', 0)) ) return false;
+            if ( get_option('abc_last_sent', 0) && $min_send_again_time < intval ( get_option('abc_last_sent', time())) ) return false;
             if ( 20 >   intval ( get_option('abc_page_views', 0))) return false;
             if ( 1  >   intval ( get_option('abc_page_views', 0))) return false;
             if ( 20 >   intval ( get_option('abc_page_views', 0))) return false;
             if ( 1  >   intval ( get_option('abc_page_views', 0))) return false;
             return true;
+        }
+        
+        /**
+         * save the compare data
+         * @since 1.2.1
+         */
+        public function save_compare_data( $data ) {
+            
+            if ( empty( $data->totalViews )) return;
+            
+            update_option( 'abc_last_stats', $data );
+            
         }
         
     }
