@@ -3,6 +3,12 @@
 <?php $status = ( in_array( 'basic', $this->_active_stat_methods )) ? __('active', ABCOUNTERTD) : __('deactivated', ABCOUNTERTD); ?>
 <p><?php printf( __('Current status of this method of measurement: <strong>%s</strong>', ABCOUNTERTD ), $status ); ?></p>
 <p><?php printf( __('Last reset: %s', ABCOUNTERTD), date_i18n( _x('d.m.Y, g:i a', 'time format of the last stat reset', ABCOUNTERTD), get_option('abc_last_reset', 0))); ?></p>
+<?php if ( get_option('abc_last_sent', 0) ) : 
+    ?><p><?php printf( __('Last time compared: %s', ABCOUNTERTD), 
+            date_i18n( _x('d.m.Y, g:i a', 'time format of the last stat reset', ABCOUNTERTD), 
+                    get_option('abc_last_sent', 0))); 
+    ?></p><?php 
+    endif; ?>
 
 <table id="adblock-counter-statistic">
     <thead></thead>
@@ -45,7 +51,8 @@
 </div>
 <div class="abc-form-block">
     <?php if ( $this->_compare_allowed ) :
-        ?><p class="success"><?php _e( 'Compare your data with others now.', ABCOUNTERTD); ?></p><?php else :
+        ?><p class="success"><?php _e( 'Compare your data with others now.', ABCOUNTERTD); ?></p><?php 
+        else :
         ?><p class="warning"><?php _e( 'You can currently not compare your data with others. See HELP panel above for more information.', ABCOUNTERTD); ?></p><?php endif; ?>    
     <form action="" method="post">
         <input type="hidden" name="abcounter" value="compare"/>

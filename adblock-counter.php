@@ -241,6 +241,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             
             // conditions to send data
             $conditions = array(
+                __('You can send a request every 3 hours', ABCOUNTERTD),
                 __('Your last reset was more than 24 ago', ABCOUNTERTD),
                 __('You have at least 20 visits and page views', ABCOUNTERTD),
                 __('You have at least 1 visit and page view with AdBlock', ABCOUNTERTD),
@@ -701,8 +702,11 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         public function compare_allowed() {
             // timestamp from one day ago
             $min_time = strtotime('-1 day', time());
+            // timestamp from 12 hours ago
+            $min_send_again_time = strtotime('-3 hours', time());
             // check if measuring time is at least 24 hours
             if ( $min_time < intval ( get_option('abc_last_reset', 0)) ) return false;
+            if ( get_option('abc_last_sent', 0) && $min_send_again_time < intval ( get_option('abc_last_sent', time())) ) return false;
             if ( 20 >   intval ( get_option('abc_page_views', 0))) return false;
             if ( 1  >   intval ( get_option('abc_page_views', 0))) return false;
             if ( 20 >   intval ( get_option('abc_page_views', 0))) return false;

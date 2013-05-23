@@ -57,6 +57,7 @@ if (!class_exists('ABC_Tracking')) {
                 if ( !empty( $return->errors ) && is_array( $return->errors)) {
                     self::render_errors( $return->errors );
                 } else {
+                    update_option('abc_last_sent', time());
                     return $return;
                 }
                 
