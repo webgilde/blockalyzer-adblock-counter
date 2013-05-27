@@ -101,6 +101,9 @@ if (!class_exists('BA_CLASS')) {
             add_action('init', array($this, 'load_stat_methods'), 1);
 
             if ( is_admin() ) {
+                // run if this was an upgrade
+                $this->upgrade();
+                
                 add_action('admin_menu', array($this, 'add_stats_page'));
                 add_action('admin_menu', array($this, 'add_settings_page'));
                 add_action('admin_init', array($this, 'add_settings_options'));
@@ -357,7 +360,6 @@ if (!class_exists('BA_CLASS')) {
             if (!current_user_can('manage_options')) {
                 wp_die(__('You do not have sufficient permissions to access this page.'));
             }
-            
             ?><div id="icon-options-general" class="icon32"><br></div>
             <h2><?php _e('BlockAlyzer Settings', BATD); ?></h2>
             <div id="ba-admin-wrap">
@@ -512,7 +514,8 @@ if (!class_exists('BA_CLASS')) {
         public function _activation() {
 
             $this->_update_nonce();
-            update_option('ba_last_reset', time() );            
+            update_option('ba_last_reset', time() );
+            update_option('ba_version', BAVERSION );
         }
 
         /**
@@ -725,6 +728,40 @@ if (!class_exists('BA_CLASS')) {
             
             update_option( 'ba_last_stats', $data );
             
+        }
+        
+        /**
+         * upgrade script
+         */
+        public function upgrade() {
+            $version = get_option( 'ba_version', 0 );
+            // prior to version 1.2.2
+            // convert all stats and options to new fields
+            if ( !empty( $version ) ) {
+                update_option( 'ba_last_stats', get_option('abc_last_stats') );
+                delete_option( 'abc_last_stats' );
+                update_option( 'ba_tracking_hash', get_option('abc_tracking_hash') );
+                delete_option( 'abc_tracking_hash' );
+                update_option( 'ba_page_views', get_option('abc_page_views') );
+                delete_option( 'abc_page_views' );
+                update_option( 'ba_unique_visitors', get_option('abc_unique_visitors') );
+                delete_option( 'abc_unique_visitors' );
+                update_option( 'ba_page_views_blocked', get_option('abc_page_views_blocked') );
+                delete_option( 'abc_page_views_blocked' );
+                update_option( 'ba_unique_visitors_blocked', get_option('abc_unique_visitors_blocked') );
+                delete_option( 'abc_unique_visitors_blocked' );
+                update_option( 'ba_last_sent', get_option('abc_last_sent') );
+                delete_option( 'abc_last_sent' );
+                update_option( 'ba_last_stats', get_option('abc_last_stats') );
+                delete_option( 'abc_last_stats' );
+                update_option( 'ba_methods', get_option('abc_methods') );
+                delete_option( 'abc_methods' );
+                
+            }
+            /*if ( !empty( $version ) || $version != BAVERSION ) {
+                    
+            }*/
+            update_option( 'ba_version', BAVERSION );
         }
         
     }
