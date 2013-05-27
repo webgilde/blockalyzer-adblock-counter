@@ -3,7 +3,7 @@ Contributors: webzunft
 Tags: ads, ad, adblock, ad blocker, ad block, adblock count, adblock counter
 Requires at least: 3.4
 Tested up to: 3.5.1
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -43,6 +43,10 @@ e.g.
 
 == Changelog ==
 
+= 1.2.2 =
+
+* fixed inconsistant naming in the plugin; use 'ba_' prefix only
+
 = 1.2.1 =
 
 * solved some errors with sending data
@@ -65,7 +69,7 @@ e.g.
 
 = 1.1.1 =
 
-* added the constant ABC_ADBLOCK_ENABLED to retrieve, if adblock is enabled or not (use for other plugins)
+* added the constant ABC_ADBLOCK_ENABLED to retrieve, if adblock is enabled or not (use for other plugins), since v. 1.2.2 it is BA_ADBLOCK_ENABLED
 
 = 1.1.0 =
 

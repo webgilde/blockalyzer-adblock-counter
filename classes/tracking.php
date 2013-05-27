@@ -1,6 +1,6 @@
 <?php
 
-if (!class_exists('ABCOUNTER_CLASS')) {
+if (!class_exists('BA_CLASS')) {
     header('HTTP/1.0 403 Forbidden');
     die;
 }
@@ -10,20 +10,20 @@ if (!class_exists('ABCOUNTER_CLASS')) {
  * @since 1.2
 
  */
-if (!class_exists('ABC_Tracking')) {
+if (!class_exists('BA_Tracking')) {
 
-    class ABC_Tracking {
+    class BA_Tracking {
 
         /**
          * send blog adblock data and compare with data from others
          */
         static function compare() {
 
-            $hash = get_option('abc_tracking_hash');
+            $hash = get_option('ba_tracking_hash');
 
             if (empty($hash)) {
                 $hash = md5( site_url() );
-                update_option('abc_tracking_hash', $hash);
+                update_option('ba_tracking_hash', $hash);
             }
 
             $data = array(
@@ -36,11 +36,11 @@ if (!class_exists('ABC_Tracking')) {
                     'country' => '',
                 ),
                 'stats' => array(
-                    'last_reset' => get_option('abc_last_reset', 0),
-                    'total_views' => get_option('abc_page_views', 0),
-                    'unique_users' => get_option('abc_unique_visitors', 0),
-                    'views_blocked' => get_option('abc_page_views_blocked', 0),
-                    'users_blocked' => get_option('abc_unique_visitors_blocked', 0)
+                    'last_reset' => get_option('ba_last_reset', 0),
+                    'total_views' => get_option('ba_page_views', 0),
+                    'unique_users' => get_option('ba_unique_visitors', 0),
+                    'views_blocked' => get_option('ba_page_views_blocked', 0),
+                    'users_blocked' => get_option('ba_unique_visitors_blocked', 0)
                 )
             );
 
@@ -56,7 +56,7 @@ if (!class_exists('ABC_Tracking')) {
                 if ( !empty( $return->errors ) && is_array( $return->errors)) {
                     self::render_errors( $return->errors );
                 } else {
-                    update_option('abc_last_sent', time());
+                    update_option('ba_last_sent', time());
                     return $return;
                 }
                 

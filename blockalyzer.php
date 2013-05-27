@@ -1,15 +1,15 @@
 <?php
 /*
-  Plugin Name: Adblock Counter
-  Version: 1.2.1
-  Plugin URI: http://webgilde.com/
-  Description: Count how many of your visitors are using an ad blocker.
+  Plugin Name: BlockAlyzer - Adblock counter
+  Version: 1.2.2
+  Plugin URI: http://webgilde.com/en/blockalyzer/
+  Description: Count how many of your visitors are using an adblock plugin.
   Author: Thomas Maier
   Author URI: http://www.webgilde.com/
   License: GPL v3
 
   adblock-counter Plugin for WordPress
-  Copyright (C) 2013, Thomas Maier (thomas.maier@webgilde.com)
+  Copyright (C) 2013, webgilde GmbH, Thomas Maier (thomas.maier@webgilde.com)
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -33,15 +33,15 @@ if (!function_exists('add_action')) {
     exit();
 }
 
-define('ABCOUNTERVERSION', '1.2.1');
-define('ABCOUNTERNAME', 'adblock-counter');
-define('ABCOUNTERTD', 'adblock-counter');
-define('ABCOUNTERDIR', basename(dirname(__FILE__)));
-define('ABCOUNTERPATH', plugin_dir_path(__FILE__));
+define('BAVERSION', '1.2.2');
+define('BANAME', 'blockalyzer-adblock-counter');
+define('BATD', 'blockalyzer');
+define('BADIR', basename(dirname(__FILE__)));
+define('BAPATH', plugin_dir_path(__FILE__));
 
-if (!class_exists('ABCOUNTER_CLASS')) {
+if (!class_exists('BA_CLASS')) {
 
-    class ABCOUNTER_CLASS {
+    class BA_CLASS {
 
         /**
          * user id
@@ -138,17 +138,17 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          */
         public function load_adblock_constant() {
 
-            if (!defined('ABC_ADBLOCK_ENABLED')) {
+            if (!defined('BA_ADBLOCK_ENABLED')) {
 
-                if (isset($_COOKIE['AbcAdBlock'])) {
-                    if ($_COOKIE['AbcAdBlock'] === 'disabled')
-                        define('ABC_ADBLOCK_ENABLED', false);
-                    elseif ($_COOKIE['AbcAdBlock'] === 'enabled')
-                        define('ABC_ADBLOCK_ENABLED', true);
+                if (isset($_COOKIE['BaAdBlock'])) {
+                    if ($_COOKIE['BaAdBlock'] === 'disabled')
+                        define('BA_ADBLOCK_ENABLED', false);
+                    elseif ($_COOKIE['BaAdBlock'] === 'enabled')
+                        define('BA_ADBLOCK_ENABLED', true);
                     else
-                        define('ABC_ADBLOCK_ENABLED', 0);
+                        define('BA_ADBLOCK_ENABLED', 0);
                 } else {
-                    define('ABC_ADBLOCK_ENABLED', 0);
+                    define('BA_ADBLOCK_ENABLED', 0);
                 }
             }
         }
@@ -160,9 +160,9 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             // initialize basic method
             $stat_methods = array(
                 'basic' => array(
-                    'name' => __('Basic method', ABCOUNTERTD),
+                    'name' => __('Basic method', BATD),
                     'active' => 0,
-                    'description' => sprintf(__('You can see your statistics in <em><a href="%s" title="Go to statistics page">Tools > AdBlock Stats</a></em>', ABCOUNTERTD), admin_url('tools.php?page=adblock-counter')),
+                    'description' => sprintf(__('You can see your statistics in <em><a href="%s" title="Go to statistics page">Tools > AdBlock Stats</a></em>', BATD), admin_url('tools.php?page=adblock-counter')),
                 )
             );
             // hook to register new stat methods
@@ -201,7 +201,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * add statistics page for the default adblock counter
          */
         public function add_stats_page() {
-            $this->_hooks['stats'] = add_management_page(__('BlockAlyzer Statistics', ABCOUNTERTD), __('AdBlock Stats', ABCOUNTERTD), 'manage_options', 'adblock-counter', array($this, 'render_stats_page'));
+            $this->_hooks['stats'] = add_management_page(__('BlockAlyzer Statistics', BATD), __('AdBlock Stats', BATD), 'manage_options', 'adblock-counter', array($this, 'render_stats_page'));
             add_action('load-'. $this->_hooks['stats'], array( $this, 'contextual_help'));
         }
 
@@ -210,7 +210,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * @since 1.1.2
          */
         public function add_settings_page() {
-            add_options_page(__('BlockAlyzer Settings', ABCOUNTERTD), __('BlockAlyzer', ABCOUNTERTD), 'manage_options', 'ba-settings-page', array($this, 'render_settings_page'));
+            add_options_page(__('BlockAlyzer Settings', BATD), __('BlockAlyzer', BATD), 'manage_options', 'ba-settings-page', array($this, 'render_settings_page'));
         }
 
         /**
@@ -218,7 +218,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * @since 1.1.2
          */
         public function add_settings_options() {
-            add_settings_section('ba-settings-section', __('Stats Method', ABCOUNTERTD), array($this, 'render_settings_section'), 'ba-settings-page');
+            add_settings_section('ba-settings-section', __('Stats Method', BATD), array($this, 'render_settings_section'), 'ba-settings-page');
             
             if ( !empty( $this->_stat_methods ) && is_array( $this->_stat_methods )) foreach( $this->_stat_methods as $_method_key => $_method ) {
             
@@ -241,35 +241,35 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             
             // conditions to send data
             $conditions = array(
-                __('You can send a request every 3 hours', ABCOUNTERTD),
-                __('Your last reset was more than 24 ago', ABCOUNTERTD),
-                __('You have at least 20 visits and page views', ABCOUNTERTD),
-                __('You have at least 1 visit and page view with AdBlock', ABCOUNTERTD),
+                __('You can send a request every 3 hours', BATD),
+                __('Your last reset was more than 24 ago', BATD),
+                __('You have at least 20 visits and page views', BATD),
+                __('You have at least 1 visit and page view with AdBlock', BATD),
             );
             
             $screen->add_help_tab( array(
                 'id'	=> 'ba_conditions',
-                'title'	=> __('Conditions', ABCOUNTERTD),
-                'content'	=> '<h3>' . __( 'Conditions under which your data will be accepted and compared with others.', ABCOUNTERTD ) . '</h3><ul><li>' .
+                'title'	=> __('Conditions', BATD),
+                'content'	=> '<h3>' . __( 'Conditions under which your data will be accepted and compared with others.', BATD ) . '</h3><ul><li>' .
                     implode('</li><li>', $conditions ) . '</li></ul>',
             ) );
             
             // array with data we are sending to server; for localization
             $data_send = array(
-                __('Hash - to check source', ABCOUNTERTD),
-                __('Domain - to prevent duplicate data', ABCOUNTERTD),
-                __('Language - for later statistical use and comparision', ABCOUNTERTD),
-                __('Last reset - when have your data been reset (to prevent duplicate content', ABCOUNTERTD),
-                __('Number of Views', ABCOUNTERTD),
-                __('Number of View with AdBlock', ABCOUNTERTD),
-                __('Number of Unique Visitors', ABCOUNTERTD),
-                __('Number of Unique Visitors with AdBlock', ABCOUNTERTD),
+                __('Hash - to check source', BATD),
+                __('Domain - to prevent duplicate data', BATD),
+                __('Language - for later statistical use and comparision', BATD),
+                __('Last reset - when have your data been reset (to prevent duplicate content', BATD),
+                __('Number of Views', BATD),
+                __('Number of View with AdBlock', BATD),
+                __('Number of Unique Visitors', BATD),
+                __('Number of Unique Visitors with AdBlock', BATD),
             );
             
             $screen->add_help_tab( array(
                 'id'	=> 'ba_data',
-                'title'	=> __('Data we send', ABCOUNTERTD),
-                'content'	=> '<h3>' . __( 'List of the data we compare and send to our server.', ABCOUNTERTD ) . '</h3><ul><li>' .
+                'title'	=> __('Data we send', BATD),
+                'content'	=> '<h3>' . __( 'List of the data we compare and send to our server.', BATD ) . '</h3><ul><li>' .
                     implode('</li><li>', $data_send ) . '</li></ul>',
             ) );
             
@@ -315,22 +315,22 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             if (!current_user_can('manage_options')) {
                 wp_die(__('You do not have sufficient permissions to access this page.'));
             }
-            if (!empty($_POST['abcounter'])) {
+            if (!empty($_POST['bacounter'])) {
                 // reset statistics
-                if ($_POST['abcounter'] == 'reset') {
+                if ($_POST['bacounter'] == 'reset') {
                     $this->stat_method_standard_count_reset_statistics();
                 }
                 // load compare data
-                if ($_POST['abcounter'] == 'compare') {
+                if ($_POST['bacounter'] == 'compare') {
                     if ( $this->compare_allowed() ) {
                         require_once 'classes/tracking.php';
-                        $this->_compare_data = ABC_Tracking::compare();
+                        $this->_compare_data = BA_Tracking::compare();
                         $this->save_compare_data( $this->_compare_data );
                     }
                 }
             }
-            if ( empty( $this->_compare_data ) && get_option('abc_last_stats') ) {
-                $this->_compare_data = get_option('abc_last_stats');
+            if ( empty( $this->_compare_data ) && get_option('ba_last_stats') ) {
+                $this->_compare_data = get_option('ba_last_stats');
             }
             
             if ( $this->compare_allowed() ) {
@@ -346,7 +346,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * render settings section
          */
         public function render_settings_section() {
-            ?><p><?php _e('You can choose one or more of the methods below to display the AdBlock statistics. If you disable all methods, measuring will be disabled.', ABCOUNTERTD); ?></p><?php
+            ?><p><?php _e('You can choose one or more of the methods below to display the AdBlock statistics. If you disable all methods, measuring will be disabled.', BATD); ?></p><?php
         }
 
         /**
@@ -359,7 +359,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             }
             
             ?><div id="icon-options-general" class="icon32"><br></div>
-            <h2><?php _e('BlockAlyzer Settings', ABCOUNTERTD); ?></h2>
+            <h2><?php _e('BlockAlyzer Settings', BATD); ?></h2>
             <div id="ba-admin-wrap">
 
                 <form method="post" action="options.php">
@@ -370,7 +370,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                         ?>
                     </div>
                     <p class="submit">
-                        <input type="submit" name="submit" id="submit" class="button button-primary" value="<?php _e('Save Changes', ABCOUNTERTD); ?>">
+                        <input type="submit" name="submit" id="submit" class="button button-primary" value="<?php _e('Save Changes', BATD); ?>">
                     </p>
                 </form>
             </div><?php
@@ -383,18 +383,18 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             
             if ( !$this->_is_measuring ) return;
             // enqueue empty advertisement.js
-            wp_register_script('adblock-counter-testjs', plugins_url('js/advertisement.js', __FILE__), array('jquery'), ABCOUNTERVERSION);
+            wp_register_script('adblock-counter-testjs', plugins_url('js/advertisement.js', __FILE__), array('jquery'), BAVERSION);
             wp_enqueue_script('adblock-counter-testjs');
             // add the ajax url for the frontend
-            wp_localize_script('jquery', 'AbcAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
+            wp_localize_script('jquery', 'BaAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
         }
 
         /**
          * add scripts to admin panel
          */
         public function enqueue_admin_scripts() {
-            wp_register_style('abc_admin_css', plugins_url('/css/admin-style.css', __FILE__), false, ABCOUNTERVERSION);
-            wp_enqueue_style('abc_admin_css');
+            wp_register_style('ba_admin_css', plugins_url('/css/admin-style.css', __FILE__), false, BAVERSION);
+            wp_enqueue_style('ba_admin_css');
         }
 
         /**
@@ -404,8 +404,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         public function create_user_id() {
             if ( !$this->_is_measuring ) return;
             
-            if (isset($_COOKIE['AbcUniqueVisitorId'])) {
-                $this->_user_id = $_COOKIE['AbcUniqueVisitorId'];
+            if (isset($_COOKIE['BaUniqueVisitorId'])) {
+                $this->_user_id = $_COOKIE['BaUniqueVisitorId'];
             } else {
                 $this->_user_id = wp_create_nonce($_SERVER['REMOTE_ADDR']);
                 $this->_is_new_user = true;
@@ -427,15 +427,15 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          */
         public function include_bannergif() {
             if ( !$this->_is_measuring ) return;
-            ?><img id = "abc_banner" src = "<?php echo plugins_url('/img/ads/banner.gif', __FILE__); ?>" alt = "banner" width = "1" height = "1" /><?php
+            ?><img id = "ba_banner" src = "<?php echo plugins_url('/img/ads/banner.gif', __FILE__); ?>" alt = "banner" width = "1" height = "1" /><?php
         }
 
         /**
          * deprecated
          */
         public function user_nonce() {
-            if (isset($_COOKIE['AbcUniqueVisitorId'])) {
-                return $_COOKIE['AbcUniqueVisitorId'];
+            if (isset($_COOKIE['BaUniqueVisitorId'])) {
+                return $_COOKIE['BaUniqueVisitorId'];
             } else {
                 return wp_create_nonce();
             }
@@ -446,7 +446,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          */
         public function save_nonce() {
                         ?> 
-            AbcSetCookie('AbcUniqueVisitorId', '<?php echo $this->_user_id; ?>', 30);     
+            BaSetCookie('BaUniqueVisitorId', '<?php echo $this->_user_id; ?>', 30);     
 
             <?php
         }
@@ -458,8 +458,8 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         public function head_js() {
             if ( !$this->_is_measuring ) return;
             ?><script type="text/javascript">//<![CDATA[
-            function AbcGetCookie(c_name) { var i,x,y,ARRcookies=document.cookie.split(";"); for (i=0;i<ARRcookies.length;i++) { x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("=")); y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1); x=x.replace(/^\s+|\s+$/g,""); if (x==c_name) { return unescape(y); } } }
-            function AbcSetCookie( name, value, exdays, path, domain, secure) { var exdate=new Date(); exdate.setDate(exdate.getDate() + exdays); document.cookie = name + "=" + escape(value) + ((exdate == null) ? "" : "; expires=" + exdate.toUTCString()) + ((path == null) ? "; path=/" : "; path=" + path) + ((domain == null) ? "" : "; domain=" + domain) +((secure == null) ? "" : "; secure");}
+            function BaGetCookie(c_name) { var i,x,y,ARRcookies=document.cookie.split(";"); for (i=0;i<ARRcookies.length;i++) { x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("=")); y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1); x=x.replace(/^\s+|\s+$/g,""); if (x==c_name) { return unescape(y); } } }
+            function BaSetCookie( name, value, exdays, path, domain, secure) { var exdate=new Date(); exdate.setDate(exdate.getDate() + exdays); document.cookie = name + "=" + escape(value) + ((exdate == null) ? "" : "; expires=" + exdate.toUTCString()) + ((path == null) ? "; path=/" : "; path=" + path) + ((domain == null) ? "" : "; domain=" + domain) +((secure == null) ? "" : "; secure");}
             //]]></script><?php
         }
 
@@ -473,32 +473,32 @@ if (!class_exists('ABCOUNTER_CLASS')) {
                 jQuery(document).ready(function($) {
                     setTimeout(function(){ // timeout to run after loading the advertisement.js
                         // count for missing js file
-                        var nonce = '<?php echo get_option('abc_nonce'); ?>';
+                        var nonce = '<?php echo get_option('ba_nonce'); ?>';
                         // set unique user id
-                        if ( !AbcGetCookie('AbcUniqueVisitorId') ) {
+                        if ( !BaGetCookie('BaUniqueVisitorId') ) {
                             var data = {
                                 action: 'get_user_id'
                             };
-                            $.post(AbcAjax.ajaxurl, data, function(response) {
-                                AbcSetCookie('AbcUniqueVisitorId', response, 30);
+                            $.post(BaAjax.ajaxurl, data, function(response) {
+                                BaSetCookie('BaUniqueVisitorId', response, 30);
                             });
                         }
 
-                        var abc_blocked=false;
+                        var ba_blocked=false;
                         if ($.adblockJsFile === undefined){
-                            abc_blocked=true;
+                            ba_blocked=true;
                         }
 
-                        var banner = document.getElementById("abc_banner");                        
+                        var banner = document.getElementById("ba_banner");                        
 
                         if (banner == null || banner.offsetHeight == 0){
-                            abc_blocked=true;
+                            ba_blocked=true;
                         }
 
-                        if(abc_blocked==true){	
-                            AbcSetCookie('AbcAdBlock', 'enabled', 30);
+                        if(ba_blocked==true){	
+                            BaSetCookie('BaAdBlock', 'enabled', 30);
                         }else{
-                            AbcSetCookie('AbcAdBlock', 'disabled', 30);
+                            BaSetCookie('BaAdBlock', 'disabled', 30);
                         }
                         <?php do_action('ba_js_footer'); ?>
                     },100);
@@ -512,7 +512,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         public function _activation() {
 
             $this->_update_nonce();
-            update_option('abc_last_reset', time() );            
+            update_option('ba_last_reset', time() );            
         }
 
         /**
@@ -522,7 +522,7 @@ if (!class_exists('ABCOUNTER_CLASS')) {
         public function _update_nonce() {
 
             $nonce = wp_create_nonce(time());
-            update_option('abc_nonce', $nonce);
+            update_option('ba_nonce', $nonce);
             return $nonce;
         }
         
@@ -536,27 +536,27 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             if ( !in_array( 'basic', $this->_active_stat_methods ) ) return;
                 ?>var data = {
                     action: 'standard_count',
-                    blocked: abc_blocked
+                    blocked: ba_blocked
                 };
-                data.abc_count_jsFile = false;
+                data.ba_count_jsFile = false;
                 if ($.adblockJsFile === undefined){
-                    data.abc_count_jsFile = true;
+                    data.ba_count_jsFile = true;
                 }
                 
-                data.abc_count_banner = false;    
+                data.ba_count_banner = false;    
                 if (banner == null || banner.offsetHeight == 0){
-                    data.abc_count_banner = true;
+                    data.ba_count_banner = true;
                 }
 
-                $.post(AbcAjax.ajaxurl, data, function(response) {
+                $.post(BaAjax.ajaxurl, data, function(response) {
                     <?php /* if ( !AbcGetCookie('AbcUniqueVisitorJsFile') || AbcGetCookie('AbcUniqueVisitorJsFile') != nonce  ) {
                         AbcSetCookie('AbcUniqueVisitorJsFile', nonce, 30);
                     }     
                     if ( !AbcGetCookie('AbcUniqueVisitorBanner') || AbcGetCookie('AbcUniqueVisitorBanner') != nonce  ) {
                         AbcSetCookie('AbcUniqueVisitorBanner', nonce, 30);     
                     }     */ ?>
-                    if ( !AbcGetCookie('AbcUniqueVisitor') || AbcGetCookie('AbcUniqueVisitor') != nonce ) {
-                        AbcSetCookie('AbcUniqueVisitor', nonce, 30);    
+                    if ( !BaGetCookie('BaUniqueVisitor') || BaGetCookie('BaUniqueVisitor') != nonce ) {
+                        BaSetCookie('BaUniqueVisitor', nonce, 30);    
                     }
             });<?php
         }
@@ -590,9 +590,9 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          */
         public function stat_method_standard_count_page_views() {
 
-            $page_views = get_option('abc_page_views', 0);
+            $page_views = get_option('ba_page_views', 0);
             $page_views++;
-            update_option('abc_page_views', $page_views);
+            update_option('ba_page_views', $page_views);
 
             //wp_die();
         }
@@ -602,9 +602,9 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          */
         public function stat_method_standard_count_blocked_page_views() {
 
-            $page_views = get_option('abc_page_views_blocked', 0);
+            $page_views = get_option('ba_page_views_blocked', 0);
             $page_views++;
-            update_option('abc_page_views_blocked', $page_views);
+            update_option('ba_page_views_blocked', $page_views);
 
             //wp_die();
         }
@@ -616,12 +616,12 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          */
         public function stat_method_standard_count_unique_visitors() {
 
-            if (!empty($_COOKIE['AbcUniqueVisitor']) && $_COOKIE['AbcUniqueVisitor'] == get_option('abc_nonce'))
+            if (!empty($_COOKIE['BaUniqueVisitor']) && $_COOKIE['BaUniqueVisitor'] == get_option('ba_nonce'))
                 return;
 
-            $uniques = get_option('abc_unique_visitors', 0);
+            $uniques = get_option('ba_unique_visitors', 0);
             $uniques++;
-            update_option('abc_unique_visitors', $uniques);
+            update_option('ba_unique_visitors', $uniques);
         }
 
         /**
@@ -630,12 +630,12 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          */
         public function stat_method_standard_count_blocked_unique_visitors() {
 
-            if (!empty($_COOKIE['AbcUniqueVisitor']) && $_COOKIE['AbcUniqueVisitor'] == get_option('abc_nonce'))
+            if (!empty($_COOKIE['BaUniqueVisitor']) && $_COOKIE['BaUniqueVisitor'] == get_option('ba_nonce'))
                 return;
 
-            $uniques = get_option('abc_unique_visitors_blocked', 0);
+            $uniques = get_option('ba_unique_visitors_blocked', 0);
             $uniques++;
-            update_option('abc_unique_visitors_blocked', $uniques);
+            update_option('ba_unique_visitors_blocked', $uniques);
         }
 
         /**
@@ -645,16 +645,16 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          */
         public function stat_method_standard_count_jsFile() {
 
-            $count = get_option('abc_page_views_jsFile', 0);
+            $count = get_option('ba_page_views_jsFile', 0);
             $count++;
-            update_option('abc_page_views_jsFile', $count);
+            update_option('ba_page_views_jsFile', $count);
 
             // only count, if wasn't count before or nonce was reset
-            if (empty($_COOKIE['AbcUniqueVisitorJsFile']) || $_COOKIE['AbcUniqueVisitorJsFile'] != get_option('abc_nonce')) {
+            if (empty($_COOKIE['BaUniqueVisitorJsFile']) || $_COOKIE['BaUniqueVisitorJsFile'] != get_option('ba_nonce')) {
 
-                $uniques = get_option('abc_unique_visitors_jsFile', 0);
+                $uniques = get_option('ba_unique_visitors_jsFile', 0);
                 $uniques++;
-                update_option('abc_unique_visitors_jsFile', $uniques);
+                update_option('ba_unique_visitors_jsFile', $uniques);
             }
         }
 
@@ -664,16 +664,16 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          * deprecated since 1.2
          */
         public function stat_method_standard_count_banner() {
-            $count = get_option('abc_page_views_bannerFile', 0);
+            $count = get_option('ba_page_views_bannerFile', 0);
             $count++;
-            update_option('abc_page_views_bannerFile', $count);
+            update_option('ba_page_views_bannerFile', $count);
 
             // only count, if wasn't count before or nonce was reset
-            if (empty($_COOKIE['AbcUniqueVisitorBanner']) || $_COOKIE['AbcUniqueVisitorBanner'] != get_option('abc_nonce')) {
+            if (empty($_COOKIE['BaUniqueVisitorBanner']) || $_COOKIE['BaUniqueVisitorBanner'] != get_option('ba_nonce')) {
 
-                $uniques = get_option('abc_unique_visitors_bannerFile', 0);
+                $uniques = get_option('ba_unique_visitors_bannerFile', 0);
                 $uniques++;
-                update_option('abc_unique_visitors_bannerFile', $uniques);
+                update_option('ba_unique_visitors_bannerFile', $uniques);
             }
         }       
         
@@ -683,11 +683,11 @@ if (!class_exists('ABCOUNTER_CLASS')) {
          */
         public function stat_method_standard_count_reset_statistics() {
 
-            update_option('abc_page_views', 0);
-            update_option('abc_page_views_blocked', 0);
-            update_option('abc_unique_visitors', 0);            
-            update_option('abc_unique_visitors_blocked', 0);
-            update_option('abc_last_reset', time() );
+            update_option('ba_page_views', 0);
+            update_option('ba_page_views_blocked', 0);
+            update_option('ba_unique_visitors', 0);            
+            update_option('ba_unique_visitors_blocked', 0);
+            update_option('ba_last_reset', time() );
 
             $this->_update_nonce();
         }        
@@ -706,12 +706,12 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             // timestamp from 12 hours ago
             $min_send_again_time = strtotime('-3 hours', time());
             // check if measuring time is at least 24 hours
-            if ( $min_time < intval ( get_option('abc_last_reset', 0)) ) return false;
-            if ( get_option('abc_last_sent', 0) && $min_send_again_time < intval ( get_option('abc_last_sent', time())) ) return false;
-            if ( 20 >   intval ( get_option('abc_page_views', 0))) return false;
-            if ( 1  >   intval ( get_option('abc_page_views', 0))) return false;
-            if ( 20 >   intval ( get_option('abc_page_views', 0))) return false;
-            if ( 1  >   intval ( get_option('abc_page_views', 0))) return false;
+            if ( $min_time < intval ( get_option('ba_last_reset', 0)) ) return false;
+            if ( get_option('ba_last_sent', 0) && $min_send_again_time < intval ( get_option('ba_last_sent', time())) ) return false;
+            if ( 20 >   intval ( get_option('ba_page_views', 0))) return false;
+            if ( 1  >   intval ( get_option('ba_page_views', 0))) return false;
+            if ( 20 >   intval ( get_option('ba_page_views', 0))) return false;
+            if ( 1  >   intval ( get_option('ba_page_views', 0))) return false;
             return true;
         }
         
@@ -723,11 +723,11 @@ if (!class_exists('ABCOUNTER_CLASS')) {
             
             if ( empty( $data->totalViews )) return;
             
-            update_option( 'abc_last_stats', $data );
+            update_option( 'ba_last_stats', $data );
             
         }
         
     }
 
-    $adblock_counter = new ABCOUNTER_CLASS();
+    $blockalyzer = new BA_CLASS();
 }
