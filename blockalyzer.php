@@ -285,8 +285,8 @@ if (!class_exists('BA_CLASS')) {
          */
         public function render_settings_method( $method ) {
 
-            ?><input name="ba_methods[<?php echo $method[0]; ?>]" id="ba_methods_<?php echo $method[0]; ?>" type="checkbox" value="1"
-            <?php checked(1, $method[1]['active'] ) ?>/><span class="description"><?php echo $method[1]['description']; ?></span><?php
+            ?><input name="ba_methods[<?php echo $method[0]; ?>]" id="ba_methods_<?php echo $method[0]; ?>" type="checkbox" value="1" <?php 
+            checked(1, $method[1]['active'] ) ?>/><span class="description"><?php echo $method[1]['description']; ?></span><?php
         }
         
         /**
@@ -737,7 +737,7 @@ if (!class_exists('BA_CLASS')) {
             $version = get_option( 'ba_version', 0 );
             // prior to version 1.2.2
             // convert all stats and options to new fields
-            if ( !empty( $version ) ) {
+            if ( empty( $version ) ) {
                 update_option( 'ba_last_stats', get_option('abc_last_stats') );
                 delete_option( 'abc_last_stats' );
                 update_option( 'ba_tracking_hash', get_option('abc_tracking_hash') );
