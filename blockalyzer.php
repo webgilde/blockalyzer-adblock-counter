@@ -219,17 +219,24 @@ if (!class_exists('BA_CLASS')) {
         /**
          * render the setting options
          * @since 1.1.2
+         * @update 1.2.3
          */
         public function add_settings_options() {
-            add_settings_section('ba-settings-section', __('Stats Method', BATD), array($this, 'render_settings_section'), 'ba-settings-page');
-            
+            add_settings_section('ba-settings-stats-section', __('Stats Method', BATD), array($this, 'render_settings_section'), 'ba-settings-page');
+            add_settings_section('ba-settings-benchmark-section', __('Benchmark Settings', BATD), false, 'ba-settings-page');
+
+            // choose stats method
             if ( !empty( $this->_stat_methods ) && is_array( $this->_stat_methods )) foreach( $this->_stat_methods as $_method_key => $_method ) {
+                add_settings_field('ba_methods_' . $_method_key, $_method['name'], array($this, 'render_settings_method'), 'ba-settings-page', 'ba-settings-stats-section', array( $_method_key, $_method ) );
+            }            
+            register_setting('ba-settings-stats-section', 'ba_methods', array($this, 'sanitize_stats_settings_method'));
             
-                add_settings_field('ba_methods_' . $_method_key, $_method['name'], array($this, 'render_settings_method'), 'ba-settings-page', 'ba-settings-section', array( $_method_key, $_method ) );
-            
-            }
-            
-            register_setting('ba-settings-section', 'ba_methods', array($this, 'sanitize_settings_method'));
+            // options for benchmark page
+            $categories = $this->get_site_categories();
+            add_settings_field('ba_benchmark_category', __('Site Category'), array($this, 'render_settings_select'), 'ba-settings-page', 'ba-settings-benchmark-section', array( 'ba_benchmark_category', $categories ) );
+            register_setting('ba-settings-benchmark-section', 'ba_benchmark_category');
+            // add_settings_field('ba_benchmark_language', __('Site Language'), array($this, 'render_settings_select'), 'ba-settings-page', 'ba-settings-benchmark-section', array( 'ba_benchmark_language', array() ) );
+            // register_setting('ba-settings-benchmark-section', 'ba_benchmark_language');
             
         }
         
@@ -290,11 +297,27 @@ if (!class_exists('BA_CLASS')) {
         }
         
         /**
+         * render select field for settings pages
+         * @param array $method with 1. value as index, 2. array with key=>values
+         * @since 1.2.2
+         */
+        public function render_settings_select( $setting ) {
+
+            if ( empty( $setting[1] ) ) return __('Couldn\'t find any value to choose from', BATD );
+            
+            ?><select id="<?php echo $setting[0]; ?>" name="<?php echo $setting[0]; ?>"><?php
+                foreach ( $setting[1] as $_key => $_element ) :
+                    ?><option value="<?php echo $_key; ?>" <?php selected( get_option('ba_benchmark_category'), $_key ); ?>><?php echo $_element; ?></option><?php
+                endforeach;
+            ?></select><?php
+        }
+        
+        /**
          * sanitize the value for the methods
          * especially include current values if not send via checkbox
          * @since 1.1.2
          */
-        public function sanitize_settings_method ( $input ) {
+        public function sanitize_stats_settings_method ( $input ) {
             
             if ( !empty( $this->_stat_methods ) && is_array( $this->_stat_methods )) {
                 
@@ -306,8 +329,7 @@ if (!class_exists('BA_CLASS')) {
                 
             }
             
-            return $input;
-            
+            return $input;   
         }
 
         /**
@@ -367,7 +389,8 @@ if (!class_exists('BA_CLASS')) {
                 <form method="post" action="options.php">
                     <div class="postbox">
                         <?php
-                        settings_fields('ba-settings-section');
+                        settings_fields('ba-settings-stats-section');
+                        settings_fields('ba-settings-benchmark-section');
                         do_settings_sections('ba-settings-page');
                         ?>
                     </div>
@@ -762,6 +785,18 @@ if (!class_exists('BA_CLASS')) {
                     
             }*/
             update_option( 'ba_version', BAVERSION );
+        }
+        
+        /**
+         * return benchmark site categories
+         * @since 1.2.3
+         */
+        public function get_site_categories () {
+            require_once( BAPATH . 'inc/site_categories.php');
+            if ( empty( $site_categories ) ) return;
+            
+            return $site_categories;
+            
         }
         
     }

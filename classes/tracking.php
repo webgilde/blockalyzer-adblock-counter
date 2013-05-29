@@ -90,6 +90,18 @@ if (!class_exists('BA_Tracking')) {
             }
             
         }
+        
+        /**
+         * return benchmark site categories
+         * @since 1.2.3
+         */
+        public function get_site_categories () {
+            require_once( BAPATH . 'inc/site_categories.php');
+            if ( empty( $site_categories ) ) return;
+            
+            return $site_categories;
+            
+        }
 
     }
 
