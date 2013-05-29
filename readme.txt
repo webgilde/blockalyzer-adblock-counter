@@ -43,6 +43,11 @@ e.g.
 
 == Changelog ==
 
+= 1.2.3 =
+
+* get general benchmark for your locale
+* get benchmark for your site category
+
 = 1.2.2 =
 
 * fixed inconsistant naming in the plugin; use 'ba_' prefix only

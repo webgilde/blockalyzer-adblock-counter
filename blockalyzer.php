@@ -291,9 +291,8 @@ if (!class_exists('BA_CLASS')) {
             
             // content for help tab with data we return
             $data_return = array(
-                __('general Benchmark with page views and unique users', BATD),                
-                __('Benchmark for your locale', BATD),
-                __('Benchmark for your category (if provided, by locale)', BATD),                
+                __('general Benchmark with page views and unique users for your localization', BATD),                
+                __('if site category provided: benchmark for your category and localization', BATD),                
             );
             
             $screen->add_help_tab( array(
@@ -767,7 +766,7 @@ if (!class_exists('BA_CLASS')) {
          */
         public function save_compare_data( $data ) {
             
-            if ( empty( $data->totalViews )) return;
+            if ( empty( $data->general->totalViews )) return;
             
             update_option( 'ba_last_stats', $data );
             
@@ -778,6 +777,7 @@ if (!class_exists('BA_CLASS')) {
          */
         public function upgrade() {
             $version = get_option( 'ba_version', 0 );
+            if ( 0 == version_compare( $version, BAVERSION )) return;
             // prior to version 1.2.2
             // convert all stats and options to new fields
             if ( empty( $version ) ) {
@@ -801,9 +801,11 @@ if (!class_exists('BA_CLASS')) {
                 delete_option( 'abc_methods' );
                 
             }
-            /*if ( !empty( $version ) || $version != BAVERSION ) {
-                    
-            }*/
+            if ( !empty( $version ) && -1 == version_compare($version, BAVERSION) ) {
+                $stats = get_option('ba_last_stats', true);
+                $new_stats->general = $stats;
+                update_option('ba_last_stats', $new_stats);
+            }
             update_option( 'ba_version', BAVERSION );
         }
         
