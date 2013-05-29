@@ -34,6 +34,7 @@ if (!class_exists('BA_Tracking')) {
                     'name' => '', //get_bloginfo('name'),
                     'lang' => get_locale(),
                     'country' => '',
+                    'category' => get_option('ba_benchmark_category'),
                 ),
                 'stats' => array(
                     'last_reset' => get_option('ba_last_reset', 0),

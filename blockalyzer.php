@@ -85,6 +85,11 @@ if (!class_exists('BA_CLASS')) {
          * @since 1.2
          */
         public $_hooks = array();
+        
+        /**
+         * site categories
+         */
+        public $_site_categories = array();
 
         /**
          * initialize the plugin
@@ -274,6 +279,7 @@ if (!class_exists('BA_CLASS')) {
                 __('Number of View with AdBlock', BATD),
                 __('Number of Unique Visitors', BATD),
                 __('Number of Unique Visitors with AdBlock', BATD),
+                __('Site category (if specified)', BATD),
             );
             
             $screen->add_help_tab( array(
@@ -307,7 +313,7 @@ if (!class_exists('BA_CLASS')) {
             
             ?><select id="<?php echo $setting[0]; ?>" name="<?php echo $setting[0]; ?>"><?php
                 foreach ( $setting[1] as $_key => $_element ) :
-                    ?><option value="<?php echo $_key; ?>" <?php selected( get_option('ba_benchmark_category'), $_key ); ?>><?php echo $_element; ?></option><?php
+                    ?><option value="<?php echo $_key; ?>" <?php selected( get_option( $setting[0], 0), $_key ); ?>><?php echo $_element; ?></option><?php
                 endforeach;
             ?></select><?php
         }
@@ -792,10 +798,13 @@ if (!class_exists('BA_CLASS')) {
          * @since 1.2.3
          */
         public function get_site_categories () {
-            require_once( BAPATH . 'inc/site_categories.php');
-            if ( empty( $site_categories ) ) return;
             
-            return $site_categories;
+            if ( empty( $this->_site_categories ) ) {
+                require_once( BAPATH . 'inc/site_categories.php');
+                if ( empty( $site_categories ) ) return;
+                $this->_site_categories = $site_categories;
+            }
+            return $this->_site_categories;
             
         }
         
