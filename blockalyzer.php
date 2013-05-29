@@ -801,7 +801,8 @@ if (!class_exists('BA_CLASS')) {
                 delete_option( 'abc_methods' );
                 
             }
-            if ( !empty( $version ) && -1 == version_compare($version, BAVERSION) ) {
+            // run this, if there is a new version
+            if ( !empty( $version ) && -1 == version_compare($version, '1.2.3') ) {
                 $stats = get_option('ba_last_stats', true);
                 if ( !empty( $stats ) ) {
                     $new_stats->general = $stats;
