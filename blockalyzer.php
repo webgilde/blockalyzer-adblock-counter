@@ -291,11 +291,9 @@ if (!class_exists('BA_CLASS')) {
             
             // content for help tab with data we return
             $data_return = array(
-                __('Share of page views', BATD),
-                __('Share of unique users', BATD),
-                __('Benchmark for your category (if provided)', BATD),
-                __('Benchmark for your locale (if provided)', BATD),
-                __('general Benchmark, if no details provided', BATD),
+                __('general Benchmark with page views and unique users', BATD),                
+                __('Benchmark for your locale', BATD),
+                __('Benchmark for your category (if provided, by locale)', BATD),                
             );
             
             $screen->add_help_tab( array(
