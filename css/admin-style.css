@@ -1,27 +1,22 @@
+#ba-admin-wrap h3 { margin: 1em 1em; }
+#ba-admin-wrap .postbox > p { margin: 1em 2em; }
 .ba-form-block {
     clear: both;
     height: 4em;
 }
-
-.ba-form-block form {
-    float: left;
-    width: 14em;
-}
+.form-table { margin: 1em 2em; }
 
 table#adblock-counter-statistic {
     text-align: left;
 }
-
 table#adblock-counter-statistic td,
 table#adblock-counter-statistic th {
     padding: .3em;
     padding-right: 1em;
 }
-
 table#adblock-counter-statistic .headline th{
     font-size: 1.5em;
     padding-top: 1em;
 }
-
 .success { color: green; }
 .warning { color: red; }

@@ -413,6 +413,7 @@ if (!class_exists('BA_CLASS')) {
                         do_settings_sections('ba-settings-page');
                         ?>
                     </div>
+                    
                     <p class="submit">
                         <input type="submit" name="submit" id="submit" class="button button-primary" value="<?php _e('Save Changes', BATD); ?>">
                     </p>
