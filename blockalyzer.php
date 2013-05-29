@@ -273,7 +273,7 @@ if (!class_exists('BA_CLASS')) {
             $data_send = array(
                 __('Hash - to check source', BATD),
                 __('Domain - to prevent duplicate data', BATD),
-                __('Language - for later statistical use and comparision', BATD),
+                __('Language', BATD),
                 __('Last reset - when have your data been reset (to prevent duplicate content', BATD),
                 __('Number of Views', BATD),
                 __('Number of View with AdBlock', BATD),
@@ -284,9 +284,25 @@ if (!class_exists('BA_CLASS')) {
             
             $screen->add_help_tab( array(
                 'id'	=> 'ba_data',
-                'title'	=> __('Data we send', BATD),
-                'content'	=> '<h3>' . __( 'List of the data we compare and send to our server.', BATD ) . '</h3><ul><li>' .
+                'title'	=> __('Data you send', BATD),
+                'content'	=> '<h3>' . __( 'List of the data you send to our server.', BATD ) . '</h3><ul><li>' .
                     implode('</li><li>', $data_send ) . '</li></ul>',
+            ) );
+            
+            // content for help tab with data we return
+            $data_return = array(
+                __('Share of page views', BATD),
+                __('Share of unique users', BATD),
+                __('Benchmark for your category (if provided)', BATD),
+                __('Benchmark for your locale (if provided)', BATD),
+                __('general Benchmark, if no details provided', BATD),
+            );
+            
+            $screen->add_help_tab( array(
+                'id'	=> 'ba_return',
+                'title'	=> __('Data you get', BATD),
+                'content'	=> '<h3>' . __( 'List of the data you get from our server.', BATD ) . '</h3><ul><li>' .
+                    implode('</li><li>', $data_return ) . '</li></ul>',
             ) );
             
         }

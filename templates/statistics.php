@@ -70,6 +70,7 @@
             }
         }
     ?></p>
+    <p><strong><?php _e('Localization', BATD ); ?></strong>: <?php echo get_locale(); ?></p>
 </div>
 
 <?php do_action('ba_stats'); ?>
