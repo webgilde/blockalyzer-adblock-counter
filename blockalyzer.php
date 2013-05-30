@@ -819,8 +819,8 @@ if (!class_exists('BA_CLASS')) {
                 delete_option( 'abc_unique_visitors_blocked' );
                 update_option( 'ba_last_sent', get_option('abc_last_sent') );
                 delete_option( 'abc_last_sent' );
-                update_option( 'ba_last_stats', get_option('abc_last_stats') );
-                delete_option( 'abc_last_stats' );
+                update_option( 'ba_last_reset', get_option('abc_last_reset') );
+                delete_option( 'abc_last_reset' );
                 update_option( 'ba_methods', get_option('abc_methods') );
                 delete_option( 'abc_methods' );
             }
