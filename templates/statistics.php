@@ -8,7 +8,7 @@
             date_i18n( _x('d.m.Y, g:i a', 'time format of the last stat reset', BATD), 
                     get_option('ba_last_sent', 0))); 
     ?></p><?php 
-    endif; 
+    endif;
 ?><table id="adblock-counter-statistic">
     <thead></thead>
     <tbody>
@@ -17,7 +17,8 @@
             <th><?php _e('total', BATD); ?></th>
             <th><?php _e('with AdBlock', BATD); ?></th>
             <th><?php _e('share of AdBlock users', BATD); ?></th>
-            <?php if ( !empty( $this->_compare_data->totalViews ) ) : ?><th><?php _e('BlockAlyzer reference values', BATD); ?></th><?php endif; ?>
+            <?php if ( !empty( $this->_compare_data->general->totalViews ) ) : ?><th><?php _e('general benchmark', BATD); ?></th><?php endif; ?>
+            <?php if ( !empty( $this->_compare_data->category->totalViews ) ) : ?><th><?php _e('category benchmark', BATD); ?></th><?php endif; ?>
         </tr>
         <tr>
             <th><?php _e('page views', BATD); ?></th>
@@ -27,7 +28,8 @@
             if ( $ba_page_views > 0 ) 
                 echo round( $ba_page_views_blocked / $ba_page_views * 100); 
             else echo 0; ?>%</td>
-            <?php if ( !empty( $this->_compare_data->totalViews ) ) : ?><td><?php echo round( $this->_compare_data->totalViews ) . '%'; ?></td><?php endif; ?>
+            <?php if ( !empty( $this->_compare_data->general->totalViews ) ) : ?><td><?php echo round( $this->_compare_data->general->totalViews ) . '%'; ?></td><?php endif; ?>
+            <?php if ( !empty( $this->_compare_data->category->totalViews ) ) : ?><td><?php echo round( $this->_compare_data->category->totalViews ) . '%'; ?></td><?php endif; ?>
         </tr>
         <tr>
             <th><?php _e('unique visitors', BATD); ?></th>
@@ -37,7 +39,8 @@
             if ( $ba_unique_visitors > 0 ) 
                 echo round( $ba_unique_visitors_blocked / $ba_unique_visitors * 100); 
             else echo 0; ?>%</td>
-            <?php if ( !empty( $this->_compare_data->totalUsers ) ) : ?><td><?php echo round( $this->_compare_data->totalUsers ) . '%'; ?></td><?php endif; ?>
+            <?php if ( !empty( $this->_compare_data->general->totalUsers ) ) : ?><td><?php echo round( $this->_compare_data->general->totalUsers ) . '%'; ?></td><?php endif; ?>
+            <?php if ( !empty( $this->_compare_data->category->totalUsers ) ) : ?><td><?php echo round( $this->_compare_data->category->totalUsers ) . '%'; ?></td><?php endif; ?>
         </tr>
     </tbody>
 </table>
@@ -59,6 +62,18 @@
     </form>
     <p class="description"><?php _e('Compare your statistics with the statistics of other pages. Will also send your data to our server.', BATD); ?><br/>
     <?php _e('See the HELP panel above for information on which data we are sending.', BATD); ?></p>
+    <p><strong><?php _e('Site Category', BATD); ?></strong>: <?php
+        $category = get_option('ba_benchmark_category');
+        if ( empty( $category ) ) printf(__('You did not specify a site category. You will receive only the general stats. Visit the <a href"%s">settings page</a> to specify a category.', BATD), admin_url('options-general.php?page=ba-settings-page'));
+        else {
+            $site_categories = $this->get_site_categories();
+            // include( BAPATH . 'inc/site_categories.php' );
+            if ( !empty( $site_categories[ $category ]) ) {
+                echo $site_categories[ $category ];
+            }
+        }
+    ?></p>
+    <p><strong><?php _e('Localization', BATD ); ?></strong>: <?php echo get_locale(); ?></p>
 </div>
 
 <?php do_action('ba_stats'); ?>

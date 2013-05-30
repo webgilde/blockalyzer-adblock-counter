@@ -34,6 +34,7 @@ if (!class_exists('BA_Tracking')) {
                     'name' => '', //get_bloginfo('name'),
                     'lang' => get_locale(),
                     'country' => '',
+                    'category' => get_option('ba_benchmark_category'),
                 ),
                 'stats' => array(
                     'last_reset' => get_option('ba_last_reset', 0),
@@ -88,6 +89,18 @@ if (!class_exists('BA_Tracking')) {
                 endforeach;
             ?></ul></div><?php
             }
+            
+        }
+        
+        /**
+         * return benchmark site categories
+         * @since 1.2.3
+         */
+        public function get_site_categories () {
+            require_once( BAPATH . 'inc/site_categories.php');
+            if ( empty( $site_categories ) ) return;
+            
+            return $site_categories;
             
         }
 
