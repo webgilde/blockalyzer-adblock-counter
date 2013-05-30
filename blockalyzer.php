@@ -336,24 +336,24 @@ if (!class_exists('BA_CLASS')) {
         }
         
         /**
-         * sanitize the value for the methods
+         * sanitize the option values
          * especially include current values if not send via checkbox
          * @since 1.1.2
+         * @updated 1.2.3
          */
-        public function sanitize_settings ( $input ) {
+        public function sanitize_settings ( $options ) {
             
-            return $input;
-            if ( !empty( $this->_stat_methods ) && is_array( $this->_stat_methods )) {
+            if ( isset( $options['methods'] ) && !empty( $this->_stat_methods ) && is_array( $this->_stat_methods )) {
                 
                 foreach ( $this->_stat_methods as $_key => $_method ) {
-                    if ( !isset( $input[ $_key ] ) ) {
-                        $input[ $_key ] = 0;
+                    if ( !isset( $options['methods'][ $_key ] ) ) {
+                        $options['methods'][ $_key ] = 0;
                     }
                 }
                 
             }
             
-            return $input;   
+            return $options;   
         }
 
         /**
