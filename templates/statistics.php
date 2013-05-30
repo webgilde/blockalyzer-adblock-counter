@@ -56,7 +56,8 @@
         ?><p class="success"><?php _e( 'Compare your data with others now.', BATD); ?></p><?php 
         else :
         ?><p class="warning"><?php _e( 'You can currently not compare your data with others. See HELP panel above for more information.', BATD); ?></p><?php endif; ?>    
-    <form action="" method="post">
+        <p><?php printf( __('By clicking the button below, you accept its <a href="%s">terms and privacy policy</a>.', BATD ), 'http://webgilde.com/en/blockalyzer-privacy-policy/'); ?></p>
+        <form action="" method="post">
         <input type="hidden" name="bacounter" value="compare"/>
         <input type="submit" value="<?php _e('compare statistics', BADIR ); ?>"<?php if ( !$this->_compare_allowed ) echo ' disabled="disabled"'; ?>/>
     </form>
