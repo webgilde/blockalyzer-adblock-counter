@@ -240,12 +240,17 @@ if (!class_exists('BA_CLASS')) {
             add_settings_section('ba_settings_section', __('Stats Method', BATD), array($this, 'render_settings_section'), 'ba-settings-page');
 
             // choose stats method
-            if ( !empty( $this->_stat_methods ) && is_array( $this->_stat_methods )) foreach( $this->_stat_methods as $_method_key => $_method ) {
-                add_settings_field('ba_methods_' . $_method_key, $_method['name'], array($this, 'render_settings_method'), 'ba-settings-page', 'ba_settings_section', array( $_method_key, $_method ) );
-            }            
+            if ( !empty( $this->_stat_methods ) && is_array( $this->_stat_methods )) { 
+                $count = count( $this->_stat_methods );
+                $i = 1;
+                foreach( $this->_stat_methods as $_method_key => $_method ) {
+                    // check if this is the last field
+                    $last =  ( $count === $i++ ) ? 'last' : '';
+                    add_settings_field('ba_methods_' . $_method_key, $_method['name'], array($this, 'render_settings_method'), 'ba-settings-page', 'ba_settings_section', array( $_method_key, $_method, $last ) );
+                }       
+            }     
             // options for benchmark page
-            $categories = $this->get_site_categories();
-            add_settings_field('ba_benchmark_category', __('Site Category'), array($this, 'render_settings_select'), 'ba-settings-page', 'ba_settings_section', array( 'benchmark_category', $categories ) );
+            add_settings_field('ba_benchmark_category', __('Site Category'), array($this, 'render_settings_benchmark_category'), 'ba-settings-page', 'ba_settings_section' );
             
         }
         
@@ -307,7 +312,7 @@ if (!class_exists('BA_CLASS')) {
             ) );
             
         }
-
+        
         /**
          * callback for option to choose the method of measurement
          * @param array $method with 1. value as index, second array with method information
@@ -317,22 +322,35 @@ if (!class_exists('BA_CLASS')) {
 
             ?><input name="ba_settings[methods][<?php echo $method[0]; ?>]" id="ba_methods_<?php echo $method[0]; ?>" type="checkbox" value="1" <?php 
             checked(1, $method[1]['active'] ) ?>/><span class="description"><?php echo $method[1]['description']; ?></span><?php
+            
+            // if this is the last field, start another block of options
+            if ( !empty($method[2]) && $method[2] == 'last' ) {
+                ?></td></tr></tbody></table>
+                </div><!-- .postbox -->
+                <div class="postbox isc-setting-group">
+                <h3 class="setting-group-head"><?php _e('Benchmark', BATD) ?></h3>
+                <table class="form-table"><tbody><tr><td>
+                <?php
+            }
+            
         }
         
         /**
-         * render select field for settings pages
-         * @param array $method with 1. value as index, 2. array with key=>values
+         * render select field for benchmark category
          * @since 1.2.2
+         * @updated 1.2.3
          */
-        public function render_settings_select( $setting ) {
+        public function render_settings_benchmark_category( ) {
 
-            if ( empty( $setting[1] ) ) return __('Couldn\'t find any value to choose from', BATD );
-            
-            ?><select id="<?php echo $setting[0]; ?>" name="ba_settings[<?php echo $setting[0]; ?>]"><?php
-                foreach ( $setting[1] as $_key => $_element ) :
-                    ?><option value="<?php echo $_key; ?>" <?php selected( $this->_options[$setting[0]], $_key ); ?>><?php echo $_element; ?></option><?php
+            $categories = $this->get_site_categories();
+            if ( empty( $categories ) ) return __('Couldn\'t find any value to choose from', BATD );
+            ?><select id="benchmark_category" name="ba_settings[benchmark_category]"><?php
+                foreach ( $categories as $_key => $_element ) :
+                    ?><option value="<?php echo $_key; ?>" <?php selected( $this->_options['benchmark_category'], $_key ); ?>><?php echo $_element; ?></option><?php
                 endforeach;
-            ?></select><?php
+            ?></select>
+            <p class="description"><?php _e('If you enter your sites category, you will receive additional benchmark data.', BATD ); ?></p>
+            <?php
         }
         
         /**
