@@ -472,7 +472,7 @@ if (!class_exists('BA_CLASS')) {
         public function create_user_id() {
             if ( !$this->_is_measuring ) return;
             
-            if (isset($_COOKIE['BaUniqueVisitorId'])) {
+            if (!empty($_COOKIE['BaUniqueVisitorId'])) {
                 $this->_user_id = $_COOKIE['BaUniqueVisitorId'];
             } else {
                 $this->_user_id = wp_create_nonce($_SERVER['REMOTE_ADDR']);
@@ -485,6 +485,7 @@ if (!class_exists('BA_CLASS')) {
          * @since 1.1
          */
         public function get_user_id() {
+            if ( empty( $this->_user_id ) ) $this->create_user_id();
             echo $this->_user_id;
             wp_die();
         }
@@ -496,27 +497,6 @@ if (!class_exists('BA_CLASS')) {
         public function include_bannergif() {
             if ( !$this->_is_measuring ) return;
             ?><img id = "ba_banner" src = "<?php echo plugins_url('/img/ads/banner.gif', __FILE__); ?>" alt = "banner" width = "1" height = "1" /><?php
-        }
-
-        /**
-         * deprecated
-         */
-        public function user_nonce() {
-            if (isset($_COOKIE['BaUniqueVisitorId'])) {
-                return $_COOKIE['BaUniqueVisitorId'];
-            } else {
-                return wp_create_nonce();
-            }
-        }
-
-        /**
-         * deprecated
-         */
-        public function save_nonce() {
-                        ?> 
-            BaSetCookie('BaUniqueVisitorId', '<?php echo $this->_user_id; ?>', 30);     
-
-            <?php
         }
         
         /**
@@ -543,10 +523,8 @@ if (!class_exists('BA_CLASS')) {
                         // count for missing js file
                         var nonce = '<?php echo get_option('ba_nonce'); ?>';
                         // set unique user id
-                        if ( !BaGetCookie('BaUniqueVisitorId') ) {
-                            var data = {
-                                action: 'get_user_id'
-                            };
+                        if ( !BaGetCookie('BaUniqueVisitorId') || BaGetCookie('BaUniqueVisitorId') == 0 ) {
+                            var data = { action: 'get_user_id' };
                             $.post(BaAjax.ajaxurl, data, function(response) {
                                 BaSetCookie('BaUniqueVisitorId', response, 30);
                             });
