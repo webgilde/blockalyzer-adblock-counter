@@ -250,7 +250,7 @@ if (!class_exists('BA_CLASS')) {
                 }       
             }     
             // options for benchmark page
-            add_settings_field('ba_benchmark_category', __('Site Category'), array($this, 'render_settings_benchmark_category'), 'ba-settings-page', 'ba_settings_section' );
+            add_settings_field('ba_benchmark_category', __('Site Topic'), array($this, 'render_settings_benchmark_category'), 'ba-settings-page', 'ba_settings_section' );
             
         }
         
@@ -288,7 +288,7 @@ if (!class_exists('BA_CLASS')) {
                 __('Number of View with AdBlock', BATD),
                 __('Number of Unique Visitors', BATD),
                 __('Number of Unique Visitors with AdBlock', BATD),
-                __('Site category (if specified)', BATD),
+                __('Site topic (if specified)', BATD),
             );
             
             $screen->add_help_tab( array(
@@ -301,7 +301,7 @@ if (!class_exists('BA_CLASS')) {
             // content for help tab with data we return
             $data_return = array(
                 __('general Benchmark with page views and unique users for your localization', BATD),                
-                __('if site category provided: benchmark for your category and localization', BATD),                
+                __('if site topic provided: benchmark for your category and localization', BATD),                
             );
             
             $screen->add_help_tab( array(
@@ -349,7 +349,7 @@ if (!class_exists('BA_CLASS')) {
                     ?><option value="<?php echo $_key; ?>" <?php selected( $this->_options['benchmark_category'], $_key ); ?>><?php echo $_element; ?></option><?php
                 endforeach;
             ?></select>
-            <p class="description"><?php _e('If you enter your sites category, you will receive additional benchmark data.', BATD ); ?></p>
+            <p class="description"><?php _e('If you enter your sites topic, you will receive additional benchmark data.', BATD ); ?></p>
             <?php
         }
         
