@@ -522,13 +522,14 @@ if (!class_exists('BA_CLASS')) {
                     setTimeout(function(){ // timeout to run after loading the advertisement.js
                         // count for missing js file
                         var nonce = '<?php echo get_option('ba_nonce'); ?>';
-                        // set unique user id
+                        <?php /* 
+                         * set unique user id; currently not needed, but maybe for a later use
                         if ( !BaGetCookie('BaUniqueVisitorId') || BaGetCookie('BaUniqueVisitorId') == 0 ) {
                             var data = { action: 'get_user_id' };
                             $.post(BaAjax.ajaxurl, data, function(response) {
                                 BaSetCookie('BaUniqueVisitorId', response, 30);
                             });
-                        }
+                        } */ ?>
 
                         var ba_blocked=false;
                         if ($.adblockJsFile === undefined){
