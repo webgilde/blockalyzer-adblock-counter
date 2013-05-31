@@ -64,7 +64,7 @@
     <p class="description"><?php _e('Compare your statistics with the statistics of other pages. Will also send your data to our server.', BATD); ?><br/>
     <?php _e('See the HELP panel above for information on which data we are sending.', BATD); ?></p>
     <p><strong><?php _e('Site Category', BATD); ?></strong>: <?php
-        $category = get_option('ba_benchmark_category');
+        $category = $this->_options['benchmark_category'];
         if ( empty( $category ) ) printf(__('You did not specify a site category. You will receive only the general stats. Visit the <a href"%s">settings page</a> to specify a category.', BATD), admin_url('options-general.php?page=ba-settings-page'));
         else {
             $site_categories = $this->get_site_categories();
