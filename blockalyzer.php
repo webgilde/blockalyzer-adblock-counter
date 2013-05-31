@@ -266,7 +266,7 @@ if (!class_exists('BA_CLASS')) {
             // conditions to send data
             $conditions = array(
                 __('You can send a request every 3 hours', BATD),
-                __('Your last reset was more than 24 ago', BATD),
+                __('Your last reset was more than 24 hours ago', BATD),
                 __('You have at least 20 visits and page views', BATD),
                 __('You have at least 1 visit and page view with AdBlock', BATD),
             );
