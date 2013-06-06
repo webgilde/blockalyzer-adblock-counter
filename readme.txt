@@ -1,6 +1,6 @@
 === Plugin Name ===
 Contributors: webzunft
-Tags: ads, ad, adblock, ad blocker, ad block, adblock count, adblock counter, ad analysis, ad optimization
+Tags: ads, ad, adblock, adblocker, ad blocker, ad block, adblock count, adblock counter, ad analysis, ad optimization
 Requires at least: 3.4
 Tested up to: 3.5.1
 Stable tag: 1.2.4
@@ -30,6 +30,8 @@ The benchmark feature will show you the share of visitors with adblock from othe
 **Localization**
 
 English
+
+(please contact me before sending a translation)
 
 **further instructions**
 
