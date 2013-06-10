@@ -731,11 +731,11 @@ if (!class_exists('BA_CLASS')) {
          */
         public function stat_method_standard_count_reset_statistics() {
 
-            update_option('ba_page_views', 100);
-            update_option('ba_page_views_blocked', 10);
-            update_option('ba_unique_visitors', 110);            
-            update_option('ba_unique_visitors_blocked', 10);
-            update_option('ba_last_reset', 1370606621 );
+            update_option('ba_page_views', 0);
+            update_option('ba_page_views_blocked', 0);
+            update_option('ba_unique_visitors', 0);            
+            update_option('ba_unique_visitors_blocked', 0);
+            update_option('ba_last_reset', time() );
 
             $this->_update_nonce();
         }        
