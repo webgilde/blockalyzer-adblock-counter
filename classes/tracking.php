@@ -16,8 +16,9 @@ if (!class_exists('BA_Tracking')) {
 
         /**
          * send blog adblock data and compare with data from others
+         * @param array site options
          */
-        static function compare() {
+        static function compare( $siteoptions = array() ) {
 
             $hash = get_option('ba_tracking_hash');
 
@@ -30,11 +31,10 @@ if (!class_exists('BA_Tracking')) {
                 'site' => array(
                     'hash' => $hash,
                     'url' => site_url(),
-                    'topic' => '',
                     'name' => '', //get_bloginfo('name'),
                     'lang' => get_locale(),
                     'country' => '',
-                    'category' => get_option('ba_benchmark_category'),
+                    'category' => $siteoptions['benchmark_category'],
                 ),
                 'stats' => array(
                     'last_reset' => get_option('ba_last_reset', 0),

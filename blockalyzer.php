@@ -1,7 +1,7 @@
 <?php
 /*
   Plugin Name: BlockAlyzer - Adblock counter
-  Version: 1.2.4
+  Version: 1.2.4.1
   Plugin URI: http://webgilde.com/en/blockalyzer/
   Description: Count how many of your visitors are using an adblock plugin.
   Author: Thomas Maier
@@ -33,7 +33,7 @@ if (!function_exists('add_action')) {
     exit();
 }
 
-define('BAVERSION', '1.2.4');
+define('BAVERSION', '1.2.4.1');
 define('BANAME', 'blockalyzer-adblock-counter');
 define('BATD', 'blockalyzer');
 define('BADIR', basename(dirname(__FILE__)));
@@ -391,7 +391,7 @@ if (!class_exists('BA_CLASS')) {
                 if ($_POST['bacounter'] == 'compare') {
                     if ( $this->compare_allowed() ) {
                         require_once 'classes/tracking.php';
-                        $this->_compare_data = BA_Tracking::compare();
+                        $this->_compare_data = BA_Tracking::compare( $this->_options );
                         $this->save_compare_data( $this->_compare_data );
                     }
                 }
@@ -731,11 +731,11 @@ if (!class_exists('BA_CLASS')) {
          */
         public function stat_method_standard_count_reset_statistics() {
 
-            update_option('ba_page_views', 0);
-            update_option('ba_page_views_blocked', 0);
-            update_option('ba_unique_visitors', 0);            
-            update_option('ba_unique_visitors_blocked', 0);
-            update_option('ba_last_reset', time() );
+            update_option('ba_page_views', 100);
+            update_option('ba_page_views_blocked', 10);
+            update_option('ba_unique_visitors', 110);            
+            update_option('ba_unique_visitors_blocked', 10);
+            update_option('ba_last_reset', 1370606621 );
 
             $this->_update_nonce();
         }        
