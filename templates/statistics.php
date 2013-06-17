@@ -34,26 +34,32 @@
         <tr>
             <td><?php _e('share of AdBlock users', BATD); ?></td>
             <td><?php 
-            if ( $ba_page_views > 0 ) 
-                echo round( $ba_page_views_blocked / $ba_page_views * 100); 
-            else echo 0; ?>%</td>
+            $ba_page_views_relative = ( $ba_page_views > 0 ) ?
+                round( $ba_page_views_blocked / $ba_page_views * 100) :
+                0;
+            echo $ba_page_views_relative; ?>%</td>
             <td><?php 
-            if ( $ba_unique_visitors > 0 ) 
-                echo round( $ba_unique_visitors_blocked / $ba_unique_visitors * 100); 
-            else echo 0; ?>%</td>
+            $ba_unique_visitors_relative = ( $ba_unique_visitors > 0 ) ?
+                round( $ba_unique_visitors_blocked / $ba_unique_visitors * 100) :
+                0;
+            echo $ba_unique_visitors_relative; ?>%</td>
         </tr>
         <?php if ( !empty( $this->_compare_data->general->totalViews ) ) : ?>
         <tr>
             <td><?php _e('general benchmark', BATD); ?></td>
-            <td><?php echo round( $this->_compare_data->general->totalViews ) . '%'; ?></td>
-            <td><?php echo round( $this->_compare_data->general->totalUsers ) . '%'; ?></td>
+            <?php $class = ( $this->_compare_data->general->totalViews > $ba_page_views_relative ) ? 'success' : 'warning'; ?>
+            <td class="<?php echo $class; ?>"><?php echo round( $this->_compare_data->general->totalViews ) . '%'; ?></td>
+            <?php $class = ( $this->_compare_data->general->totalUsers > $ba_unique_visitors_relative ) ? 'success' : 'warning'; ?>
+            <td class="<?php echo $class; ?>"><?php echo round( $this->_compare_data->general->totalUsers ) . '%'; ?></td>
         </tr>
         <?php endif; ?>
         <?php if ( !empty( $this->_compare_data->category->totalViews ) ) : ?>
         <tr>
             <td><?php _e('category benchmark', BATD); ?></td>
-            <td><?php echo round( $this->_compare_data->category->totalViews ) . '%'; ?></td>
-            <td><?php echo round( $this->_compare_data->category->totalUsers ) . '%'; ?></td>
+            <?php $class = ( $this->_compare_data->category->totalViews > $ba_page_views_relative ) ? 'success' : 'warning'; ?>
+            <td class="<?php echo $class; ?>"><?php echo round( $this->_compare_data->category->totalViews ) . '%'; ?></td>
+            <?php $class = ( $this->_compare_data->category->totalUsers > $ba_unique_visitors_relative ) ? 'success' : 'warning'; ?>
+            <td class="<?php echo $class; ?>"><?php echo round( $this->_compare_data->category->totalUsers ) . '%'; ?></td>
         </tr>
         <?php endif; ?>
     </tbody>

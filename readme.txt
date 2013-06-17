@@ -3,7 +3,7 @@ Contributors: webzunft
 Tags: ads, ad, adblock, adblocker, ad blocker, ad block, adblock count, adblock counter, ad analysis, ad optimization
 Requires at least: 3.4
 Tested up to: 3.5.1
-Stable tag: 1.2.4.1
+Stable tag: 1.2.5
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -54,6 +54,10 @@ e.g.
 3. statistics table with benchmark data
 
 == Changelog ==
+
+= 1.2.5 =
+
+* optimized styling on statistics page
 
 = 1.2.4.1 =
 
