@@ -6,17 +6,30 @@
 }
 .form-table { margin: 1em 2em; }
 
+.ba-settings-list { float: left; font-size: 1.2em; margin-bottom: 1em; }
+.ba-settings-list dt { float: left; width: 10em; clear: both; }
+.ba-settings-list dd { float: left; }
+
+h2 { clear: both; }
+
 table#adblock-counter-statistic {
+    clear: both; 
     text-align: left;
+    font-size: 1.4em; 
 }
+
+table#adblock-counter-statistic td:not(:first-child) { text-align: right; }
+
 table#adblock-counter-statistic td,
 table#adblock-counter-statistic th {
     padding: .3em;
     padding-right: 1em;
 }
-table#adblock-counter-statistic .headline th{
-    font-size: 1.5em;
-    padding-top: 1em;
-}
+
+input[type="submit"] { border: solid 1px #333; font-size: 1.4em; }
+input[type="submit"]:hover { cursor: pointer; background: #fff; }
+.reset input[type="submit"]:hover { background: red; cursor: pointer; }
+
 .success { color: green; }
 .warning { color: red; }
+.clear { clear: both; }
