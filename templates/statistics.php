@@ -53,7 +53,9 @@
             <td class="<?php echo $class; ?>"><?php echo round( $this->_compare_data->general->totalViews ) . '%'; ?></td>
             <?php $class = ( $this->_compare_data->general->totalUsers > $ba_unique_visitors_relative ) ? 'success' : 'warning'; ?>
             <td class="<?php echo $class; ?>"><?php echo round( $this->_compare_data->general->totalUsers ) . '%'; ?></td>
+            <?php if ( $this->_compare_allowed ) : ?>
             <td><button class="compare_submit"><?php _e('update benchmark data', BATD); ?></button></td>
+            <?php endif; ?>
         </tr>
         <?php endif; ?>
         <?php if ( !empty( $this->_compare_data->category->totalViews ) ) : ?>
@@ -63,7 +65,9 @@
             <td class="<?php echo $class; ?>"><?php echo round( $this->_compare_data->category->totalViews ) . '%'; ?></td>
             <?php $class = ( $this->_compare_data->category->totalUsers > $ba_unique_visitors_relative ) ? 'success' : 'warning'; ?>
             <td class="<?php echo $class; ?>"><?php echo round( $this->_compare_data->category->totalUsers ) . '%'; ?></td>
+            <?php if ( $this->_compare_allowed ) : ?>
             <td><button class="compare_submit"><?php _e('update benchmark data', BATD); ?></button></td>
+            <?php endif; ?>
         </tr>
         <?php endif; ?>
     </tbody>
