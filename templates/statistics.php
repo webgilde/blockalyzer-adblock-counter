@@ -13,12 +13,11 @@
     echo date_i18n( _x('d.m.Y, g:i a', 'time format of the last stat reset', BATD), get_option('ba_last_sent', 0)); ?></dd><?php    
     endif;
 ?></dl>
-<hr class="clear"/>
-<h2><?php _e('Statistics', BATD); ?></h2>
+<hr class="clear"/><h2><?php _e('Statistics', BATD); ?></h2>
 <p><?php _e('These statistics show the amound of page views and unique visitors having adblock enabled.', BATD); ?></p>
     <table id="adblock-counter-statistic">
     <thead>
-        <tr><th></th><th><?php _e('page views', BATD); ?></th><th><?php _e('unique visitors', BATD); ?></th></tr>
+        <tr><th></th><th><?php _e('page views', BATD); ?></th><th><?php _e('unique visitors', BATD); ?></th><th></th></tr>
     </thead>
     <tbody>
         <tr>
@@ -43,6 +42,9 @@
                 round( $ba_unique_visitors_blocked / $ba_unique_visitors * 100) :
                 0;
             echo $ba_unique_visitors_relative; ?>%</td>
+            <?php if ( $this->_compare_allowed ) : ?>
+            <td><button class="compare_submit"><?php _e('load benchmark data', BATD); ?></button></td>
+            <?php endif; ?>
         </tr>
         <?php if ( !empty( $this->_compare_data->general->totalViews ) ) : ?>
         <tr>
@@ -51,6 +53,7 @@
             <td class="<?php echo $class; ?>"><?php echo round( $this->_compare_data->general->totalViews ) . '%'; ?></td>
             <?php $class = ( $this->_compare_data->general->totalUsers > $ba_unique_visitors_relative ) ? 'success' : 'warning'; ?>
             <td class="<?php echo $class; ?>"><?php echo round( $this->_compare_data->general->totalUsers ) . '%'; ?></td>
+            <td><button class="compare_submit"><?php _e('update benchmark data', BATD); ?></button></td>
         </tr>
         <?php endif; ?>
         <?php if ( !empty( $this->_compare_data->category->totalViews ) ) : ?>
@@ -60,6 +63,7 @@
             <td class="<?php echo $class; ?>"><?php echo round( $this->_compare_data->category->totalViews ) . '%'; ?></td>
             <?php $class = ( $this->_compare_data->category->totalUsers > $ba_unique_visitors_relative ) ? 'success' : 'warning'; ?>
             <td class="<?php echo $class; ?>"><?php echo round( $this->_compare_data->category->totalUsers ) . '%'; ?></td>
+            <td><button class="compare_submit"><?php _e('update benchmark data', BATD); ?></button></td>
         </tr>
         <?php endif; ?>
     </tbody>
@@ -82,10 +86,10 @@
         else :
         ?><p class="warning"><?php _e( 'You can currently not compare your data with others. See HELP panel above for more information.', BATD); ?></p><?php endif; ?>    
         <p><?php printf( __('By clicking the button below, you accept its <a href="%s">terms and privacy policy</a>.', BATD ), 'http://webgilde.com/en/blockalyzer-privacy-policy/'); ?></p>
-        <form action="" method="post">
-        <input type="hidden" name="bacounter" value="compare"/>
-        <input type="submit" value="<?php _e('compare statistics', BADIR ); ?>"<?php if ( !$this->_compare_allowed ) echo ' disabled="disabled"'; ?>/>
-    </form>
+        <form action="" method="post" id="compare_form">
+            <input type="hidden" name="bacounter" value="compare"/>
+            <input type="submit" value="<?php _e('compare statistics', BADIR ); ?>"<?php if ( !$this->_compare_allowed ) echo ' disabled="disabled"'; ?>/>
+        </form>
     <p><strong><?php _e('Site Topic', BATD); ?></strong>: <?php
         $category = $this->_options['benchmark_category'];
         if ( empty( $category ) ) printf(__('You did not specify a site topic. You will receive only the general stats. Visit the <a href="%s">settings page</a> to specify the topic of your site.', BATD), admin_url('options-general.php?page=ba-settings-page'));
@@ -101,3 +105,14 @@
 </div>
 
 <?php do_action('ba_stats'); ?>
+
+<script>
+jQuery(document).ready(function($){
+    compare_form = $('#compare_form');
+    $('.compare_submit').click(function(){ 
+        if( confirm('<?php _e('Please confirm that you have read the terms and conditions below to send and receive data.'); ?>') ) {
+            compare_form.submit();
+        }
+    });
+});
+</script>

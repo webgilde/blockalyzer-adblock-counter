@@ -17,14 +17,10 @@ table#adblock-counter-statistic {
     text-align: left;
     font-size: 1.4em; 
 }
-
 table#adblock-counter-statistic td:not(:first-child) { text-align: right; }
-
 table#adblock-counter-statistic td,
-table#adblock-counter-statistic th {
-    padding: .3em;
-    padding-right: 1em;
-}
+table#adblock-counter-statistic th { padding: .3em; padding-right: 1em; }
+table#adblock-counter-statistic .compare_submit { font-size: .7em; border: solid 1px #333; cursor: pointer; }
 
 input[type="submit"] { border: solid 1px #333; font-size: 1.4em; }
 input[type="submit"]:hover { cursor: pointer; background: #fff; }
