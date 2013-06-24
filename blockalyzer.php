@@ -289,6 +289,7 @@ if (!class_exists('BA_CLASS')) {
                 __('Number of Unique Visitors', BATD),
                 __('Number of Unique Visitors with an ad blocker', BATD),
                 __('Site topic (if specified)', BATD),
+                __('BlockAlyzer version', BATD),
             );
             
             $screen->add_help_tab( array(

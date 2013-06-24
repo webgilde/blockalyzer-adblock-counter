@@ -48,6 +48,7 @@ if (!class_exists('BA_Tracking')) {
                     'lang' => $lang,
                     'locale' => $locale,
                     'category' => $siteoptions['benchmark_category'],
+                    'version' => BAVERSION,
                 ),
                 'stats' => array(
                     'last_reset' => get_option('ba_last_reset', 0),
