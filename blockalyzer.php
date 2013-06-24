@@ -282,7 +282,7 @@ if (!class_exists('BA_CLASS')) {
             $data_send = array(
                 __('Hash - to check source', BATD),
                 __('Domain - to prevent duplicate data', BATD),
-                __('Language', BATD),
+                __('Language and Locale', BATD),
                 __('Last reset - when have your data been reset (to prevent duplicate content', BATD),
                 __('Number of Views', BATD),
                 __('Number of Views with an ad blocker', BATD),

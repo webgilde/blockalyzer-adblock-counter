@@ -58,6 +58,8 @@ e.g.
 = 1.2.5 =
 
 * optimized styling on statistics page
+* fixed language issue for multisite
+* added locale to benchmark data
 * added plugin banner
 
 = 1.2.4.1 =
