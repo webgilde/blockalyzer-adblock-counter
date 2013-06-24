@@ -26,12 +26,12 @@
             <td><?php echo $ba_unique_visitors = get_option('ba_unique_visitors', 0); ?></td>
         </tr>
         <tr>
-            <td><?php _e('with AdBlock', BATD); ?></td>
+            <td><?php _e('with ad block', BATD); ?></td>
             <td><?php echo $ba_page_views_blocked = get_option('ba_page_views_blocked', 0); ?></td>
             <td><?php echo $ba_unique_visitors_blocked = get_option('ba_unique_visitors_blocked', 0); ?></td>
         </tr>
         <tr>
-            <td><?php _e('share of AdBlock users', BATD); ?></td>
+            <td><?php _e('share of ad block users', BATD); ?></td>
             <td><?php 
             $ba_page_views_relative = ( $ba_page_views > 0 ) ?
                 round( $ba_page_views_blocked / $ba_page_views * 100) :
