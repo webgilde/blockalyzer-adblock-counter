@@ -216,7 +216,7 @@ if (!class_exists('BA_CLASS')) {
          * add statistics page for the default adblock counter
          */
         public function add_stats_page() {
-            $this->_hooks['stats'] = add_management_page(__('BlockAlyzer Statistics', BATD), __('AdBlock Stats', BATD), 'manage_options', 'adblock-counter', array($this, 'render_stats_page'));
+            $this->_hooks['stats'] = add_management_page(__('BlockAlyzer Statistics', BATD), __('adblock stats', BATD), 'manage_options', 'adblock-counter', array($this, 'render_stats_page'));
             add_action('load-'. $this->_hooks['stats'], array( $this, 'contextual_help'));
         }
 
@@ -268,7 +268,7 @@ if (!class_exists('BA_CLASS')) {
                 __('You can send a request every 3 hours', BATD),
                 __('Your last reset was more than 24 hours ago', BATD),
                 __('You have at least 20 visits and page views', BATD),
-                __('You have at least 1 visit and page view with AdBlock', BATD),
+                __('You have at least 1 visit and page view with an ad blocker', BATD),
             );
             
             $screen->add_help_tab( array(
@@ -285,9 +285,9 @@ if (!class_exists('BA_CLASS')) {
                 __('Language', BATD),
                 __('Last reset - when have your data been reset (to prevent duplicate content', BATD),
                 __('Number of Views', BATD),
-                __('Number of View with AdBlock', BATD),
+                __('Number of Views with an ad blocker', BATD),
                 __('Number of Unique Visitors', BATD),
-                __('Number of Unique Visitors with AdBlock', BATD),
+                __('Number of Unique Visitors with an ad blocker', BATD),
                 __('Site topic (if specified)', BATD),
             );
             
@@ -413,7 +413,7 @@ if (!class_exists('BA_CLASS')) {
          * render settings section
          */
         public function render_settings_section() {
-            ?><p><?php _e('You can choose one or more of the methods below to display the AdBlock statistics. If you disable all methods, measuring will be disabled.', BATD); ?></p><?php
+            ?><p><?php _e('You can choose one or more of the methods below to display the ad blocker statistics. If you disable all methods, measuring will be disabled.', BATD); ?></p><?php
         }
 
         /**
@@ -745,7 +745,7 @@ if (!class_exists('BA_CLASS')) {
          * conditions:
          * * data is at least 24 hours old
          * * at least 20 visits and views
-         * * at least 1 visit and view with AdBlock
+         * * at least 1 visit and view with ad block
          * @since 1.2
          */
         public function compare_allowed() {

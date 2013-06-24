@@ -7,11 +7,11 @@ Stable tag: 1.2.5
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Count how many of your visitors actually use an ad blocker.
+Count the number of visits from users with an ad blocker.
 
 == Description ==
 
-*BlockAlyzer* counts how many of your visitors actually use an ad blocker. You might use this to estimate the impact of adblock add-ons on your income from advertisement.
+*BlockAlyzer* counts how many of your visitors are using an ad blocker. You might use this to estimate the impact of adblock add-ons on your income from advertisement.
 
 **compare your data with others**
 
@@ -58,6 +58,7 @@ e.g.
 = 1.2.5 =
 
 * optimized styling on statistics page
+* added plugin banner
 
 = 1.2.4.1 =
 
