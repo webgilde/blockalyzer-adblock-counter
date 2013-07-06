@@ -1,16 +1,15 @@
+/* settings page */
+
 #ba-admin-wrap h3 { margin: 1em 1em; }
 #ba-admin-wrap .postbox > p { margin: 1em 2em; }
-.ba-form-block {
-    clear: both;
-    height: 4em;
-}
-.form-table { margin: 1em 2em; }
+settings_page_ba-settings-page .form-table { margin: 1em 2em; }
 
 .ba-settings-list { float: left; font-size: 1.2em; margin-bottom: 1em; }
 .ba-settings-list dt { float: left; width: 10em; clear: both; }
 .ba-settings-list dd { float: left; }
 
-h2 { clear: both; }
+/* statistics page */
+#ba-stats-page h2 { clear: both; }
 
 table#adblock-counter-statistic {
     clear: both; 
@@ -22,10 +21,10 @@ table#adblock-counter-statistic td,
 table#adblock-counter-statistic th { padding: .3em; padding-right: 1em; }
 table#adblock-counter-statistic .compare_submit { font-size: .7em; border: solid 1px #333; cursor: pointer; }
 
-input[type="submit"] { border: solid 1px #333; font-size: 1.4em; }
-input[type="submit"]:hover { cursor: pointer; background: #fff; }
-.reset input[type="submit"]:hover { background: red; cursor: pointer; }
+#ba-stats-page input[type="submit"] { border: solid 1px #333; font-size: 1.4em; }
+#ba-stats-page input[type="submit"]:hover { cursor: pointer; background: #fff; }
+#ba-stats-page .reset input[type="submit"]:hover { background: red; cursor: pointer; }
 
-.success { color: green; }
-.warning { color: red; }
-.clear { clear: both; }
+#ba-stats-page .success { color: green; }
+#ba-stats-page .warning { color: red; }
+#ba-stats-page .clear { clear: both; }

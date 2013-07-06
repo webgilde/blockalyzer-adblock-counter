@@ -1,3 +1,4 @@
+<div id="ba-stats-page" class="wrap">
 <dl class="ba-settings-list">
 <?php if ( in_array( 'basic', $this->_active_stat_methods )) {
     $status = __('active', BATD);
@@ -73,7 +74,7 @@
     </tbody>
     </table>
 <hr class="clear"/>
-<div class="ba-form-block reset">
+<div class="reset">
     <form action="" method="post">
         <input type="hidden" name="bacounter" value="reset"/>
         <input type="submit" value="<?php _e('reset statistics', BADIR ); ?>"/>
@@ -84,7 +85,7 @@
 <h2><?php _e('Compare data', BATD); ?></h2>
 <p class="description"><?php _e('Compare your statistics with the statistics of other pages. Will also send your data to our server.', BATD); ?><br/>
 <?php _e('See the HELP panel above for information on which data we are sending.', BATD); ?></p>    
-<div class="ba-form-block compare">
+<div class="compare">
     <?php if ( $this->_compare_allowed ) :
         ?><p class="success"><?php _e( 'Compare your data with others now.', BATD); ?></p><?php 
         else :
@@ -120,3 +121,4 @@ jQuery(document).ready(function($){
     });
 });
 </script>
+</div>
