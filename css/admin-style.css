@@ -12,9 +12,9 @@ settings_page_ba-settings-page .form-table { margin: 1em 2em; }
 #ba-stats-page h2 { clear: both; }
 
 table#adblock-counter-statistic {
-    clear: both; 
+    clear: both;
     text-align: left;
-    font-size: 1.4em; 
+    font-size: 1.4em;
 }
 table#adblock-counter-statistic td:not(:first-child) { text-align: right; }
 table#adblock-counter-statistic td,
@@ -28,3 +28,8 @@ table#adblock-counter-statistic .compare_submit { font-size: .7em; border: solid
 #ba-stats-page .success { color: green; }
 #ba-stats-page .warning { color: red; }
 #ba-stats-page .clear { clear: both; }
+
+/* dashboard widget */
+#ba_dashboard_table td, #ba_dashboard_table th { padding: 3px 5px 3px 0; text-align: left; }
+#blockalyzer_dashboard_widget .success { color: green; }
+#blockalyzer_dashboard_widget .warning { color: red; }
