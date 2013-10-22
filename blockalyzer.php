@@ -1,7 +1,7 @@
 <?php
 /*
   Plugin Name: BlockAlyzer - Adblock counter
-  Version: 1.2.5.1
+  Version: 1.2.6
   Plugin URI: http://webgilde.com/en/blockalyzer/
   Description: Count how many of your visitors are using an adblock plugin.
   Author: Thomas Maier
@@ -33,7 +33,7 @@ if (!function_exists('add_action')) {
     exit();
 }
 
-define('BAVERSION', '1.2.5.1');
+define('BAVERSION', '1.2.6');
 define('BANAME', 'blockalyzer-adblock-counter');
 define('BATD', 'blockalyzer');
 define('BADIR', basename(dirname(__FILE__)));
@@ -218,7 +218,7 @@ if (!class_exists('BA_CLASS')) {
             $stat_methods = array(
                 'basic' => array(
                     'name' => __('Basic method', BATD),
-                    'active' => 0,
+                    'active' => 1,
                     'description' => sprintf(__('You can see your statistics in <em><a href="%s" title="Go to statistics page">Tools > AdBlock Stats</a></em>', BATD), admin_url('tools.php?page=adblock-counter')),
                 )
             );
