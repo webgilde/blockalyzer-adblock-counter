@@ -3,7 +3,7 @@ Contributors: webzunft
 Tags: ads, ad, adblock, adblocker, ad blocker, ad block, adblock count, adblock counter, ad analysis, ad optimization
 Requires at least: 3.4
 Tested up to: 3.5.1
-Stable tag: 1.2.5.1
+Stable tag: 1.2.6
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -27,21 +27,23 @@ The benchmark feature is completely voluntarily. No data will be send without yo
 
 The benchmark feature will show you the share of visitors with adblock from other sites in your language and with a similar topic.
 
-**Localization**
+**other features**
 
-English
+* desktop widget
+
+**localization**
+
+English, German
 
 (please contact me before sending a translation)
 
 **further instructions**
 
+Developers can use BlockAlyzer’s adblock detection for their own purposes from this [tutorial](http://webgilde.com/en/blockalyzer/developers/).
+
 Please find further instructions on the [BlockAlyzer homepage](http://webgilde.com/en/blockalyzer/)
 
 == Installation ==
-
-This section describes how to install the plugin and get it working.
-
-e.g.
 
 1. Upload `blockalyzer`-folder to the `/wp-content/plugins/` directory
 1. Activate blockalyzer through the 'Plugins' menu in WordPress
@@ -54,6 +56,14 @@ e.g.
 3. statistics table with benchmark data
 
 == Changelog ==
+
+= 1.2.6 =
+
+* added dashboard widget with short statistics
+* added German translation
+* set basic method to active by default on plugin activation
+* please [review and vote for the plugin](http://wordpress.org/support/view/plugin-reviews/blockalyzer-adblock-counter "BlockAlyzer Reviews")
+* Analytics Import, Debugging, ...? vote for the next major feature [here](http://webgilde.com/en/blockalyzer-1-2-6/)
 
 = 1.2.5.1 =
 
