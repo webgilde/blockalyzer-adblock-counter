@@ -27,9 +27,13 @@ The benchmark feature is completely voluntarily. No data will be send without yo
 
 The benchmark feature will show you the share of visitors with adblock from other sites in your language and with a similar topic.
 
-**Localization**
+**other features**
 
-English
+* desktop widget
+
+**localization**
+
+English, German
 
 (please contact me before sending a translation)
 
@@ -58,6 +62,7 @@ e.g.
 = 1.3 =
 
 * added dashboard widget with short info
+* added German translation
 
 = 1.2.5.1 =
 

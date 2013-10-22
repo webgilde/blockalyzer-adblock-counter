@@ -1,0 +1,455 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BlockAlyzer - Adblock counter v1.2.5.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2013-10-22 14:42:13+0000\n"
+"Last-Translator: admin <post@webzunft.de>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: CSL v1.x\n"
+"X-Poedit-Language: German\n"
+"X-Poedit-Country: GERMANY\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;\n"
+"X-Poedit-Basepath: \n"
+"X-Poedit-Bookmarks: \n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Textdomain-Support: yes"
+
+#: blockalyzer.php:220
+#@ blockalyzer
+msgid "Basic method"
+msgstr "Einfaches Zählen"
+
+#: blockalyzer.php:222
+#, php-format
+#@ blockalyzer
+msgid "You can see your statistics in <em><a href=\"%s\" title=\"Go to statistics page\">Tools > AdBlock Stats</a></em>"
+msgstr "Sie können Ihre Statistik unter <em><a href=\"%s\" title=\"zur Auswertungsseite\">Werkzeuge > BlockAlyzer Stats</a></em> einsehen."
+
+#: blockalyzer.php:261
+#@ blockalyzer
+msgid "BlockAlyzer Statistics"
+msgstr "BlockAlyzer Statistiken"
+
+#: blockalyzer.php:261
+#@ blockalyzer
+msgid "adblock stats"
+msgstr "BlockAlyzer Stats"
+
+#: blockalyzer.php:270
+#: blockalyzer.php:471
+#@ blockalyzer
+msgid "BlockAlyzer Settings"
+msgstr "BlockAlyzer Einstellungen"
+
+#: blockalyzer.php:270
+#@ blockalyzer
+msgid "BlockAlyzer"
+msgstr "BlockAlyzer"
+
+#: blockalyzer.php:282
+#@ blockalyzer
+msgid "Stats Method"
+msgstr "Zählmethode"
+
+#: blockalyzer.php:295
+#: templates/statistics.php:98
+#@ blockalyzer
+msgid "Site Topic"
+msgstr "Thema der Seite"
+
+#: blockalyzer.php:310
+#@ blockalyzer
+msgid "You can send a request every 3 hours"
+msgstr "Sie können alle 3 Stunden eine Anfrage senden."
+
+#: blockalyzer.php:311
+#@ blockalyzer
+msgid "Your last reset was more than 24 hours ago"
+msgstr "Ihr letzter Reset liegt über 24 Stunden zurück."
+
+#: blockalyzer.php:312
+#@ blockalyzer
+msgid "You have at least 20 visits and page views"
+msgstr "Sie haben mehr als 20 Besuche oder Seitenaufrufe."
+
+#: blockalyzer.php:313
+#@ blockalyzer
+msgid "You have at least 1 visit and page view with an ad blocker"
+msgstr "Sie haben mindestens einen Besuch und einen Seitenaufruf mit einem Anzeigenblocker"
+
+#: blockalyzer.php:318
+#@ blockalyzer
+msgid "Conditions"
+msgstr "Bedingungen"
+
+#: blockalyzer.php:319
+#@ blockalyzer
+msgid "Conditions under which your data will be accepted and compared with others."
+msgstr "Bedingungen, unter denen Ihre Daten für den Vergleich mit anderen gültig sind."
+
+#: blockalyzer.php:325
+#@ blockalyzer
+msgid "Hash - to check source"
+msgstr "Hash-Wert um die Quelle zu identifizieren."
+
+#: blockalyzer.php:326
+#@ blockalyzer
+msgid "Domain - to prevent duplicate data"
+msgstr "Domain - um doppelte Auswertung zu vermeiden."
+
+#: blockalyzer.php:327
+#@ blockalyzer
+msgid "Language and Locale"
+msgstr "Sprache und Lokalisierung"
+
+#: blockalyzer.php:328
+#@ blockalyzer
+msgid "Last reset - when have your data been reset (to prevent duplicate content"
+msgstr "Letzter Reset"
+
+#: blockalyzer.php:329
+#@ blockalyzer
+msgid "Number of Views"
+msgstr "Anzahl der Seitenaufrufe"
+
+#: blockalyzer.php:330
+#@ blockalyzer
+msgid "Number of Views with an ad blocker"
+msgstr "Seitenaufrufe mit einem Anzeigenblocker"
+
+#: blockalyzer.php:331
+#@ blockalyzer
+msgid "Number of Unique Visitors"
+msgstr "Anzahl der individuellen Besucher"
+
+#: blockalyzer.php:332
+#@ blockalyzer
+msgid "Number of Unique Visitors with an ad blocker"
+msgstr "Individuelle Besucher mit Anzeigenblocker"
+
+#: blockalyzer.php:333
+#@ blockalyzer
+msgid "Site topic (if specified)"
+msgstr "Thema der Seite (wenn angegeben)"
+
+#: blockalyzer.php:334
+#@ blockalyzer
+msgid "BlockAlyzer version"
+msgstr "Version des BlockAlyzer"
+
+#: blockalyzer.php:339
+#@ blockalyzer
+msgid "Data you send"
+msgstr "Gesendete Daten"
+
+#: blockalyzer.php:340
+#@ blockalyzer
+msgid "List of the data you send to our server."
+msgstr "Liste der Daten die Du zum Server sendest."
+
+#: blockalyzer.php:346
+#@ blockalyzer
+msgid "general Benchmark with page views and unique users for your localization"
+msgstr "Allgemeiner Vergleichswert mit Seitenaufrufen und individuellen Besuchern für Ihre Spracheinstellung"
+
+#: blockalyzer.php:347
+#@ blockalyzer
+msgid "if site topic provided: benchmark for your category and localization"
+msgstr "Falls Thema der Seite angegeben: Vergleichswert für Ihre Kategorie und Spracheinstellung."
+
+#: blockalyzer.php:352
+#@ blockalyzer
+msgid "Data you get"
+msgstr "Empfangene Daten"
+
+#: blockalyzer.php:353
+#@ blockalyzer
+msgid "List of the data you get from our server."
+msgstr "Liste der Daten, die Du vom Server erhältst."
+
+#: blockalyzer.php:374
+#@ blockalyzer
+msgid "Benchmark"
+msgstr "Vergleichswert"
+
+#: blockalyzer.php:389
+#@ blockalyzer
+msgid "Couldn't find any value to choose from"
+msgstr "Keine Werte zur Auswahl erhalten."
+
+#: blockalyzer.php:395
+#@ blockalyzer
+msgid "If you enter your sites topic, you will receive additional benchmark data."
+msgstr "Wenn Du das Thema deiner Seite einstellst, erhältst du zusätzliche Vergleichswerte."
+
+#: blockalyzer.php:426
+#: blockalyzer.php:468
+#@ blockalyzer
+msgid "You do not have sufficient permissions to access this page."
+msgstr "Du hast nicht die ausreichenden Rechte um die Seite zu sehen."
+
+#: blockalyzer.php:459
+#@ blockalyzer
+msgid "You can choose one or more of the methods below to display the ad blocker statistics. If you disable all methods, measuring will be disabled."
+msgstr "Du kannst eine oder mehrere Methoden zur Messung auswählen. Wenn Du alle deaktivierst wird die Messung gestoppt."
+
+#: blockalyzer.php:484
+#@ blockalyzer
+msgid "Save Changes"
+msgstr "Änderungen speichern"
+
+#: inc/site_categories.php:9
+#@ blockalyzer
+msgid "(unspecified)"
+msgstr "(nicht angegeben)"
+
+#: inc/site_categories.php:10
+#@ blockalyzer
+msgid "Blog"
+msgstr "Blog"
+
+#: inc/site_categories.php:11
+#@ blockalyzer
+msgid "- Private"
+msgstr "- Privat"
+
+#: inc/site_categories.php:12
+#@ blockalyzer
+msgid "- Company"
+msgstr "- Unternehmen"
+
+#: inc/site_categories.php:13
+#@ blockalyzer
+msgid "- Technology"
+msgstr "- Technologie"
+
+#: inc/site_categories.php:14
+#@ blockalyzer
+msgid "- Hobby & Lifestyle"
+msgstr "- Hobby & Freizeit"
+
+#: inc/site_categories.php:15
+#@ blockalyzer
+msgid "- Business"
+msgstr "- Business"
+
+#: inc/site_categories.php:16
+#@ blockalyzer
+msgid "Company Website"
+msgstr "Unternehmensseite"
+
+#: inc/site_categories.php:17
+#@ blockalyzer
+msgid "Private Website"
+msgstr "Private Webseite"
+
+#: inc/site_categories.php:18
+#@ blockalyzer
+msgid "Online-Shop"
+msgstr "Onlineshop"
+
+#: inc/site_categories.php:19
+#@ blockalyzer
+msgid "Online-Tool"
+msgstr "Online-Tool"
+
+#: inc/site_categories.php:20
+#@ blockalyzer
+msgid "Knowledgebase"
+msgstr "Wissen"
+
+#: inc/site_categories.php:21
+#@ blockalyzer
+msgid "Affiliate-Site"
+msgstr "Affiliate-Seite"
+
+#: templates/dashboard_widget.php:6
+#@ blockalyzer
+msgid "visitors with AdBlocker"
+msgstr "Besucher mit Anzeigenblocker"
+
+#: templates/dashboard_widget.php:7
+#: templates/statistics.php:52
+#@ blockalyzer
+msgid "general benchmark"
+msgstr "allgemeiner Vergleichswert"
+
+#: templates/dashboard_widget.php:8
+#: templates/statistics.php:64
+#@ blockalyzer
+msgid "category benchmark"
+msgstr "Kategorievergleichswert"
+
+#: templates/dashboard_widget.php:9
+#: templates/statistics.php:7
+#@ blockalyzer
+msgid "deactivated"
+msgstr "deaktiviert"
+
+#: templates/dashboard_widget.php:12
+#@ blockalyzer
+msgid "You can now compare your data with others"
+msgstr "Du kannst jetzt deine Daten mit anderen vergleichen."
+
+#: templates/dashboard_widget.php:14
+#@ blockalyzer
+msgid "show details"
+msgstr "Details anzeigen"
+
+#: templates/dashboard_widget.php:15
+#@ blockalyzer
+msgid "compare data"
+msgstr "Daten vergleichen"
+
+#: templates/dashboard_widget.php:16
+#@ blockalyzer
+msgid "configure BlockAlyzer"
+msgstr "BlockAlyzer konfigurieren"
+
+#: templates/dashboard_widget.php:9
+#: templates/statistics.php:4
+#@ blockalyzer
+msgid "active"
+msgstr "aktiv"
+
+#: templates/statistics.php:10
+#@ blockalyzer
+msgid "Status of this method"
+msgstr "Status der Methode"
+
+#: templates/statistics.php:11
+#@ blockalyzer
+msgid "Last reset"
+msgstr "Letzter Reset"
+
+#: templates/statistics.php:11
+#: templates/statistics.php:14
+#@ blockalyzer
+msgctxt "time format of the last stat reset"
+msgid "d.m.Y, g:i a"
+msgstr "d.m.Y, g:i a"
+
+#: templates/statistics.php:13
+#@ blockalyzer
+msgid "Last time compared"
+msgstr "Zuletzt verglichen"
+
+#: templates/statistics.php:17
+#@ blockalyzer
+msgid "Statistics"
+msgstr "Statistiken"
+
+#: templates/statistics.php:18
+#@ blockalyzer
+msgid "These statistics show the amound of page views and unique visitors having adblock enabled."
+msgstr "Diese Statistiken zeigen die Anzahl der Seitenaufrufe und Besucher mit aktiviertem Anzeigenblocker."
+
+#: templates/statistics.php:21
+#@ blockalyzer
+msgid "page views"
+msgstr "Seitenaufrufe"
+
+#: templates/statistics.php:21
+#@ blockalyzer
+msgid "unique visitors"
+msgstr "indiv. Besucher"
+
+#: templates/statistics.php:25
+#@ blockalyzer
+msgid "total"
+msgstr "gesamt"
+
+#: templates/statistics.php:30
+#@ blockalyzer
+msgid "with ad block"
+msgstr "mit Blocker"
+
+#: templates/statistics.php:35
+#@ blockalyzer
+msgid "share of ad block users"
+msgstr "Anteil Besucher mit Blocker"
+
+#: templates/statistics.php:47
+#@ blockalyzer
+msgid "load benchmark data"
+msgstr "Vergleichsdaten laden"
+
+#: templates/statistics.php:58
+#: templates/statistics.php:70
+#@ blockalyzer
+msgid "update benchmark data"
+msgstr "Vergleichsdaten aktualisieren"
+
+#: templates/statistics.php:80
+#@ blockalyzer
+msgid "reset statistics"
+msgstr "Statistiken zurücksetzen"
+
+#: templates/statistics.php:82
+#@ blockalyzer
+msgid "Resets statistics. No way to turn back."
+msgstr "Statistiken werden unwiederbringlich zurückgesetzt."
+
+#: templates/statistics.php:85
+#@ blockalyzer
+msgid "Compare data"
+msgstr "Daten vergleichen"
+
+#: templates/statistics.php:86
+#@ blockalyzer
+msgid "Compare your statistics with the statistics of other pages. Will also send your data to our server."
+msgstr "Vergleiche deine Statistik mit den Zahlen anderer Webseiten. Deine Daten werden zum Server geschickt."
+
+#: templates/statistics.php:87
+#@ blockalyzer
+msgid "See the HELP panel above for information on which data we are sending."
+msgstr "Im HILFE-Bereich oben erfährst Du genau, welche Daten wir von Dir senden."
+
+#: templates/statistics.php:90
+#@ blockalyzer
+msgid "Compare your data with others now."
+msgstr "Daten jetzt mit anderen vergleichen."
+
+#: templates/statistics.php:92
+#@ blockalyzer
+msgid "You can currently not compare your data with others. See HELP panel above for more information."
+msgstr "Du kannst deine Daten gerade nicht mit anderen vergleichen. Die möglichen Gründe erfährst du oben unter HILFE:"
+
+#: templates/statistics.php:93
+#, php-format
+#@ blockalyzer
+msgid "By clicking the button below, you accept its <a href=\"%s\">terms and privacy policy</a>."
+msgstr "Mit einem Klick auf den Button unten akzeptierst du die <a href=\"%s\">Bedingungen und Datenschutzerklärung</a>.."
+
+#: templates/statistics.php:96
+#@ blockalyzer
+msgid "compare statistics"
+msgstr "Statistiken vergleichen"
+
+#: templates/statistics.php:100
+#, php-format
+#@ blockalyzer
+msgid "You did not specify a site topic. You will receive only the general stats. Visit the <a href=\"%s\">settings page</a> to specify the topic of your site."
+msgstr "Du hat kein Thema deiner Seite eingegeben. Du wird daher nur die allgemeinen Vergleichswerte erhalten. Dein Seitenthema kannst Du auf der <a href=\"%s\">Einstellungsseite</a> auswählen."
+
+#: templates/statistics.php:109
+#@ blockalyzer
+msgid "Localization"
+msgstr "Lokalisierung"
+
+#: templates/statistics.php:118
+#@ blockalyzer
+msgid "Please confirm that you have read the terms and conditions below to send and receive data."
+msgstr "Bitte bestätige, dass du die Bedingungen und Datenschutzerklärung gelesen hast, bevor du Daten senden und empfangen kannst."
+
+#: blockalyzer.php:189
+#@ blockalyzer
+msgid "Blockalyzer AdBlock Counter"
+msgstr "BlockAlyzer - Zähler für Anzeigenblocker"
+

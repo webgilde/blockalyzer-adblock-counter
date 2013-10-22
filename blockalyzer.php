@@ -109,6 +109,8 @@ if (!class_exists('BA_CLASS')) {
             add_action('init', array($this, 'load_adblock_constant'));
             // load statistic methods
             add_action('init', array($this, 'load_stat_methods'), 1);
+            // load textdomain for translation
+            add_action('plugins_loaded', array($this, 'load_textdomain'));
 
             if ( is_admin() ) {
                 // run if this was an upgrade
@@ -144,6 +146,14 @@ if (!class_exists('BA_CLASS')) {
         }
 
         /**
+         * load textdomain
+         * @since 1.3
+         */
+        public function load_textdomain() {
+            load_plugin_textdomain( BATD, false, BADIR . '/languages' );
+        }
+
+        /**
          * load a constant with the information if adblock is enabled
          * false === adblock disabled
          * true === adblock enabled
@@ -176,7 +186,7 @@ if (!class_exists('BA_CLASS')) {
         public function add_dashboard_widget(){
             wp_add_dashboard_widget(
                  'blockalyzer_dashboard_widget',
-                 'Blockalyzer AdBlock Counter',
+                 __('Blockalyzer AdBlock Counter', BATD),
                  array($this, 'dashboard_widget_functions')
             );
         }
@@ -282,7 +292,7 @@ if (!class_exists('BA_CLASS')) {
                 }
             }
             // options for benchmark page
-            add_settings_field('ba_benchmark_category', __('Site Topic'), array($this, 'render_settings_benchmark_category'), 'ba-settings-page', 'ba_settings_section' );
+            add_settings_field('ba_benchmark_category', __('Site Topic', BATD), array($this, 'render_settings_benchmark_category'), 'ba-settings-page', 'ba_settings_section' );
 
         }
 
@@ -413,7 +423,7 @@ if (!class_exists('BA_CLASS')) {
          */
         public function render_stats_page() {
             if (!current_user_can('manage_options')) {
-                wp_die(__('You do not have sufficient permissions to access this page.'));
+                wp_die(__('You do not have sufficient permissions to access this page.', BATD));
             }
             if (!empty($_POST['bacounter'])) {
                 // reset statistics
@@ -455,7 +465,7 @@ if (!class_exists('BA_CLASS')) {
          */
         public function render_settings_page() {
             if (!current_user_can('manage_options')) {
-                wp_die(__('You do not have sufficient permissions to access this page.'));
+                wp_die(__('You do not have sufficient permissions to access this page.', BATD));
             }
             ?><div id="icon-options-general" class="icon32"><br></div>
             <h2><?php _e('BlockAlyzer Settings', BATD); ?></h2>

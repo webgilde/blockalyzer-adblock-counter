@@ -115,7 +115,7 @@
 jQuery(document).ready(function($){
     compare_form = $('#compare_form');
     $('.compare_submit').click(function(){
-        if( confirm('<?php _e('Please confirm that you have read the terms and conditions below to send and receive data.'); ?>') ) {
+        if( confirm('<?php _e('Please confirm that you have read the terms and conditions below to send and receive data.', BATD); ?>') ) {
             compare_form.submit();
         }
     });
