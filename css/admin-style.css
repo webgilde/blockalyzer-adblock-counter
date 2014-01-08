@@ -1,8 +1,9 @@
 /* settings page */
 
 #ba-admin-wrap h3 { margin: 1em 1em; }
-#ba-admin-wrap .postbox > p { margin: 1em 2em; }
+#ba-admin-wrap .postbox > p { margin: 1em 16px; }
 settings_page_ba-settings-page .form-table { margin: 1em 2em; }
+#ba-admin-wrap .form-table th { padding-left: 16px; }
 
 .ba-settings-list { float: left; font-size: 1.2em; margin-bottom: 1em; }
 .ba-settings-list dt { float: left; width: 10em; clear: both; }

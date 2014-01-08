@@ -372,7 +372,7 @@ if (!class_exists('BA_CLASS')) {
                 </div><!-- .postbox -->
                 <div class="postbox isc-setting-group">
                 <h3 class="setting-group-head"><?php _e('Benchmark', BATD) ?></h3>
-                <table class="form-table"><tbody><tr><td>
+                <table class="form-table"><tbody>
                 <?php
             }
 
