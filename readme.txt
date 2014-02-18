@@ -2,8 +2,8 @@
 Contributors: webzunft
 Tags: ads, ad, adblock, adblocker, ad blocker, ad block, adblock count, adblock counter, ad analysis, ad optimization
 Requires at least: 3.4
-Tested up to: 3.8
-Stable tag: 1.2.8
+Tested up to: 3.8.1
+Stable tag: 1.2.9
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -56,6 +56,11 @@ Please find further instructions on the [BlockAlyzer homepage](http://webgilde.c
 3. statistics table with benchmark data
 
 == Changelog ==
+
+= 1.2.9 =
+
+* bugfixed js var to allow using BlockAlyzer for anti adblock strategies like described on http://webgilde.com/en/anti-adblock/
+* please [vote for the next major feature](http://webgilde.com/en/blockalyzer-1-2-6/)
 
 = 1.2.8 =
 

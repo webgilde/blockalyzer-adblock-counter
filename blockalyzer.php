@@ -1,7 +1,7 @@
 <?php
 /*
   Plugin Name: BlockAlyzer - Adblock counter
-  Version: 1.2.8
+  Version: 1.2.9
   Plugin URI: http://webgilde.com/en/blockalyzer/
   Description: Count how many of your visitors are using an adblock plugin.
   Author: Thomas Maier
@@ -33,7 +33,7 @@ if (!function_exists('add_action')) {
     exit();
 }
 
-define('BAVERSION', '1.2.8');
+define('BAVERSION', '1.2.9');
 define('BANAME', 'blockalyzer-adblock-counter');
 define('BATD', 'blockalyzer');
 define('BADIR', basename(dirname(__FILE__)));
@@ -574,7 +574,7 @@ if (!class_exists('BA_CLASS')) {
                             });
                         } */ ?>
 
-                        var ba_blocked=false;
+                        ba_blocked=false;
                         if ($.adblockJsFile === undefined){
                             ba_blocked=true;
                         }
