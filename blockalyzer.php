@@ -1,7 +1,7 @@
 <?php
 /*
   Plugin Name: BlockAlyzer - Adblock counter
-  Version: 1.2.9
+  Version: 1.2.10
   Plugin URI: http://webgilde.com/en/blockalyzer/
   Description: Count how many of your visitors are using an adblock plugin.
   Author: Thomas Maier
@@ -33,7 +33,7 @@ if (!function_exists('add_action')) {
     exit();
 }
 
-define('BAVERSION', '1.2.9');
+define('BAVERSION', '1.2.10');
 define('BANAME', 'blockalyzer-adblock-counter');
 define('BATD', 'blockalyzer');
 define('BADIR', basename(dirname(__FILE__)));
@@ -141,8 +141,7 @@ if (!class_exists('BA_CLASS')) {
             add_action('wp_ajax_get_user_id', array($this, 'get_user_id'));
             add_action('wp_ajax_nopriv_get_user_id', array($this, 'get_user_id'));
 
-            $this->_options = get_option('ba_settings', array() );
-
+            $this->_options = $this->load_settings();
         }
 
         /**
@@ -151,6 +150,21 @@ if (!class_exists('BA_CLASS')) {
          */
         public function load_textdomain() {
             load_plugin_textdomain( BATD, false, BADIR . '/languages' );
+        }
+
+        /**
+         * load settings
+         *
+         * @return array $settings
+         * @since 1.3
+         */
+        public function load_settings(){
+            $defaults = array(
+                'methods' => array(
+                    'basic' => 1
+                )
+            );
+            return get_option('ba_settings', $defaults);
         }
 
         /**
@@ -177,6 +191,7 @@ if (!class_exists('BA_CLASS')) {
                     define('BA_ADBLOCK_ENABLED', 0);
                 }
             }
+
         }
 
         /**
@@ -389,7 +404,7 @@ if (!class_exists('BA_CLASS')) {
             if ( empty( $categories ) ) return __('Couldn\'t find any value to choose from', BATD );
             ?><select id="benchmark_category" name="ba_settings[benchmark_category]"><?php
                 foreach ( $categories as $_key => $_element ) :
-                    ?><option value="<?php echo $_key; ?>" <?php selected( $this->_options['benchmark_category'], $_key ); ?>><?php echo $_element; ?></option><?php
+                    ?><option value="<?php echo $_key; ?>" <?php if(isset($this->_options['benchmark_category'])) selected( $this->_options['benchmark_category'], $_key ); ?>><?php echo $_element; ?></option><?php
                 endforeach;
             ?></select>
             <p class="description"><?php _e('If you enter your sites topic, you will receive additional benchmark data.', BATD ); ?></p>
