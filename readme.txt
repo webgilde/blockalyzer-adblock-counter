@@ -1,15 +1,21 @@
 === Plugin Name ===
 Contributors: webzunft
 Tags: ads, ad, adblock, adblocker, ad blocker, ad block, adblock count, adblock counter, ad analysis, ad optimization
-Requires at least: 3.4
-Tested up to: 4.1
-Stable tag: 1.2.10
+Requires at least: 4.0
+Tested up to: 4.8
+Stable tag: 1.3
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 Count the number of visits from users with an ad blocker.
 
 == Description ==
+
+>   <strong>BlockAlyzer is deprecated – Use Advanced Ads instead</strong>
+>
+>   [Advanced Ads](https://wordpress.org/plugins/advanced-ads/) is a powerful ad management and optimization tool.
+>   In addition to the feature to count ad block visitors the plugin also includes plenty of features to make ad management easy and increase your revenue.
+>   You can also show alternative ad content to ad blocking users with the Pro version.
 
 *BlockAlyzer* counts how many of your visitors are using an ad blocker. You might use this to estimate the impact of adblock add-ons on your income from advertisement.
 
@@ -56,6 +62,10 @@ Please find further instructions on the [BlockAlyzer homepage](http://webgilde.c
 3. statistics table with benchmark data
 
 == Changelog ==
+
+= 1.3 =
+
+* BlockAlyzer is deprecated. Please use [Advanced Ads](https://wordpress.org/plugins/advanced-ads/) instead
 
 = 1.2.10 =
 

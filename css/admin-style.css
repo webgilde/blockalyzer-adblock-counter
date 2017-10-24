@@ -34,3 +34,7 @@ table#adblock-counter-statistic .compare_submit { font-size: .7em; border: solid
 #ba_dashboard_table td, #ba_dashboard_table th { padding: 3px 5px 3px 0; text-align: left; }
 #blockalyzer_dashboard_widget .success { color: green; }
 #blockalyzer_dashboard_widget .warning { color: red; }
+
+/* deprecation message */
+#adblock-counter-deprecated { margin: 1em 0; padding: 1em; border: solid red 1px; background: #7FD4FF; }
+#adblock-counter-deprecated p { font-size: 1.5em; margin: 0; }

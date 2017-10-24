@@ -1,7 +1,7 @@
 <?php
 /*
   Plugin Name: BlockAlyzer - Adblock counter
-  Version: 1.2.10
+  Version: 1.3
   Plugin URI: http://webgilde.com/en/blockalyzer/
   Description: Count how many of your visitors are using an adblock plugin.
   Author: Thomas Maier
@@ -33,7 +33,7 @@ if (!function_exists('add_action')) {
     exit();
 }
 
-define('BAVERSION', '1.2.10');
+define('BAVERSION', '1.3');
 define('BANAME', 'blockalyzer-adblock-counter');
 define('BATD', 'blockalyzer');
 define('BADIR', basename(dirname(__FILE__)));
@@ -221,6 +221,7 @@ if (!class_exists('BA_CLASS')) {
             } else {
                 $this->_compare_allowed = false;
             }
+            include( 'templates/deprecated.php' );
             require_once 'templates/dashboard_widget.php';
         }
 
@@ -464,6 +465,7 @@ if (!class_exists('BA_CLASS')) {
                 $this->_compare_allowed = false;
             }
 
+            require_once 'templates/deprecated.php';
             require_once 'templates/statistics.php';
         }
 
@@ -482,6 +484,7 @@ if (!class_exists('BA_CLASS')) {
             if (!current_user_can('manage_options')) {
                 wp_die(__('You do not have sufficient permissions to access this page.', BATD));
             }
+            include( 'templates/deprecated.php' );
             ?><div id="icon-options-general" class="icon32"><br></div>
             <h2><?php _e('BlockAlyzer Settings', BATD); ?></h2>
             <div id="ba-admin-wrap">
@@ -509,7 +512,9 @@ if (!class_exists('BA_CLASS')) {
 
             if ( !$this->_is_measuring ) return;
             // enqueue empty advertisement.js
-            wp_register_script('adblock-counter-testjs', plugins_url('js/advertisement.js', __FILE__), array('jquery'), BAVERSION);
+            // wp_register_script('adblock-counter-testjs', plugins_url('js/advertisement.js', __FILE__), array('jquery'), BAVERSION);
+            // enqueue empty banner.js
+            wp_register_script('adblock-counter-testjs', plugins_url('js/banner.js', __FILE__), array('jquery'), BAVERSION);
             wp_enqueue_script('adblock-counter-testjs');
             // add the ajax url for the frontend
             wp_localize_script('jquery', 'BaAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
